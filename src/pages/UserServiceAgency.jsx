@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
 
-function ServiceAgency() {
+function UserServiceAgency() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -111,4 +111,4 @@ function ServiceAgency() {
   );
 }
 
-export default ServiceAgency;
+export default UserServiceAgency;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import config from '../../config';
 
 const HostReg = ({ onClose }) => {
   const [formData, setFormData] = useState({
@@ -13,10 +14,12 @@ const HostReg = ({ onClose }) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const { baseURL } = config;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/hosts/register', {
+      const response = await fetch(`${baseURL}/hosts/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

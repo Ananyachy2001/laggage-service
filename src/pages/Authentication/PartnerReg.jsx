@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import config from '../../config';
 const PartnerReg = ({ onClose }) => {
   const [formData, setFormData] = useState({
     companyName: '',
@@ -7,6 +7,8 @@ const PartnerReg = ({ onClose }) => {
     password: '',
     address: ''
   });
+
+  const { baseURL } = config;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,7 +18,7 @@ const PartnerReg = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/partners/register', {
+      const response = await fetch(`${baseURL}/partners/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

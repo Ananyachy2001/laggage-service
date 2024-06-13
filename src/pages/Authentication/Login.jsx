@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Register from './Register';
+import config from '../../config';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -8,20 +10,24 @@ const Login = () => {
   const [role, setRole] = useState('user');
   const [error, setError] = useState('');
   const [showRegister, setShowRegister] = useState(false);
+  const navigate = useNavigate();
+
+  const { baseURL } = config;
 
   const handleLogin = async () => {
     try {
+      console.log("Base URL:", baseURL);
       let endpoint;
       switch (role) {
         case 'partner':
-          endpoint = '/api/partners/login';
+          endpoint = `${baseURL}/partners/login`;
           break;
         case 'host':
-          endpoint = '/api/hosts/login';
+          endpoint = `${baseURL}/hosts/login`;
           break;
         case 'user':
         default:
-          endpoint = '/api/users/login';
+          endpoint = `${baseURL}/users/login`;
           break;
       }
 
@@ -32,6 +38,10 @@ const Login = () => {
       localStorage.setItem('token', token);
 
       console.log('Login successful. Token:', token);
+
+      // Redirect to the dashboard
+      navigate('/');
+
     } catch (error) {
       console.error('Login failed:', error);
       setError('Login failed. Please check your credentials and try again.');
@@ -102,12 +112,12 @@ const Login = () => {
               Log In
             </button>
             <button
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="button"
-            onClick={handleRegister}
-          >
-            Register
-          </button>
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={handleRegister}
+            >
+              Register
+            </button>
           </div>
           {showRegister && <Register onClose={handleCloseRegister} />}
         </form>

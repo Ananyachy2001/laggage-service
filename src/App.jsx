@@ -11,8 +11,11 @@ import './charts/ChartjsConfig';
 
 // Import pages
 import Dashboard from './pages/Dashboard';
-import ServiceAgency from './pages/ServiceAgency';
+import SearchLuggage from './pages/SearchLuggage';
+import UserServiceAgency from './pages/UserServiceAgency';
 import Login from './pages/Authentication/Login';
+import AllHost from './pages/SuperAdmin/AllHost';
+import AllUser from './pages/SuperAdmin/AllUser';
 
 function App() {
 
@@ -28,8 +31,12 @@ function App() {
     <>
       <Routes>
         <Route exact path="/" element={<Dashboard />} />
-        <Route exact path="/serviceagency" element={<ServiceAgency />} />
+        <Route exact path="/userserviceagency" element={<UserServiceAgency />} />
         <Route exact path="/login" element={<Login/>} />
+        <Route exact path="/superadmin/host" element={<AllHost/>} />
+        <Route exact path="/superadmin/user" element={<AllUser/>} />
+        <Route exact path="/searchluggage" element={<SearchLuggage/>} />
+
         
       </Routes>
     </>

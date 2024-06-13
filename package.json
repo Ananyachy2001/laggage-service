@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "start": "react-scripts start",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -12,6 +13,7 @@
     "axios": "^1.7.2",
     "chart.js": "^4.4.1",
     "chartjs-adapter-moment": "^1.0.1",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.9.0",
@@ -21,7 +23,8 @@
     "react-dom": "^18.2.0",
     "react-flatpickr": "^3.10.13",
     "react-modal": "^3.16.1",
-    "react-router-dom": "^6.20.1",
+    "react-router-dom": "^6.23.1",
+    "react-scripts": "^5.0.1",
     "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
