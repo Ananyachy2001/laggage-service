@@ -8,6 +8,7 @@ const SearchLuggage = () => {
   const [time, setTime] = useState('10:00'); // Default time
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [selectedReservation, setSelectedReservation] = useState(null); // State for selected reservation
 
   const dummyLuggageData = [
     {
@@ -29,20 +30,11 @@ const SearchLuggage = () => {
     // Add more dummy data as needed
   ];
 
-  const citiesInAustralia = [
-    'Sydney',
-    'Melbourne',
-    'Brisbane',
-    'Perth',
-    'Adelaide',
-    // Add more cities as needed
-  ];
-
   const handleSearch = () => {
     console.log(`Searching for luggage storage in ${location} on ${date} at ${time}`);
 
     // Filter dummy data based on location, date, and time
-    const filteredData = dummyLuggageData.filter(item =>
+    const filteredData = dummyLuggageData.filter(item => 
       item.location.toLowerCase() === location.toLowerCase() &&
       item.date === date &&
       item.time === time
@@ -52,7 +44,14 @@ const SearchLuggage = () => {
 
     // Update state with search results
     setSearchResults(filteredData);
+    setSelectedReservation(null); // Reset selected reservation when performing a new search
+  };
 
+  const handleReservation = (selectedItem) => {
+    setSelectedReservation(selectedItem);
+    // Additional logic for booking the slot with the host can be implemented here
+    // For demonstration purposes, you can log the selected item
+    console.log('Selected Reservation:', selectedItem);
     // Implement API call here if using a real backend
   };
 
@@ -72,22 +71,19 @@ const SearchLuggage = () => {
             <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
               <h2 className="text-xl font-semibold mb-4">Search Luggage Storage</h2>
 
-              {/* Location dropdown */}
+              {/* Location input */}
               <div className="mb-4">
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700">
                   Location
                 </label>
-                <select
+                <input
+                  type="text"
                   id="location"
                   aria-label="Location"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                >
-                  {citiesInAustralia.map((city) => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </select>
+                />
               </div>
 
               {/* Date input */}
@@ -143,12 +139,30 @@ const SearchLuggage = () => {
                           <br />
                           Capacity: {item.capacity}, Available: {item.available}
                         </p>
+                        <button
+                          className="mt-2 bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                          onClick={() => handleReservation(item)}
+                        >
+                          Reserve
+                        </button>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
             </div>
+
+            {/* Display selected reservation */}
+            {selectedReservation && (
+              <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Selected Reservation</h3>
+                <p>
+                  Location: {selectedReservation.location}, Date: {selectedReservation.date}, Time: {selectedReservation.time}
+                </p>
+                {/* Additional UI elements for confirming the reservation */}
+              </div>
+            )}
+
           </div>
         </main>
       </div>

@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-// import axios from 'axios'; // Commented out for dummy data
+import dummyUsers from './customers'; // Import dummy data from dummyData.js
 
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 
-const AllUser = () => {
-    // Dummy data for users with new fields
-    const [users, setUsers] = useState([
-        { name: 'John Doe', email: 'john.doe@example.com', hostId: 'host_id_1', dateJoined: '2023-01-01', recurring: 'Yes', location: 'Sydney' },
-        { name: 'Jane Smith', email: 'jane.smith@example.com', hostId: 'host_id_2', dateJoined: '2023-02-15', recurring: 'No', location: 'Melbourne' },
-        { name: 'Michael Johnson', email: 'michael.johnson@example.com', hostId: 'host_id_3', dateJoined: '2023-03-10', recurring: 'Yes', location: 'Perth' }
-    ]);
+const AllCustomer = () => {
+    const [users, setUsers] = useState(dummyUsers); // Use dummyUsers from dummyData.js
     const [searchQuery, setSearchQuery] = useState('');
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -21,6 +16,9 @@ const AllUser = () => {
         user.hostId.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    // Get unique host IDs
+    const hostIds = [...new Set(users.map(user => user.hostId))];
 
     return (
         <div className="flex h-screen overflow-hidden">
@@ -76,6 +74,20 @@ const AllUser = () => {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Host Reservation Section */}
+                        {hostIds.map((hostId, index) => (
+                            <div key={index} className="mt-8">
+                                <h2 className="text-lg font-semibold mb-4">Users under Host ID: {hostId}</h2>
+                                <ul className="divide-y divide-gray-300">
+                                    {users.filter(user => user.hostId === hostId).map((user, index) => (
+                                        <li key={index} className="py-2">
+                                            {user.name} - {user.email}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
                     </div>
                 </main>
             </div>
@@ -83,4 +95,4 @@ const AllUser = () => {
     );
 };
 
-export default AllUser;
+export default AllCustomer;

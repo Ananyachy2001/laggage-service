@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import {
   Routes,
   Route,
@@ -16,6 +18,12 @@ import UserServiceAgency from './pages/UserServiceAgency';
 import Login from './pages/Authentication/Login';
 import AllHost from './pages/SuperAdmin/AllHost';
 import AllUser from './pages/SuperAdmin/AllUser';
+import Reservations from './pages/User/Reservations';
+import AllLuggage from './pages/Luggage/AllLuggage';
+import LuggageDetails from './pages/Luggage/LuggageDetails';
+import AddLocation from './pages/Host/AddLocation';
+import AllCustomer from './pages/Host/AllCustomer';
+import HostAnalytics from './pages/Host/HostAnalytics';
 
 function App() {
 
@@ -36,6 +44,13 @@ function App() {
         <Route exact path="/superadmin/host" element={<AllHost/>} />
         <Route exact path="/superadmin/user" element={<AllUser/>} />
         <Route exact path="/searchluggage" element={<SearchLuggage/>} />
+        <Route exact path="/reservations" element={<Reservations/>} />
+        <Route exact path="/allluggage" element={<AllLuggage/>} />
+        <Route exact path="/luggage/:id" element={<LuggageDetails/>} />
+        <Route exact path="/host/addlocation" element={<AddLocation/>} />
+        <Route exact path="/host/allcustomers" element={<AllCustomer/>} />
+        <Route exact path="/host/analytics" element={<HostAnalytics/>} />
+
 
         
       </Routes>
