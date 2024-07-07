@@ -152,14 +152,14 @@ const SearchLuggage = () => {
               )}
             </div>
 
-            {/* Display selected reservation */}
+           
             {selectedReservation && (
               <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-lg font-semibold mb-4">Selected Reservation</h3>
                 <p>
                   Location: {selectedReservation.location}, Date: {selectedReservation.date}, Time: {selectedReservation.time}
                 </p>
-                {/* Additional UI elements for confirming the reservation */}
+                
               </div>
             )}
 

@@ -12,25 +12,25 @@ function DashboardCard04() {
       '03-01-2021', '04-01-2021', '05-01-2021',
     ],
     datasets: [
-      // Light blue bars
+      // Light blue bars for direct bookings
       {
-        label: 'Direct',
+        label: 'Direct Bookings',
         data: [
-          800, 1600, 900, 1300, 1950, 1700,
+          300, 450, 500, 700, 800, 650, // Example data points
         ],
-        backgroundColor: tailwindConfig().theme.colors.blue[400],
-        hoverBackgroundColor: tailwindConfig().theme.colors.blue[500],
+        backgroundColor: tailwindConfig().theme.colors.green[400], // Changed to green for visual distinction
+        hoverBackgroundColor: tailwindConfig().theme.colors.green[500],
         barPercentage: 0.66,
         categoryPercentage: 0.66,
       },
-      // Blue bars
+      // Dark blue bars for indirect bookings
       {
-        label: 'Indirect',
+        label: 'Indirect Bookings',
         data: [
-          4900, 2600, 5350, 4800, 5200, 4800,
+          200, 300, 400, 500, 600, 500, // Example data points
         ],
-        backgroundColor: tailwindConfig().theme.colors.indigo[500],
-        hoverBackgroundColor: tailwindConfig().theme.colors.indigo[600],
+        backgroundColor: tailwindConfig().theme.colors.blue[500],
+        hoverBackgroundColor: tailwindConfig().theme.colors.blue[600],
         barPercentage: 0.66,
         categoryPercentage: 0.66,
       },
@@ -40,7 +40,7 @@ function DashboardCard04() {
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700">
       <header className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-        <h2 className="font-semibold text-slate-800 dark:text-slate-100">Direct VS Indirect</h2>
+        <h2 className="font-semibold text-slate-800 dark:text-slate-100">Luggage Storage Bookings: Direct VS Indirect</h2>
       </header>
       {/* Chart built with Chart.js 3 */}
       {/* Change the height attribute to adjust the chart height */}

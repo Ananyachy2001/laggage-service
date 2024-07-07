@@ -24,6 +24,12 @@ import LuggageDetails from './pages/Luggage/LuggageDetails';
 import AddLocation from './pages/Host/AddLocation';
 import AllCustomer from './pages/Host/AllCustomer';
 import HostAnalytics from './pages/Host/HostAnalytics';
+import AdminAnalytics from './pages/SuperAdmin/AdminAnalytics';
+import SearchNearLocation from './pages/SearchNearLocation';
+import Home from './pages/Home/Home';
+import LuggageStoreDetails from './pages/SearchLugLocation/LuggageStoreDetails';
+import LuggageLocation from './pages/SearchLugLocation/LuggageLocation';
+
 
 function App() {
 
@@ -38,18 +44,23 @@ function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/" element={<Dashboard />} />
+        <Route exact path="/dashboard" element={<Dashboard />} />
+        <Route exact path="/" element={<Home />} />
+        <Route exact path="/luggage_locations" element={<LuggageLocation />} />
+        <Route exact path="/luggage_store_details" element={<LuggageStoreDetails />} />
         <Route exact path="/userserviceagency" element={<UserServiceAgency />} />
         <Route exact path="/login" element={<Login/>} />
         <Route exact path="/superadmin/host" element={<AllHost/>} />
         <Route exact path="/superadmin/user" element={<AllUser/>} />
         <Route exact path="/searchluggage" element={<SearchLuggage/>} />
+        <Route exact path="/searchnearlocation" element={<SearchNearLocation/>} />
         <Route exact path="/reservations" element={<Reservations/>} />
         <Route exact path="/allluggage" element={<AllLuggage/>} />
         <Route exact path="/luggage/:id" element={<LuggageDetails/>} />
         <Route exact path="/host/addlocation" element={<AddLocation/>} />
         <Route exact path="/host/allcustomers" element={<AllCustomer/>} />
         <Route exact path="/host/analytics" element={<HostAnalytics/>} />
+        <Route exact path="/dashboard/analytics" element={<AdminAnalytics/>} />
 
 
         
