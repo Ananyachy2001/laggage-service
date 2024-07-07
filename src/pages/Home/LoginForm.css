@@ -1,6 +1,6 @@
 /* Background overlay */
 .bg-overlay {
-    background: linear-gradient(135deg, rgba(74, 85, 100, 0.85) 0%, rgba(24, 54, 95, 0.85) 100%);
+    background: linear-gradient(135deg, rgba(109, 132, 168, 0.85) 0%, rgba(6, 23, 46, 0.85) 100%);
   }
   
   /* Form container */
@@ -28,7 +28,7 @@
   /* Header */
   h2 {
     font-family: 'Times Roman', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 1.8rem;
     background: -webkit-linear-gradient(45deg, #213550, #223d68);
     -webkit-background-clip: text;

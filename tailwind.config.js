@@ -6,6 +6,7 @@ module.exports = {
   ],
   theme: {
     extend: {},
+    darkMode: 'class',
     colors: {
       'custom-gray': '#f5f5f5',
       'custom-blue': '#3b82f6',

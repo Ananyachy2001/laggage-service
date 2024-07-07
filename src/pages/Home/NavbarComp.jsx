@@ -66,7 +66,7 @@ const NavbarComp = () => {
               Pages <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
             <div className={`absolute bg-white shadow-md mt-1 rounded-md overflow-hidden ${activeDropdown === 'pages' ? 'block' : 'hidden'} md:group-hover:block`}>
-              {["Sign In",  "FAQ", "404 Error Page",  "Terms & Conditions"].map(page => (
+              {["Sign In",  "FAQ", "User", "Partner",  "Terms & Conditions"].map(page => (
                 <a href={`${page.toLowerCase().replace(/ /g, '-')}.html`} key={page} className="block px-4 py-2 text-gray-600 hover:text-[#FDB139]">{page}</a>
               ))}
             </div>

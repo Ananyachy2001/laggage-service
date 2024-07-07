@@ -1,0 +1,38 @@
+/* styles.css */
+.card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card img {
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .card img:hover {
+    opacity: 0.8;
+  }
+  
+  .card h3 {
+    color: #333;
+    font-weight: 700;
+  }
+  
+  .card p {
+    color: #666;
+  }
+  
+  .card a {
+    color: #1d4ed8;
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .card a:hover {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+  

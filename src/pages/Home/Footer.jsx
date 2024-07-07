@@ -1,13 +1,14 @@
 import React from 'react'
+import logo from '../../img/home-two/logo3.svg';
 
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-16">
+    <footer className="bg-teal-800 text-white py-16">
         <div className="container mx-auto">
           <div className="flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
               <a href="index.html" className="flex items-center mb-4">
-                <img src="assets/img/home-two/logo-1.jpg" alt="logo2" className="h-10" />
+                <img src={logo} alt="logo2" className="h-28" />
               </a>
               <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has survived not only five centuries, but also the leap into electronic.</p>
             </div>

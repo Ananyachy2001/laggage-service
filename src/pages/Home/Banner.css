@@ -1,0 +1,62 @@
+.banner {
+    position: relative;
+  }
+  
+  .banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(1, 6, 8, 0.8); /* Dark overlay */
+    z-index: 1;
+  }
+  
+  .banner .relative {
+    z-index: 2; /* Ensures the content is above the overlay */
+  }
+  
+
+  .form-input {
+    width: 500px;
+    padding: 10px;
+    border: none;
+    border-radius: 15px 0 0 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-button {
+    background-color: #1abc9c;
+    padding: 16px;
+    border: none;
+    border-radius: 0 15px 15px 0;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .search-button:hover {
+    background-color: #16a085;
+  }
+  
+  .find-button {
+    background-color: #2a9b84;
+    padding: 25px;
+    border: none;
+    border-radius: 15px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    margin-top: 25px;
+    width: 350px;
+  }
+  
+  .find-button:hover {
+    background-color: #0c7560;
+  }
+  
+  .backdrop-blur-md {
+    backdrop-filter: blur(10px);
+  }
+  
+  .slogan-color{
+    color: #fdb139;
+  }
