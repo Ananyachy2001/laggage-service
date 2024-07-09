@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LoginForm from './LoginForm'; // Assuming LoginForm is in the same directory
+import './Navbarcomp.css'; 
 import logo from '../../img/home-two/logo3.svg';
 
 const NavbarComp = () => {
@@ -23,7 +24,7 @@ const NavbarComp = () => {
     if (!isHovering && activeDropdown) {
       const timer = setTimeout(() => {
         setActiveDropdown(null);
-      }, 300); // Adjust the delay time as needed
+      }, 500); // Adjust the delay time as needed
       return () => clearTimeout(timer);
     }
   }, [isHovering, activeDropdown]);

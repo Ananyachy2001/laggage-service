@@ -10,6 +10,8 @@ import Counter from './Counter';
 import Review from './Review';
 import Footer from './Footer';
 import HowitWorks from './HowitWorks';
+import Choose from './Choose';
+import Blog from './Blog';
 
 
 const Home = () => {
@@ -38,9 +40,13 @@ const Home = () => {
 
       {/* Counter */}
       <Counter />
+
+      <Choose />
     
       {/* Review */}
       <Review />
+
+      <Blog/>
 
       {/* Footer */}
       <Footer />

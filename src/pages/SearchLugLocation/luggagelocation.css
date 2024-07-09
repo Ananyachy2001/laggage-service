@@ -3,6 +3,9 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
 }
+.container-fluid {
+    padding: 0;
+}
 .sidebar {
     width: 30%;
     height: 100vh;
@@ -17,8 +20,8 @@ body {
 }
 .storage-spot {
     border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 15px;
+    padding: 35px;
+    margin-bottom: 35px;
     border-radius: 5px;
     background: #fff;
 }

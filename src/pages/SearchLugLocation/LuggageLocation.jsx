@@ -1,14 +1,16 @@
 import React from 'react';
+import LuggageNavbar from './LuggageNavbar';
 import Sidebar from './Sidebar';
 import MapContainer from './MapContainer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './luggagelocation.css';
 
 const LuggageLocation = () => (
-    <div className="container-fluid mt-5 pt-4">
-        <div className="row">
-            <Sidebar />
-            <div className="col-md-8 map-container">
+    <div>
+        <LuggageNavbar />
+        <div className="flex flex-col lg:flex-row mt-24 pt-4 ">
+            <Sidebar className="w-full lg:w-1/3" />
+            <div className="w-full lg:w-2/3">
                 <MapContainer />
             </div>
         </div>
