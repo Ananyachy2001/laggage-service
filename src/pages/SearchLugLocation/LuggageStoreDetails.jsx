@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'tailwindcss/tailwind.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faEdit, faTag, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt, faClock, faStar, faWifi, faGlassMartini, faRestroom, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import LuggageNavbar from './LuggageNavbar';
 
-library.add(faEdit, faTag, faTimes);
+library.add(faMapMarkerAlt, faClock, faStar, faWifi, faGlassMartini, faRestroom, faShieldAlt);
 
 const LuggageStoreDetails = () => {
   const [luggageQuantity, setLuggageQuantity] = useState(1);
@@ -59,31 +60,47 @@ const LuggageStoreDetails = () => {
   };
 
   return (
-    <div className="container mx-auto mt-12 pt-12">
+    <div>
+      <LuggageNavbar/>
+    
+    <div className="container mx-auto mt-12 pt-32">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="col-span-2">
           <div className="bg-white shadow-md rounded-lg p-6 mb-4">
-            <h3 className="text-2xl font-bold mb-2">24/7 Circular Quay Storage Spot</h3>
-            <h6 className="text-gray-600 mb-4">Restaurant | Open now 24 hours</h6>
-            <div id="map" className="h-64 mb-4 rounded-lg"></div>
-            <p>
+            <h3 className="text-2xl font-bold mb-2 flex items-center">
+              <FontAwesomeIcon icon="map-marker-alt" className="text-blue-500 mr-2" />
+              24/7 Circular Quay Storage Spot
+            </h3>
+            <h6 className="text-gray-600 mb-4 flex items-center">
+              <FontAwesomeIcon icon="clock" className="text-blue-500 mr-2" />
+              Restaurant | Open now 24 hours
+            </h6>
+            <div id="map" className="h-80 mb-4 rounded-lg shadow-sm"></div>
+            <p className="flex items-center mb-2">
+              <FontAwesomeIcon icon="map-marker-alt" className="text-blue-500 mr-2" />
               <strong>Address:</strong> Address will be shown after booking
             </p>
-            <p>
+            <p className="flex items-center mb-2">
+              <FontAwesomeIcon icon="tag" className="text-blue-500 mr-2" />
               <strong>Price:</strong> Prices vary per service and time
             </p>
-            <p>
-              <strong>Rating:</strong>
-              <span className="text-yellow-400 text-xl">★★★★☆</span> 4.7 (4237 reviews)
+            <p className="flex items-center mb-2">
+              <FontAwesomeIcon icon="star" className="text-yellow-400 mr-2" />
+              <strong>Rating:</strong> 4.7 (4237 reviews)
             </p>
-            <p>
+            <p className="flex items-center mb-2">
+              <FontAwesomeIcon icon="wifi" className="text-blue-500 mr-2" />
               <strong>Services:</strong> Free Wi-Fi, Bar, Bathrooms
             </p>
-            <p>
+            <p className="flex items-center mb-2">
+              <FontAwesomeIcon icon="shield-alt" className="text-blue-500 mr-2" />
               <strong>Protection:</strong> Up to $10,000
             </p>
             <div>
-              <h6 className="font-bold">Opening Hours:</h6>
+              <h6 className="font-bold flex items-center">
+                <FontAwesomeIcon icon="clock" className="text-blue-500 mr-2" />
+                Opening Hours:
+              </h6>
               <ul className="list-disc ml-4">
                 <li>Monday: 24 hours</li>
                 <li>Tuesday: 24 hours</li>
@@ -108,7 +125,6 @@ const LuggageStoreDetails = () => {
                     onChange={(e) => setLuggageQuantity(Number(e.target.value))} 
                     required 
                   />
-                  <FontAwesomeIcon icon="edit" className="ml-2 text-gray-500" />
                 </div>
               </div>
               <div className="mb-4">
@@ -126,7 +142,6 @@ const LuggageStoreDetails = () => {
                     <option value="window">Window Luggage - $6.50</option>
                     <option value="office">Office Luggage - $8.00</option>
                   </select>
-                  <FontAwesomeIcon icon="edit" className="ml-2 text-gray-500" />
                 </div>
               </div>
               <div className="mb-4">
@@ -140,7 +155,6 @@ const LuggageStoreDetails = () => {
                     value={promoCode} 
                     onChange={(e) => setPromoCode(e.target.value)}
                   />
-                  <FontAwesomeIcon icon="tag" className="ml-2 text-gray-500" />
                   <button 
                     type="button" 
                     className="ml-2 bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-700 transition duration-300"
@@ -170,6 +184,7 @@ const LuggageStoreDetails = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import luggage2 from '../../img/home-two/luggage-2.jpg'
 
 const Choose = () => {
   return (
-<div className="choose-area bg-gray-100 relative overflow-hidden py-12">
+<div className="choose-area bg-white relative overflow-hidden py-12">
   <div className="choose-shape absolute inset-0 z-0">
     <img src="assets/img/home-one/choose1.png" alt="Shape" className="animate-spin-slow absolute top-[330px] left-[345px]" />
     <img src="assets/img/home-one/banner-shape3.png" alt="Shape" className="animate-pulse absolute right-[100px] bottom-[-40px]" />

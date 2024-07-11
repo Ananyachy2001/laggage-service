@@ -12,6 +12,9 @@ import Footer from './Footer';
 import HowitWorks from './HowitWorks';
 import Choose from './Choose';
 import Blog from './Blog';
+import LuggageStorageLocations from '../SearchLugLocation/LuggageStorageSuggestions';
+import ScrollToTopButton from './ScrollToTopButton';
+import ChatbotButton from '../Chatbot/ChatbotButton';
 
 
 const Home = () => {
@@ -24,6 +27,7 @@ const Home = () => {
       <Banner />
 
       {/* How it Works */}
+      <LuggageStorageLocations />
       
       <HowitWorks />
       {/* Services */}
@@ -50,6 +54,10 @@ const Home = () => {
 
       {/* Footer */}
       <Footer />
+
+      <ScrollToTopButton />
+      <ChatbotButton />
+      
     
 
     </div>

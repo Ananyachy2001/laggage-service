@@ -16,7 +16,7 @@ function Team() {
   ];
 
   return (
-    <section className="bg-gray-100 py-16">
+    <section className="bg-gray-300 py-16">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-8">Our Expert Team Members</h2>
         <div className="flex flex-wrap justify-center -mx-4">

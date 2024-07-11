@@ -8,7 +8,7 @@ import { faArrowDown, faPlay } from '@fortawesome/free-solid-svg-icons';
 
 function HowItWorks() {
   return (
-    <section className="bg-gray-100 py-24">
+    <section className="bg-gradient-to-b from-gray-100 via-white to-gray-200  py-24">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center text-blue-600 mb-8">How it Works: A Quick Guide</h2>
         <div className="flex flex-wrap -mx-4">

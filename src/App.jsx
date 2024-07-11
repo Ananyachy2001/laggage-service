@@ -32,6 +32,8 @@ import SearchNearLocation from './pages/SearchNearLocation';
 import Home from './pages/Home/Home';
 import LuggageStoreDetails from './pages/SearchLugLocation/LuggageStoreDetails';
 import LuggageLocation from './pages/SearchLugLocation/LuggageLocation';
+import HostAvailabilityCalendar from './pages/Host/HostAvailabilityCalender';
+import UserReminder from './pages/User/UserReminder';
 
 
 function App() {
@@ -49,8 +51,10 @@ function App() {
       <Routes>
         <Route exact path="/dashboard" element={<Dashboard />} />
         <Route exact path="/" element={<Home />} />
+        <Route exact path="/user_remainder" element={<UserReminder />} />
         <Route exact path="/luggage_locations" element={<LuggageLocation />} />
         <Route exact path="/luggage_store_details" element={<LuggageStoreDetails />} />
+        <Route exact path="/host_availability_calender" element={<HostAvailabilityCalendar />} />
         <Route exact path="/userserviceagency" element={<UserServiceAgency />} />
         <Route exact path="/login" element={<Login/>} />
         <Route exact path="/superadmin/host" element={<AllHost/>} />

@@ -32,7 +32,7 @@ const NavbarComp = () => {
   return (
     <div className="fixed top-0 w-full bg-[#4A686A] shadow-md z-50">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
-        <a href="index2.html" className="flex items-center">
+        <a href="/" className="flex items-center">
           <img src={logo} alt="logo1" className="h-16 w-40" />
         </a>
         <div className="md:hidden">
@@ -67,10 +67,20 @@ const NavbarComp = () => {
               Pages <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
             <div className={`absolute bg-white shadow-md mt-1 rounded-md overflow-hidden ${activeDropdown === 'pages' ? 'block' : 'hidden'} md:group-hover:block`}>
-              {["Sign In",  "FAQ", "User", "Partner",  "Terms & Conditions"].map(page => (
-                <a href={`${page.toLowerCase().replace(/ /g, '-')}.html`} key={page} className="block px-4 py-2 text-gray-600 hover:text-[#FDB139]">{page}</a>
+            {[
+                "Host Availability Calender", // Added host availability here
+                "User Remainder",
+              ].map((page) => (
+               <a
+                href={`/${page.toLowerCase().replace(/ /g, '_')}`}
+                key={page}
+                className="block px-4 py-2 text-gray-600 hover:text-[#FDB139]"
+                >
+              {page}
+              </a>
               ))}
             </div>
+
           </div>
           <a href="about.html" className="hover:text-[#FDB139]">About</a>
 

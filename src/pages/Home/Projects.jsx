@@ -6,7 +6,7 @@ import house from '../../img/home-two/house-1.jpg';
 
 function Projects() {
   return (
-    <section className="bg-gray-100 py-16">
+    <section className="bg-gradient-to-r from-gray-200  to-gray-200 py-16">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-8">Have A Quick Look Some Of Our Works & Services</h2>
         <div className="flex flex-wrap -mx-4">
