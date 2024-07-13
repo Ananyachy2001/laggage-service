@@ -7,6 +7,7 @@ const NavbarComp = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isHovering, setIsHovering] = useState(false);
+  const [loginFormType, setLoginFormType] = useState(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,6 +29,15 @@ const NavbarComp = () => {
       return () => clearTimeout(timer);
     }
   }, [isHovering, activeDropdown]);
+
+  const openLoginForm = (type) => {
+    setLoginFormType(type);
+    setActiveDropdown(null); // Close other dropdowns
+  };
+
+  const closeLoginForm = () => {
+    setLoginFormType(null);
+  };
 
   return (
     <div className="fixed top-0 w-full bg-[#4A686A] shadow-md z-50">
@@ -70,6 +80,7 @@ const NavbarComp = () => {
             {[
                 "Host Availability Calender", // Added host availability here
                 "User Remainder",
+                "Dashboard",
               ].map((page) => (
                <a
                 href={`/${page.toLowerCase().replace(/ /g, '_')}`}
@@ -83,8 +94,6 @@ const NavbarComp = () => {
 
           </div>
           <a href="about.html" className="hover:text-[#FDB139]">About</a>
-
-          
           <a href="contact.html" className="hover:text-[#FDB139]">Contact</a>
           <div 
             className="relative group"
@@ -115,35 +124,22 @@ const NavbarComp = () => {
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleDropdownToggle('partner-login');
+                  openLoginForm('Partner');
                 }}
                 className="block px-4 py-2 text-gray-600 hover:text-[#FDB139]"
               >
                 Partner Login
               </a>
-              {activeDropdown === 'partner-login' && (
-                <LoginForm
-                  loginType="Partner "
-                  onClose={() => setActiveDropdown(null)}
-                />
-              )}
-
               <a
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleDropdownToggle('user-login');
+                  openLoginForm('User');
                 }}
                 className="block px-4 py-2 text-gray-600 hover:text-[#FDB139]"
               >
                 User Login
               </a>
-              {activeDropdown === 'user-login' && (
-                <LoginForm
-                  loginType="User "
-                  onClose={() => setActiveDropdown(null)}
-                />
-              )}
             </div>
           </div>
           <div 
@@ -162,6 +158,12 @@ const NavbarComp = () => {
           </div>
         </div>
       </div>
+      {loginFormType && (
+        <LoginForm
+          loginType={loginFormType}
+          onClose={closeLoginForm}
+        />
+      )}
     </div>
   );
 };

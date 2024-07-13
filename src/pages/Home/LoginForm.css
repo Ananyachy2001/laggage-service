@@ -1,30 +1,47 @@
 /* Background overlay */
 .bg-overlay {
-    background: linear-gradient(135deg, rgba(109, 132, 168, 0.85) 0%, rgba(6, 23, 46, 0.85) 100%);
-  }
-  
-  /* Form container */
-  .login-form-container {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: 350px;
-  }
-  
-  /* Close button */
-  .btn-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #888;
-  }
-  
-  .btn-close:hover {
-    color: #000;
-  }
-  
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.login-form-container,
+.registration-form-container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #000;
+}
+
+.form-label {
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+.btn-link {
+  color: #007bff;
+}
+
+.btn-link:hover {
+  color: #0056b3;
+}
   /* Header */
   h2 {
     font-family: 'Times Roman', Tahoma, Geneva, Verdana, sans-serif;

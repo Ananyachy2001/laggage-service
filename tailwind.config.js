@@ -13,7 +13,8 @@ module.exports = {
       'primary-5': 'var(--clr-primary-5)',
     },
     animation: {
-      fadeIn: 'fadeIn 0.5s ease-in-out'
+      fadeIn: 'fadeIn 0.5s ease-in-out',
+      'spin-slow': 'spin 3s linear infinite',
     },
     keyframes: {
       fadeIn: {
