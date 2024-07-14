@@ -26,12 +26,12 @@ const ScrollToTopButton = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-4 right-4">
+    <div className="fixed bottom-1 right-6">
       {isVisible && (
         <button
           type="button"
           onClick={scrollToTop}
-          className="p-3 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-700 focus:outline-none"
+          className="p-4 pt-2 pb-2 bg-[#4A686A] text-white rounded-full shadow-lg hover:bg-[#3f8184] focus:outline-none"
         >
           <FontAwesomeIcon icon={faArrowUp} size="lg" />
         </button>

@@ -10,7 +10,7 @@ function HowItWorks() {
   return (
     <section className="bg-gradient-to-b from-gray-100 via-white to-gray-200  py-24">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center text-blue-600 mb-8">How it Works: A Quick Guide</h2>
+        <h2 className="text-3xl font-bold text-center text-[#4A686A] mb-8">How it Works: A Quick Guide</h2>
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-1/2 px-4">
             <div className="bg-white p-6 rounded-lg shadow-md mb-8">

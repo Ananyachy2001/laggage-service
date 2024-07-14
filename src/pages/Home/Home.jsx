@@ -26,9 +26,10 @@ const Home = () => {
       
       <Banner />
 
-      {/* How it Works */}
+
       <LuggageStorageLocations />
-      
+
+      {/* How it Works */}
       <HowitWorks />
       {/* Services */}
       <Service />
@@ -56,7 +57,7 @@ const Home = () => {
       <Footer />
 
       <ScrollToTopButton />
-      <ChatbotButton />
+      {/* <ChatbotButton /> */}
       
     
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import logo from '../../img/home-two/logo3.svg';
+import NavbarComp from '../Home/NavbarComp';
 
 const UserReminder = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,7 +11,8 @@ const UserReminder = () => {
 
   return (
     <div>
-      <nav className="bg-white shadow fixed w-full z-10 top-0 ">
+      <NavbarComp />
+      {/* <nav className="bg-white shadow fixed w-full z-10 top-0 ">
         <div className="container mx-auto flex justify-between items-center p-4">
           <a className="text-xl font-bold text-gray-800" href="/">
             <img src={logo} alt="logo2" className="h-20 w-auto" />
@@ -49,7 +51,7 @@ const UserReminder = () => {
           <a href="/" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Contact</a>
           <a href="/" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Book A Schedule</a>
         </div>
-      </nav>
+      </nav> */}
 
       <div className="container mx-auto mt-36 mb-12">
   <div className="flex justify-center">

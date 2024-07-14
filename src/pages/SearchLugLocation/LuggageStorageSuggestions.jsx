@@ -78,9 +78,9 @@ const LuggageStorageLocations = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-gray-300 via-white to-gray-300 py-24">
+    <div className="bg-gradient-to-b from-gray-100 via-white to-gray-200 py-24">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-600">Our Top Luggage Storage Locations</h2>
+        <h2 className="text-4xl font-extrabold text-center mb-12 text-[#4A686A]">Our Top Luggage Storage Locations</h2>
         <div className="relative">
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
             <button
