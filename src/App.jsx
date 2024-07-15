@@ -16,27 +16,37 @@ import './charts/ChartjsConfig';
 
 // Import pages
 import Dashboard from './pages/Dashboard';
-import UserProfile from './pages/User/UserProfile';
 import SearchLuggage from './pages/SearchLuggage';
 import UserServiceAgency from './pages/UserServiceAgency';
-import Login from './pages/Authentication/Login';
-import AllHost from './pages/SuperAdmin/AllHost';
+import AllPartner from './pages/SuperAdmin/AllPartner';
 import AllUser from './pages/SuperAdmin/AllUser';
 import Reservations from './pages/User/Reservations';
 import AllLuggage from './pages/Luggage/AllLuggage';
 import LuggageDetails from './pages/Luggage/LuggageDetails';
-import AddLocation from './pages/Host/AddLocation';
-import AllCustomer from './pages/Host/AllCustomer';
-import HostAnalytics from './pages/Host/HostAnalytics';
+import AddLocation from './pages/Partner/AddLocation';
+import AllCustomer from './pages/Partner/AllCustomer';
+import PartnerAnalytics from './pages/Partner/PartnerAnalytics';
 import AdminAnalytics from './pages/SuperAdmin/AdminAnalytics';
 import SearchNearLocation from './pages/SearchNearLocation';
 import Home from './pages/Home/Home';
 import LuggageStoreDetails from './pages/SearchLugLocation/LuggageStoreDetails';
 import LuggageLocation from './pages/SearchLugLocation/LuggageLocation';
-import HostAvailabilityCalendar from './pages/Host/HostAvailabilityCalender';
-import UserReminder from './pages/User/UserReminder';
+import PartnerAvailabilityCalendar from './pages/Partner/PartnerAvailabilityCalender';
+import UserReminder from './pages/User/ClientBooking';
 import AdminLoginForm from './pages/SuperAdmin/AdminLoginForm';
-import PartnerProfile from './pages/Host/PartnerProfile';
+import PartnerProfile from './pages/Partner/PartnerProfile';
+import AdminProfile from './pages/SuperAdmin/AdminProfile';
+import AllClient from './pages/SuperAdmin/AllClient';
+import ClientProfile from './pages/User/ClientProfile';
+import ClientRefundForm from './pages/User/ClientRefundFOrm';
+import ClientBooking from './pages/User/ClientBooking';
+import AllLocations from './pages/SuperAdmin/AllLocations';
+import PartnerLocations from './pages/Partner/PartnerLocation';
+import AllBookings from './pages/SuperAdmin/AllBookings';
+import PartnerBookings from './pages/Partner/PartnerBookings';
+import Logout from './pages/Home/Logout';
+import BookingConfirmation from './pages/SearchLugLocation/BookingConfirmation';
+import ClientMenu from './pages/User/ClientMenu';
 
 
 function App() {
@@ -52,28 +62,54 @@ function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/dashboard" element={<Dashboard />} />
-        <Route exact path="/userprofile" element={<UserProfile />} />
-        <Route exact path="/partnerprofile" element={<PartnerProfile />} />
-        <Route exact path="/superadminlogin" element={<AdminLoginForm />} />
+        {/* common  */}
         <Route exact path="/" element={<Home />} />
-        <Route exact path="/user_remainder" element={<UserReminder />} />
+        <Route exact path="/dashboard" element={<Dashboard />} />
+        
+        <Route path="/logout" element={<Logout />} />
+
+        {/* admin  */}
+        <Route exact path="/superadmin/login" element={<AdminLoginForm />} />
+        <Route exact path="/superadmin/profile" element={<AdminProfile />} />
+        <Route exact path="/superadmin/clients" element={<AllClient />} />
+        <Route exact path="/superadmin/user" element={<AllUser/>} />
+        <Route exact path="/superadmin/partners" element={<AllPartner/>} />
+        <Route exact path="/superadmin/locations" element={<AllLocations/>} />
+        <Route exact path="/superadmin/bookings" element={<AllBookings/>} />
+
+        <Route exact path="/superadmin/analytics" element={<AdminAnalytics/>} />
+
+        {/* patner  */}
+        <Route exact path="/partner/addlocation" element={<AddLocation/>} />
+        <Route exact path="/partner/profile" element={<PartnerProfile />} />
+        <Route exact path="/partner/allcustomers" element={<AllCustomer/>} />
+        <Route exact path="/partner/analytics" element={<PartnerAnalytics/>} />
+        <Route exact path="/partner_availability_calender" element={<PartnerAvailabilityCalendar />} />
+        <Route exact path="/partner/locations" element={<PartnerLocations/>} />
+        <Route exact path="/partner/bookings" element={<PartnerBookings/>} />
+
+
+        {/* clients  */}
+        <Route exact path="/reservations" element={<Reservations/>} />
+        <Route exact path="/clientbooking" element={<ClientBooking />} />
+        <Route exact path="/client/profile" element={<ClientProfile />} />
+        <Route exact path="/client/menu" element={<ClientMenu />} />
+        <Route exact path="/client/refundform" element={<ClientRefundForm />} />
+        <Route exact path="/client/bookingconfirmation" element={<BookingConfirmation />} />
+
+
+
+        {/* luggage  */}
         <Route exact path="/luggage_locations" element={<LuggageLocation />} />
         <Route exact path="/luggage_store_details" element={<LuggageStoreDetails />} />
-        <Route exact path="/host_availability_calender" element={<HostAvailabilityCalendar />} />
         <Route exact path="/userserviceagency" element={<UserServiceAgency />} />
-        <Route exact path="/login" element={<Login/>} />
-        <Route exact path="/superadmin/host" element={<AllHost/>} />
-        <Route exact path="/superadmin/user" element={<AllUser/>} />
         <Route exact path="/searchluggage" element={<SearchLuggage/>} />
         <Route exact path="/searchnearlocation" element={<SearchNearLocation/>} />
-        <Route exact path="/reservations" element={<Reservations/>} />
+        
         <Route exact path="/allluggage" element={<AllLuggage/>} />
         <Route exact path="/luggage/:id" element={<LuggageDetails/>} />
-        <Route exact path="/host/addlocation" element={<AddLocation/>} />
-        <Route exact path="/host/allcustomers" element={<AllCustomer/>} />
-        <Route exact path="/host/analytics" element={<HostAnalytics/>} />
-        <Route exact path="/dashboard/analytics" element={<AdminAnalytics/>} />
+
+  
 
 
         

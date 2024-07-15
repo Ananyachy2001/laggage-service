@@ -43,7 +43,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
   };
 
   const handleNext = () => {
-    setCurrentStep(2);
+    setCurrentStep((prevStep) => prevStep + 1);
   };
 
   const handleFormSubmit = async (e) => {
@@ -155,6 +155,19 @@ const RegistrationForm = ({ loginType, onClose }) => {
                     onChange={handleChange}
                   />
                 </div>
+                <div className="flex justify-center items-center mb-4">
+                  <button
+                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
+                    type="button"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </button>
+                </div>
+              </form>
+            )}
+            {currentStep === 2 && (
+              <form>
                 <div className="mb-4">
                   <label className="block text-[#4A686A] font-medium" htmlFor="tradingName">Trading Name</label>
                   <input
@@ -212,7 +225,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                 </div>
               </form>
             )}
-            {currentStep === 2 && (
+            {currentStep === 3 && (
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
                   <label className="block text-[#4A686A] font-medium" htmlFor="email">Email address</label>

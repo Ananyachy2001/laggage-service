@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import axios from 'axios';
 import config from '../../config'; 
@@ -8,25 +9,28 @@ function AdminLoginForm() {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+  
     try {
       const response = await axios.post(`${config.API_BASE_URL}/api/v1/users/login/superadmin`, {
         email,
         password,
         rememberMe,
       });
-      // Handle successful response
+      const token = response.data.token;
+      localStorage.setItem('token', token);
       console.log('Login successful', response.data);
+      navigate('/superadmin/profile');
     } catch (error) {
-      // Handle error response
       console.error('Login failed', error);
       setError('Login failed. Please check your credentials and try again.');
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
