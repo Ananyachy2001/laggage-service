@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LoginForm from './LoginForm'; // Assuming LoginForm is in the same directory
+import './Navbarcomp.css'; 
 import logo from '../../img/home-two/logo3.svg';
 
 const NavbarComp = () => {
@@ -39,15 +40,15 @@ const NavbarComp = () => {
   };
 
   return (
-    <div className="fixed top-0 w-full bg-white shadow-md z-50">
+    <div className="fixed top-0 w-full bg-white shadow-md z-50 ">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         <a href="/" className="flex items-center">
-          <img src={logo} alt="logo" className="h-16 w-40" />
+          <img src={logo} alt="logo1" className="h-16 w-40" />
         </a>
         <div className="md:hidden">
           <button
             onClick={toggleMenu}
-            className="text-gray-800 focus:outline-none"
+            className="text-[#1a73a7] focus:outline-none"
           >
             <svg
               className="w-6 h-6"
@@ -65,67 +66,66 @@ const NavbarComp = () => {
             </svg>
           </button>
         </div>
-        <div className={`md:flex md:items-center ${isMenuOpen ? 'block' : 'hidden'} w-full md:w-auto`}>
-          <nav className="flex flex-col md:flex-row md:space-x-4 text-gray-800">
-            <a href="/" className="hover:text-yellow-500 py-2 md:py-0">Home</a>
+        <nav className={`flex-col md:flex md:flex-row md:space-x-4 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
+          <div className="md:flex md:flex-row md:space-x-4">
+            <a href="/" className="hover:text-[#FDB139]">Home</a>
             <div 
               className="relative group" 
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
             >
-              <button onClick={() => handleDropdownToggle('pages')} className="hover:text-yellow-500 flex items-center focus:outline-none py-2 md:py-0">
+              <button onClick={() => handleDropdownToggle('pages')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
                 Pages <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
-              <div className={`absolute left-0 bg-white shadow-md mt-1 rounded-md overflow-hidden ${activeDropdown === 'pages' ? 'block' : 'hidden'} group-hover:block`}>
+              <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'pages' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
                 {[
-                  "Host Availability Calender",
-                  "User Remainder",
+
                   "Dashboard",
                 ].map((page) => (
                   <a
                     href={`/${page.toLowerCase().replace(/ /g, '_')}`}
                     key={page}
-                    className="block px-4 py-2 text-gray-800 hover:bg-yellow-500 hover:text-white"
+                    className="block px-4 py-2 hover:bg-blue-800"
                   >
                     {page}
                   </a>
                 ))}
               </div>
             </div>
-            <a href="about.html" className="hover:text-yellow-500 py-2 md:py-0">About</a>
-            <a href="contact.html" className="hover:text-yellow-500 py-2 md:py-0">Contact</a>
+            <a href="about.html" className="hover:text-[#FDB139]">About</a>
+            <a href="contact.html" className="hover:text-[#FDB139]">Contact</a>
+          </div>
+          <div className="md:flex md:flex-row md:space-x-4">
             <div 
               className="relative group"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
             >
-              <button onClick={() => handleDropdownToggle('luggagestorage')} className="hover:text-yellow-500 flex items-center focus:outline-none py-2 md:py-0">
+              <button onClick={() => handleDropdownToggle('luggagestorage')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
                 Luggage Storage <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
-              <div className={`absolute left-0 bg-white shadow-md mt-1 rounded-md overflow-hidden ${activeDropdown === 'luggagestorage' ? 'block' : 'hidden'} group-hover:block`}>
+              <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'luggagestorage' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
                 {["Drop & Pickup Your Keys", "Furniture Storage"].map(luggagestorage => (
-                  <a href={`${luggagestorage.toLowerCase().replace(/ /g, '-')}.html`} key={luggagestorage} className="block px-4 py-2 text-gray-800 hover:bg-yellow-500 hover:text-white">{luggagestorage}</a>
+                  <a href={`${luggagestorage.toLowerCase().replace(/ /g, '-')}.html`} key={luggagestorage} className="block px-4 py-2 hover:bg-blue-800">{luggagestorage}</a>
                 ))}
               </div>
             </div>
-          </nav>
-          <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mt-2 md:mt-0 text-gray-800">
             <div 
               className="relative group"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
             >
-              <button onClick={() => handleDropdownToggle('login')} className="hover:text-yellow-500 flex items-center focus:outline-none py-2 md:py-0">
+              <button onClick={() => handleDropdownToggle('login')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
                 Login <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
-              <div className={`absolute left-0 bg-white shadow-md mt-1 rounded-md overflow-hidden ${activeDropdown === 'login' ? 'block' : 'hidden'} group-hover:block`}>
+              <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'login' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
                 <a
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
                     openLoginForm('Partner');
                   }}
-                  className="block px-4 py-2 text-gray-800 hover:bg-yellow-500 hover:text-white"
+                  className="block px-4 py-2 hover:bg-blue-800"
                 >
                   Partner Login
                 </a>
@@ -135,7 +135,7 @@ const NavbarComp = () => {
                     e.preventDefault();
                     openLoginForm('User');
                   }}
-                  className="block px-4 py-2 text-gray-800 hover:bg-yellow-500 hover:text-white"
+                  className="block px-4 py-2 hover:bg-blue-800"
                 >
                   User Login
                 </a>
@@ -146,17 +146,17 @@ const NavbarComp = () => {
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
             >
-              <button onClick={() => handleDropdownToggle('language')} className="hover:text-yellow-500 flex items-center focus:outline-none py-2 md:py-0">
+              <button onClick={() => handleDropdownToggle('language')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
                 Language <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
-              <div className={`absolute left-0 bg-white shadow-md mt-1 rounded-md overflow-hidden ${activeDropdown === 'language' ? 'block' : 'hidden'} group-hover:block`}>
+              <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'language' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
                 {["English", "Spanish", "Chinese", "Arabic"].map(language => (
-                  <a href="#" key={language} className="block px-4 py-2 text-gray-800 hover:bg-yellow-500 hover:text-white">{language}</a>
+                  <a href="#" key={language} className="block px-4 py-2 hover:bg-blue-800">{language}</a>
                 ))}
               </div>
             </div>
           </div>
-        </div>
+        </nav>
       </div>
       {loginFormType && (
         <LoginForm

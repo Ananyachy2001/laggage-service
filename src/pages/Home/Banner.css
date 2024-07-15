@@ -16,19 +16,18 @@
 }
 
 .form-input {
-  width: 500px;
-  padding: 10px;
   border: none;
   border-radius: 15px 0 0 15px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
 }
 
 .search-button {
   background-color: #1abc9c;
-  padding: 16px;
   border: none;
+  margin-bottom: 22px;
   border-radius: 0 15px 15px 0;
-  color: rgba(255, 255, 255, 0.164);
+  color: white;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
 }
@@ -39,14 +38,11 @@
 
 .find-button {
   background-color: #2a9b84;
-  padding: 25px;
   border: none;
   border-radius: 15px;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
-  margin-top: 25px;
-  width: 350px;
 }
 
 .find-button:hover {
