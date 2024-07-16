@@ -2,69 +2,79 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faWallet, faUser, faHeart, faGift, faBox, faFileContract, faCookie, faLifeRing, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import 'tailwindcss/tailwind.css';
-import Header from '../../partials/Header';
-
-
+import ClientHeader from '../../partials/ClientHeader';
+import { useNavigate } from 'react-router-dom';
 
 const ClientMenu = () => {
   const [token, setToken] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    setToken(storedToken);
-  }, []);
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
 
   if (!token) {
     return null; // Do not display the menu if there's no token
   }
 
+  const handleNavigation = (route) => {
+    navigate(route);
+  };
+
   return (
     <>
-      <Header />
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="w-96 bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-500 hover:scale-105">
-          <div className="p-4 flex justify-around items-center">
-            <div className="flex flex-col items-center">
-              <FontAwesomeIcon icon={faCalendar} size="2x" className="text-blue-500" />
-              <span className="text-sm mt-2">Bookings</span>
+      <ClientHeader />
+      <div className="flex">
+        <div className="flex flex-1 items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200">
+          <div className="w-96 bg-white shadow-2xl rounded-lg overflow-hidden">
+            <div className="p-6 flex justify-around items-center bg-gradient-to-r from-blue-700 to-purple-500">
+              <button className="flex flex-col items-center focus:outline-none" onClick={() => handleNavigation('/comingsoon')}>
+                <FontAwesomeIcon icon={faCalendar} size="2x" className="text-white" />
+                <span className="text-sm mt-2 text-white">Bookings</span>
+              </button>
+              <button className="flex flex-col items-center focus:outline-none" onClick={() => handleNavigation('/comingsoon')}>
+                <FontAwesomeIcon icon={faWallet} size="2x" className="text-white" />
+                <span className="text-sm mt-2 text-white">Wallet</span>
+              </button>
+              <button className="flex flex-col items-center focus:outline-none" onClick={() => handleNavigation('/client/profile')}>
+                <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-lg font-bold text-white">A</div>
+                <span className="text-sm mt-2 text-white">Profile</span>
+              </button>
             </div>
-            <div className="flex flex-col items-center">
-              <FontAwesomeIcon icon={faWallet} size="2x" className="text-green-500" />
-              <span className="text-sm mt-2">Wallet</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-lg font-bold text-white">A</div>
-              <span className="text-sm mt-2">Profile</span>
-            </div>
-          </div>
-          <div className="border-t">
-            <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer">
-              <FontAwesomeIcon icon={faHeart} className="text-red-500 mr-4" />
-              <span>Favorites</span>
-            </div>
-            <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer">
-              <FontAwesomeIcon icon={faGift} className="text-yellow-500 mr-4" />
-              <span>Refer a friend</span>
-            </div>
-            <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer">
-              <FontAwesomeIcon icon={faBox} className="text-purple-500 mr-4" />
-              <span>Receive packages</span>
-            </div>
-            <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer">
-              <FontAwesomeIcon icon={faFileContract} className="text-blue-500 mr-4" />
-              <span>Terms of Service</span>
-            </div>
-            <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer">
-              <FontAwesomeIcon icon={faCookie} className="text-brown-500 mr-4" />
-              <span>Manage cookie preferences</span>
-            </div>
-            <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer">
-              <FontAwesomeIcon icon={faLifeRing} className="text-blue-500 mr-4" />
-              <span>Support</span>
-            </div>
-            <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer">
-              <FontAwesomeIcon icon={faSignOutAlt} className="text-red-500 mr-4" />
-              <span>Sign out</span>
+            <div className="border-t">
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/favorites')}>
+                <FontAwesomeIcon icon={faHeart} className="text-red-500 mr-4" />
+                <span>Favorites</span>
+              </div>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/refer')}>
+                <FontAwesomeIcon icon={faGift} className="text-yellow-500 mr-4" />
+                <span>Refer a friend</span>
+              </div>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/packages')}>
+                <FontAwesomeIcon icon={faBox} className="text-purple-500 mr-4" />
+                <span>Receive packages</span>
+              </div>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/terms')}>
+                <FontAwesomeIcon icon={faFileContract} className="text-blue-500 mr-4" />
+                <span>Terms of Service</span>
+              </div>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/cookie-preferences')}>
+                <FontAwesomeIcon icon={faCookie} className="text-brown-500 mr-4" />
+                <span>Manage cookie preferences</span>
+              </div>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/support')}>
+                <FontAwesomeIcon icon={faLifeRing} className="text-blue-500 mr-4" />
+                <span>Support</span>
+              </div>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/signout')}>
+                <FontAwesomeIcon icon={faSignOutAlt} className="text-red-500 mr-4" />
+                <span>Sign out</span>
+              </div>
             </div>
           </div>
         </div>

@@ -14,7 +14,7 @@ function AdminLoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-  
+
     try {
       const response = await axios.post(`${config.API_BASE_URL}/api/v1/users/login/superadmin`, {
         email,
@@ -24,25 +24,22 @@ function AdminLoginForm() {
       const token = response.data.token;
       localStorage.setItem('token', token);
       console.log('Login successful', response.data);
-      navigate('/superadmin/profile');
+      navigate('/superadmin/dashboard');
     } catch (error) {
       console.error('Login failed', error);
       setError('Login failed. Please check your credentials and try again.');
     }
   };
-  
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-300 p-4">
       <form 
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md transition transform hover:scale-105" 
+        className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md"
         onSubmit={handleSubmit}
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="email" value="Your email" />
-          </div>
+        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Admin Login</h2>
+        <div className="mb-4">
+          <Label htmlFor="email" value="Email Address" className="block text-sm font-medium text-gray-700" />
           <TextInput
             id="email"
             type="email"
@@ -50,36 +47,37 @@ function AdminLoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mb-4"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="password" value="Your password" />
-          </div>
+        <div className="mb-4">
+          <Label htmlFor="password" value="Password" className="block text-sm font-medium text-gray-700" />
           <TextInput
             id="password"
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mb-4"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center mb-4">
           <Checkbox
             id="remember"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <Label htmlFor="remember">Remember me</Label>
+          <Label htmlFor="remember" className="ml-2 block text-sm text-gray-900">
+            Remember me
+          </Label>
         </div>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <Button 
           type="submit"
-          className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105"
         >
-          Submit
+          Login
         </Button>
       </form>
     </div>

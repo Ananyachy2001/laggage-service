@@ -45,7 +45,8 @@ const LoginForm = ({ loginType, onClose }) => {
       const result = await response.json();
       if (response.ok) {
         console.log('Success:', result);
-        navigate('/userprofile'); // Redirect to dashboard
+        localStorage.setItem('token', result.token); // Store the token in local storage
+        navigate('/client/profile'); // Redirect to profile
       } else {
         console.error('Error:', result);
         // Handle error

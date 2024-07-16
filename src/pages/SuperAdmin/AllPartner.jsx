@@ -1,91 +1,63 @@
-import React, { useState } from 'react';
-// import axios from 'axios'; // Commented out for dummy data
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
+import axios from 'axios'; 
 
-import Sidebar from '../../partials/Sidebar';
-import Header from '../../partials/Header';
+import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
+import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
+import config from '../../config'; 
 
 const AllPartner = () => {
-    // Commented out API related states and useEffect for dummy data
-    const [partners, setPartners] = useState([
-        {
-            id: 1,
-            username: 'partner1',
-            email: 'partner1@example.com',
-            businessAddress: {
-                street: '123 Main St',
-                district: 'Downtown',
-                city: 'Metropolis',
-                state: 'NY',
-                zipCode: '10001',
-                country: 'USA',
-            },
-            tradeLicenseNumber: '123456789',
-        },
-        {
-            id: 2,
-            username: 'partner2',
-            email: 'partner2@example.com',
-            businessAddress: {
-                street: '456 Main St',
-                district: 'Uptown',
-                city: 'Metropolis',
-                state: 'NY',
-                zipCode: '10002',
-                country: 'USA',
-            },
-            tradeLicenseNumber: '987654321',
-        },
-        {
-            id: 3,
-            username: 'partner3',
-            email: 'partner3@example.com',
-            businessAddress: {
-                street: '789 Main St',
-                district: 'Midtown',
-                city: 'Metropolis',
-                state: 'NY',
-                zipCode: '10003',
-                country: 'USA',
-            },
-            tradeLicenseNumber: '192837465',
-        },
-        {
-            id: 4,
-            username: 'partner4',
-            email: 'partner4@example.com',
-            businessAddress: {
-                street: '101 Main St',
-                district: 'Eastside',
-                city: 'Metropolis',
-                state: 'NY',
-                zipCode: '10004',
-                country: 'USA',
-            },
-            tradeLicenseNumber: '1029384756',
-        },
-        {
-            id: 5,
-            username: 'partner5',
-            email: 'partner5@example.com',
-            businessAddress: {
-                street: '202 Main St',
-                district: 'Westside',
-                city: 'Metropolis',
-                state: 'NY',
-                zipCode: '10005',
-                country: 'USA',
-            },
-            tradeLicenseNumber: '5647382910',
-        },
-        // More dummy data...
-    ]);
+    const [partners, setPartners] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [partnersPerPage] = useState(3);
+
+    const navigate = useNavigate(); 
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/logout'); 
+            return;
+        }
+
+        const fetchPartners = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get(`${config.API_BASE_URL}/api/v1/users/all-partners`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.data.status === 'success') {
+                    const fetchedPartners = response.data.data.map(partner => ({
+                        id: partner._id,
+                        username: partner.user.username,
+                        email: partner.user.email,
+                        businessAddress: partner.businessAddress,
+                        tradeLicenseNumber: partner.tradeLicenseNumber,
+                    }));
+                    setPartners(fetchedPartners);
+                } else {
+                    setError('Failed to fetch partner data');
+                }
+            } catch (err) {
+                if (err.response && err.response.status === 401) {
+                    navigate('/logout');
+                } else {
+                    setError('Failed to fetch partner data');
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPartners();
+    }, [navigate]);
 
     const filteredPartners = partners.filter(partner =>
         partner.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -101,34 +73,23 @@ const AllPartner = () => {
         setPartners(partners.filter(partner => partner.id !== id));
     };
 
-    // useEffect(() => {
-    //     const fetchPartners = async () => {
-    //         try {
-    //             setLoading(true);
-    //             const response = await axios.get('http://localhost:3001/api/admin/partners');
-    //             setPartners(response.data);
-    //             setLoading(false);
-    //         } catch (error) {
-    //             setError(error);
-    //             setLoading(false);
-    //         }
-    //     };
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
-    //     fetchPartners();
-    // }, []);
-
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error loading data: {error.message}</p>;
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <div className="flex h-screen overflow-hidden">
             {/* Sidebar */}
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <SuperAdminSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             {/* Content area */}
             <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gray-100">
                 {/* Site header */}
-                <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+                <SuperAdminHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
                 <main>
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
@@ -162,7 +123,14 @@ const AllPartner = () => {
                                 <tbody className="text-gray-800">
                                     {currentPartners.map(partner => (
                                         <tr key={partner.id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                            <td className="w-1/5 py-3 px-6 border">{partner.username}</td>
+                                            <td className="w-1/5 py-3 px-6 border">
+                                                <button
+                                                    onClick={() => navigate(`/superadmin/partners/${partner.id}`)}
+                                                    className="text-blue-600 hover:text-blue-800"
+                                                >
+                                                    {partner.username}
+                                                </button>
+                                            </td>
                                             <td className="w-1/5 py-3 px-6 border">{partner.email}</td>
                                             <td className="w-2/5 py-3 px-6 border">
                                                 {partner.businessAddress.street}, {partner.businessAddress.district}, {partner.businessAddress.city}, {partner.businessAddress.state}, {partner.businessAddress.zipCode}, {partner.businessAddress.country}

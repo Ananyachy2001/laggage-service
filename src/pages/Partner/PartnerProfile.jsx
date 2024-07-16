@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import Header from '../../partials/Header';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Assuming you're using react-router for navigation
+import PartnerHeader from '../../partials/PartnerHeader';
 import './PartnerProfile.css'; // If you still have some custom styles
 
 const PartnerProfile = () => {
@@ -20,6 +21,15 @@ const PartnerProfile = () => {
         locations: 'Location1, Location2',
     });
 
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/');
+        }
+    }, [navigate]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setProfile((prevState) => ({
@@ -37,16 +47,11 @@ const PartnerProfile = () => {
         // Add save functionality here, e.g., API call to save the profile details
     };
 
-    const handleDownloadClick = (period) => {
-        // Add download functionality here, e.g., API call to download the earnings report
-        console.log(`Downloading ${period} earnings...`);
-    };
-
     return (
         <div className="min-h-screen bg-gray-100 flex">
             
             <div className="flex-1 p-6">
-                <Header />
+                <PartnerHeader />
                 <div className="container mx-auto bg-white rounded-lg shadow-md p-8 mt-5">
                     <div className="flex flex-wrap">
                         <div className="w-full md:w-1/3 border-r">
@@ -101,20 +106,6 @@ const PartnerProfile = () => {
                                                     <p className="text-gray-900">{value}</p>
                                                 </div>
                                             ))}
-                                        </div>
-                                        <div className="text-center mt-6">
-                                            <button
-                                                className="bg-green-500 text-white font-bold py-2 px-4 rounded mx-2"
-                                                onClick={() => handleDownloadClick('monthly')}
-                                            >
-                                                Download Monthly Earnings
-                                            </button>
-                                            <button
-                                                className="bg-green-500 text-white font-bold py-2 px-4 rounded mx-2"
-                                                onClick={() => handleDownloadClick('weekly')}
-                                            >
-                                                Download Weekly Earnings
-                                            </button>
                                         </div>
                                     </div>
                                 )}

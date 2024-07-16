@@ -1,16 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ClientProfile.css';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
+import config from '../../config';
 
 const ClientProfile = () => {
     const [editMode, setEditMode] = useState(false);
     const [profile, setProfile] = useState({
-        name: 'Client Name',
-        email: 'client@mail.com',
-        username: 'clientUsername',
-        phoneNumber: '123-456-7890',
+        name: '',
+        email: '',
+        username: '',
+        phoneNumber: '',
     });
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                // Handle the case where there is no token
+                return;
+            }
+
+            try {
+                const response = await fetch(`${config.API_BASE_URL}/api/v1/users/profile/client`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    setProfile({
+                        name: result.user.username,
+                        email: result.user.email,
+                        username: result.user.username,
+                        phoneNumber: result.user.phoneNumber || '',
+                    });
+                } else {
+                    console.error('Error:', result);
+                    // Handle error
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle error
+            }
+        };
+
+        fetchProfileData();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

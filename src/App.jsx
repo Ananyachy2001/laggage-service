@@ -47,6 +47,14 @@ import PartnerBookings from './pages/Partner/PartnerBookings';
 import Logout from './pages/Home/Logout';
 import BookingConfirmation from './pages/SearchLugLocation/BookingConfirmation';
 import ClientMenu from './pages/User/ClientMenu';
+import AdminDashboard from './pages/SuperAdmin/AdminDashboard';
+import ClientWallet from './pages/User/ClientWallet';
+import ClientBookingHistory from './pages/User/ClientBookingHistory';
+import PartnerDetails from './pages/SuperAdmin/PartnerDetails';
+import ComingSoon from './pages/CominSoon';
+import PartnerDashboard from './pages/Partner/PartnerDashboard';
+import ClientDetails from './pages/SuperAdmin/ClientDetails';
+import ClientDashboard from './pages/User/ClientDashboard';
 
 
 function App() {
@@ -66,17 +74,21 @@ function App() {
         <Route exact path="/" element={<Home />} />
         <Route exact path="/dashboard" element={<Dashboard />} />
         
+        
         <Route path="/logout" element={<Logout />} />
+        <Route path="/comingsoon" element={<ComingSoon />} />
 
         {/* admin  */}
+        <Route exact path="/superadmin/dashboard" element={<AdminDashboard />} />
         <Route exact path="/superadmin/login" element={<AdminLoginForm />} />
-        <Route exact path="/superadmin/profile" element={<AdminProfile />} />
+        {/* <Route exact path="/superadmin/profile" element={<AdminProfile />} /> */}
         <Route exact path="/superadmin/clients" element={<AllClient />} />
         <Route exact path="/superadmin/user" element={<AllUser/>} />
         <Route exact path="/superadmin/partners" element={<AllPartner/>} />
+        <Route exact path="/superadmin/partners/:id" element={<PartnerDetails />} />
+        <Route exact path="/superadmin/clients/:id" element={<ClientDetails />} />
         <Route exact path="/superadmin/locations" element={<AllLocations/>} />
         <Route exact path="/superadmin/bookings" element={<AllBookings/>} />
-
         <Route exact path="/superadmin/analytics" element={<AdminAnalytics/>} />
 
         {/* patner  */}
@@ -87,6 +99,7 @@ function App() {
         <Route exact path="/partner_availability_calender" element={<PartnerAvailabilityCalendar />} />
         <Route exact path="/partner/locations" element={<PartnerLocations/>} />
         <Route exact path="/partner/bookings" element={<PartnerBookings/>} />
+        <Route exact path="/partner/dashboard" element={<PartnerDashboard />} />
 
 
         {/* clients  */}
@@ -96,6 +109,9 @@ function App() {
         <Route exact path="/client/menu" element={<ClientMenu />} />
         <Route exact path="/client/refundform" element={<ClientRefundForm />} />
         <Route exact path="/client/bookingconfirmation" element={<BookingConfirmation />} />
+        <Route exact path="/client/bookinghistory" element={<ClientBookingHistory />} />
+        <Route exact path="/client/wallet" element={<ClientWallet />} />
+        <Route exact path="/client/dashboard" element={<ClientDashboard />} />
 
 
 
@@ -105,7 +121,6 @@ function App() {
         <Route exact path="/userserviceagency" element={<UserServiceAgency />} />
         <Route exact path="/searchluggage" element={<SearchLuggage/>} />
         <Route exact path="/searchnearlocation" element={<SearchNearLocation/>} />
-        
         <Route exact path="/allluggage" element={<AllLuggage/>} />
         <Route exact path="/luggage/:id" element={<LuggageDetails/>} />
 

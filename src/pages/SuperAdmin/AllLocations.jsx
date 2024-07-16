@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 // import axios from 'axios'; // Commented out for dummy data
 
-import Sidebar from '../../partials/Sidebar';
-import Header from '../../partials/Header';
+import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
+import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import CreateLocation from './CreateLocation';
 import EditLocation from './EditLocation';
@@ -27,7 +27,12 @@ const AllLocations = () => {
             regularPrice: 100,
             discountPercentage: 10,
             url: 'http://location1.com',
-            pictures: ['http://example.com/pic1.jpg']
+            pictures: ['http://example.com/pic1.jpg'],
+            startDate: new Date('2021-01-01'),
+            endDate: new Date('2021-01-10'),
+            recurringTimes: 3,
+            partnerId: 'P001',
+            locationType: 'Type1'
         },
         {
             id: 2,
@@ -47,7 +52,12 @@ const AllLocations = () => {
             regularPrice: 150,
             discountPercentage: 15,
             url: 'http://location2.com',
-            pictures: ['http://example.com/pic2.jpg']
+            pictures: ['http://example.com/pic2.jpg'],
+            startDate: new Date('2021-02-01'),
+            endDate: new Date('2021-02-10'),
+            recurringTimes: 2,
+            partnerId: 'P002',
+            locationType: 'Type2'
         },
         // More dummy data...
     ]);
@@ -86,12 +96,12 @@ const AllLocations = () => {
     return (
         <div className="flex h-screen overflow-hidden">
             {/* Sidebar */}
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <SuperAdminSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             {/* Content area */}
             <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gray-100">
                 {/* Site header */}
-                <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+                <SuperAdminHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
                 <main>
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
@@ -125,11 +135,16 @@ const AllLocations = () => {
                                 <thead className="bg-[#4A686A] text-white">
                                     <tr>
                                         <th className="w-1/12 py-3 px-6 text-left">ID</th>
-                                        <th className="w-3/12 py-3 px-6 text-left">Name</th>
-                                        <th className="w-4/12 py-3 px-6 text-left">Description</th>
-                                        <th className="w-2/12 py-3 px-6 text-left">Price</th>
+                                        <th className="w-1/12 py-3 px-6 text-left">Partner ID</th>
+                                        <th className="w-2/12 py-3 px-6 text-left">Name</th>
+                                        <th className="w-3/12 py-3 px-6 text-left">Description</th>
+                                        <th className="w-1/12 py-3 px-6 text-left">Price</th>
                                         <th className="w-1/12 py-3 px-6 text-left">Discount</th>
-                                        <th className="w-1/12 py-3 px-6 text-left">Actions</th>
+                                        <th className="w-2/12 py-3 px-6 text-left">Start Date</th>
+                                        <th className="w-2/12 py-3 px-6 text-left">End Date</th>
+                                        <th className="w-1/12 py-3 px-6 text-left">Recurring Times</th>
+                                        <th className="w-1/12 py-3 px-6 text-left">Location Type</th>
+                                        <th className="w-2/12 py-3 px-6 text-left">Actions</th>
                                     </tr>
                                 </thead>
 
@@ -137,11 +152,16 @@ const AllLocations = () => {
                                     {currentLocations.map(location => (
                                         <tr key={location.id} className="bg-white hover:bg-gray-200 transition duration-150">
                                             <td className="w-1/12 py-3 px-6 border">{location.id}</td>
-                                            <td className="w-3/12 py-3 px-6 border">{location.name}</td>
-                                            <td className="w-4/12 py-3 px-6 border">{location.description}</td>
-                                            <td className="w-2/12 py-3 px-6 border">${location.regularPrice}</td>
+                                            <td className="w-1/12 py-3 px-6 border">{location.partnerId}</td>
+                                            <td className="w-2/12 py-3 px-6 border">{location.name}</td>
+                                            <td className="w-3/12 py-3 px-6 border">{location.description}</td>
+                                            <td className="w-1/12 py-3 px-6 border">${location.regularPrice}</td>
                                             <td className="w-1/12 py-3 px-6 border">{location.discountPercentage}%</td>
-                                            <td className="w-1/12 py-3 px-6 border text-center">
+                                            <td className="w-2/12 py-3 px-6 border">{location.startDate.toLocaleDateString()}</td>
+                                            <td className="w-2/12 py-3 px-6 border">{location.endDate.toLocaleDateString()}</td>
+                                            <td className="w-1/12 py-3 px-6 border">{location.recurringTimes}</td>    
+                                            <td className="w-1/12 py-3 px-6 border">{location.locationType}</td>
+                                            <td className="w-2/12 py-3 px-6 border text-center">
                                                 <button
                                                     onClick={() => {
                                                         setIsEditing(true);

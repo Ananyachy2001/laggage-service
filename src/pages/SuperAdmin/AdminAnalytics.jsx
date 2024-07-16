@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import CanvasJSReact from '@canvasjs/react-charts';
-import Header from '../../partials/Header'; // Replace with actual path to Header component
-import Sidebar from '../../partials/Sidebar'; // Replace with actual path to Sidebar component
+import SuperAdminHeader from '../../partials/SuperAdminHeader'; // Replace with actual path to Header component
+import SuperAdminSidebar from '../../partials/SuperAdminSidebar'; // Replace with actual path to Sidebar component
 
 const CanvasJS = CanvasJSReact.CanvasJS;
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -151,9 +151,9 @@ const AdminAnalytics = () => {
 
     return (
         <div className="bg-gray-100 min-h-screen">
-            <Header />
+            <SuperAdminHeader />
             <div className="flex">
-                <Sidebar />
+                <SuperAdminSidebar />
                 <div className="container mx-auto mt-2 bg-white p-6 rounded-lg shadow-md">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                         <div className="w-full">

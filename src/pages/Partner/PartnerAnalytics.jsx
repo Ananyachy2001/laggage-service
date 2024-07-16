@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import CanvasJSReact from '@canvasjs/react-charts';
-import Header from '../../partials/Header'; // Replace with actual path to Header component
-import Sidebar from '../../partials/Sidebar'; // Replace with actual path to Sidebar component
+import PartnerHeader from '../../partials/PartnerHeader'; // Replace with actual path to Header component
+import PartnerSidebar from '../../partials/PartnerSidebar'; // Replace with actual path to Sidebar component
 
 const CanvasJS = CanvasJSReact.CanvasJS;
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -162,9 +162,9 @@ const HostAnalytics = () => {
 
     return (
         <div className="bg-gray-100 min-h-screen">
-            <Header /> {/* Include the Header component */}
+            <PartnerHeader /> {/* Include the Header component */}
             <div className="flex">
-                <Sidebar /> {/* Include the Sidebar component */}
+                <PartnerSidebar /> {/* Include the Sidebar component */}
                 <div className="container mx-auto mt-2 bg-white p-6 rounded-lg shadow-md">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                         <div className="w-full">
