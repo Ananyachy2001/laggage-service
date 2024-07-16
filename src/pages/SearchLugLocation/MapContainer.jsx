@@ -1,51 +1,55 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
-const MapContainer = () => {
-    useEffect(() => {
-        const initMap = () => {
-            const map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 12,
-                center: { lat: -33.8688, lng: 151.2093 }
-            });
+const MapContainer = ({ locations }) => {
+  const location = useLocation();
+  const { state } = location;
+  const { lat, lng } = state?.location || {};
+  const inputLocation = state?.inputLocation || '';
 
-            const locations = [
-                { lat: -33.8688, lng: 151.2093, title: '24/7 Circular Quay Storage Spot', details: 'Restaurant | 13 min' },
-                { lat: -33.8700, lng: 151.2150, title: 'Martin Place Storage Spot', details: 'Convenience Store | 2 min' },
-                { lat: -33.8650, lng: 151.2100, title: 'Near Cliveden Storage Spot', details: 'Convenience Store | 9 min' }
-            ];
+  useEffect(() => {
+    const initMap = () => {
+      const mapCenter = lat && lng ? { lat: parseFloat(lat), lng: parseFloat(lng) } : { lat: -33.8688, lng: 151.2093 };
+      const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: mapCenter
+      });
 
-            locations.forEach((location) => {
-                const marker = new google.maps.Marker({
-                    position: { lat: location.lat, lng: location.lng },
-                    map,
-                    title: location.title
-                });
+      locations.forEach((location) => {
+        const marker = new google.maps.Marker({
+          position: { lat: location.lat, lng: location.lng },
+          map,
+          title: location.title
+        });
 
-                const infowindow = new google.maps.InfoWindow({
-                    content: `<div><h5>${location.title}</h5><p>${location.details}</p></div>`
-                });
+        const infowindow = new google.maps.InfoWindow({
+          content: `<div><h5>${location.title}</h5><p>${location.details}</p></div>`
+        });
 
-                marker.addListener('click', () => {
-                    infowindow.open(map, marker);
-                });
-            });
+        marker.addListener('click', () => {
+          infowindow.open(map, marker);
+        });
+      });
+    };
+
+    if (window.google && window.google.maps) {
+      initMap();
+    } else {
+      const loadScript = (url) => {
+        const script = document.createElement('script');
+        script.src = url;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+        script.onload = () => {
+          initMap();
         };
+      };
+      loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&callback=initMap`);
+    }
+  }, [lat, lng, locations]);
 
-        const loadScript = (url) => {
-            const script = document.createElement('script');
-            script.src = url;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-            script.onload = () => {
-                initMap();
-            };
-        };
-
-        loadScript(`https://maps.googleapis.com/maps/api/js?key=AIzaSyCupdXut4FuMzxoOk6bw8B4gDAYfpOYcvo&callback=initMap`);
-    }, []);
-
-    return <div id="map" style={{ height: '100%', width: '100%' }}></div>;
+  return <div id="map" style={{ height: '100%', width: '100%' }}></div>;
 };
 
 export default MapContainer;

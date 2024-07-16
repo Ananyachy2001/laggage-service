@@ -3,28 +3,7 @@ import StorageSpot from './StorageSpot';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
-const Sidebar = () => {
-    const [storageSpots, setStorageSpots] = useState([
-        {
-            title: "24/7 Circular Quay Storage Spot",
-            details: "Restaurant | 13 min",
-            price: "A$6.90 / 24h / bag",
-            link: "/luggage_store_details"
-        },
-        {
-            title: "Martin Place Storage Spot",
-            details: "Convenience Store | 2 min",
-            price: "A$9.00 / 24h / bag",
-            link: "/luggage_store_details"
-        },
-        {
-            title: "Near Cliveden Storage Spot",
-            details: "Convenience Store | 9 min",
-            price: "A$8.00 / 24h / bag",
-            link: "/luggage_store_details"
-        },
-    ]);
-
+const Sidebar = ({ storageSpots }) => {
     const [isAvailable, setIsAvailable] = useState(true);
 
     return (
@@ -46,30 +25,29 @@ const Sidebar = () => {
                 </button>
             </div>
             <div className="storage-spots overflow-y-auto h-[32rem] mt-16">
-    {isAvailable ? (
-        storageSpots.map((spot, index) => (
-            <StorageSpot
-                key={index}
-                title={spot.title}
-                details={spot.details}
-                price={spot.price}
-                link={spot.link}
-            />
-        ))
-    ) : (
-        <div className="text-center">
-            <p className="text-gray-500 mb-4">No stores available at the moment</p>
-            <p className="text-gray-700 mb-2">Bounce is available in 200+ cities with more added every week. We hope we can serve you wherever you go next!</p>
-            <div className="flex justify-center space-x-4">
-                <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">New York</button>
-                <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">London</button>
-                <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">Chicago</button>
-                <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">Rome</button>
+                {isAvailable ? (
+                    storageSpots.map((spot, index) => (
+                        <StorageSpot
+                            key={index}
+                            title={spot.title}
+                            details={spot.details}
+                            price={spot.price}
+                            link={spot.link}
+                        />
+                    ))
+                ) : (
+                    <div className="text-center">
+                        <p className="text-gray-500 mb-4">No stores available at the moment</p>
+                        <p className="text-gray-700 mb-2">Bounce is available in 200+ cities with more added every week. We hope we can serve you wherever you go next!</p>
+                        <div className="flex justify-center space-x-4">
+                            <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">New York</button>
+                            <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">London</button>
+                            <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">Chicago</button>
+                            <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">Rome</button>
+                        </div>
+                    </div>
+                )}
             </div>
-        </div>
-    )}
-</div>
-
         </div>
     );
 };

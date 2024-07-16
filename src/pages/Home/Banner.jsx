@@ -1,75 +1,79 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
-import axios from 'axios';
 import backgroundImage from '../../img/home-two/luggage-1.jpg';
 import './Banner.css';
 import config from '../../config';
-
 const libraries = ['places'];
 
 function Banner() {
   const navigate = useNavigate();
   const [autocomplete, setAutocomplete] = useState(null);
-  const [backendLocations, setBackendLocations] = useState([]);
-  const [filteredLocations, setFilteredLocations] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [loadingLocation, setLoadingLocation] = useState(false);
   const locationInputRef = useRef(null);
 
-  // Define your API key here
-  const GOOGLE_MAPS_API_KEY = 'AIzaSyDyWau177aZz12QPehbOqhi8MCDfNIjN3I';
+  const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
 
-  const { isLoaded } = useJsApiLoader({
+  const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries,
   });
 
-  useEffect(() => {
-    axios.get(`${config.API_BASE_URL}/api/v1/locations/public/all-locations`)
-      .then(response => {
-        const locations = response.data.map(location => ({
-          ...location,
-          fullAddress: `${location.name}, ${location.address.street}, ${location.address.district}, ${location.address.city}, ${location.address.state}, ${location.address.zipCode}, ${location.address.country}`
-        }));
-        setBackendLocations(locations);
-      })
-      .catch(error => console.error('Error fetching backend locations:', error));
+  const onLoad = useCallback((autocompleteInstance) => {
+    setAutocomplete(autocompleteInstance);
   }, []);
-
-  const handleInputChange = (event) => {
-    const inputValue = event.target.value.trim().toLowerCase();
-    if (inputValue.length >= 3) {
-      const filtered = backendLocations.filter(location =>
-        location.fullAddress.toLowerCase().includes(inputValue)
-      );
-      setFilteredLocations(filtered);
-    } else {
-      setFilteredLocations([]);
-    }
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const locationInput = locationInputRef.current.value.trim();
-    if (locationInput) {
-      navigate(`/luggage_locations?location=${locationInput}`);
-    } else {
-      navigate('/luggage_locations');
-    }
-  };
-
-  const onLoad = (autocomplete) => {
-    setAutocomplete(autocomplete);
-  };
 
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
-      console.log(autocomplete.getPlace());
+      const place = autocomplete.getPlace();
+      if (place.geometry) {
+        setSelectedPlace(place);
+      } else {
+        console.log('No geometry available for the selected place');
+      }
     } else {
       console.log('Autocomplete is not loaded yet!');
     }
   };
 
-  if (!isLoaded) return <div>Loading...</div>;
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (selectedPlace && selectedPlace.geometry) {
+      const location = {
+        lat: selectedPlace.geometry.location.lat(),
+        lng: selectedPlace.geometry.location.lng(),
+      };
+      navigate('/luggage_locations', { state: { location, inputLocation: locationInputRef.current.value } });
+    } else {
+      console.log('Please select a valid place');
+    }
+  };
+
+  const handleNearMyLocationClick = () => {
+    if (navigator.geolocation) {
+      setLoadingLocation(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          navigate('/luggage_locations', { state: { location, nearby: true } });
+          setLoadingLocation(false);
+        },
+        (error) => {
+          console.error('Error fetching location:', error);
+          setLoadingLocation(false);
+        }
+      );
+    } else {
+      console.log('Geolocation is not supported by this browser.');
+    }
+  };
+
+  if (loadError) return <div>Error loading maps</div>;
+  if (!isLoaded) return <div>Loading Maps</div>;
 
   return (
     <div
@@ -82,24 +86,17 @@ function Banner() {
           <span className='slogan-color'>Freedom</span> in Every <span className='slogan-color'>Journey</span>
         </h1>
         <p className="mt-4 text-base sm:text-lg lg:text-xl drop-shadow-md">Looking For Luggage Services! We Are Here...</p>
-        <form id="locationForm" className="mt-6" onSubmit={handleSubmit} aria-label="Location search form">
-          <div className="flex flex-col sm:flex-row justify-center items-center">
+        <form id="locationForm" className="mt-4" onSubmit={handleSubmit} aria-label="Location search form">
+          <div className="flex flex-col sm:flex-row justify-center items-center relative">
             <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
               <input
                 type="text"
                 id="location"
-                className="form-input p-3 rounded-none sm:rounded-l-md shadow-md focus:outline-none focus:ring-1 focus:ring-blue-100 w-full sm:w-96 lg:w-[500px] mb-4 sm:mb-0"
+                className="form-input p-3 rounded-none sm:rounded-l-md shadow-md focus:outline-none focus:ring-1 focus:ring-blue-100 w-full sm:w-96 lg:w-[500px] mb-4 sm:mb-0 relative"
                 placeholder="Enter your location"
                 ref={locationInputRef}
-                list="backend-location-suggestions"
-                onChange={handleInputChange}
               />
             </Autocomplete>
-            <datalist id="backend-location-suggestions">
-              {filteredLocations.map((location) => (
-                <option key={location._id} value={location.fullAddress}></option>
-              ))}
-            </datalist>
             <button
               type="submit"
               className="search-button bg-green-600 hover:bg-green-800 text-white rounded-none sm:rounded-r-md shadow-md transition duration-300 ease-in-out p-3 sm:px-6 w-full sm:w-auto"
@@ -108,8 +105,10 @@ function Banner() {
             </button>
           </div>
           <button
-            type="submit"
-            className="find-button bg-green-600 hover:bg-green-800 text-white rounded-md shadow-md transition duration-300 ease-in-out mt-4 px-8 py-3 w-full sm:w-auto"
+            type="button"
+            onClick={handleNearMyLocationClick}
+            className={`find-button bg-green-600 hover:bg-green-800 text-white rounded-md shadow-md transition duration-300 ease-in-out mt-4 px-8 py-3 w-full sm:w-auto ${loadingLocation ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={loadingLocation}
           >
             Find Closest Locations To Book
           </button>

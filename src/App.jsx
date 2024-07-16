@@ -78,6 +78,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/comingsoon" element={<ComingSoon />} />
 
+
         {/* admin  */}
         <Route exact path="/superadmin/dashboard" element={<AdminDashboard />} />
         <Route exact path="/superadmin/login" element={<AdminLoginForm />} />
