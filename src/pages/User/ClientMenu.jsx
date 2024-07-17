@@ -47,33 +47,33 @@ const ClientMenu = () => {
               </button>
             </div>
             <div className="border-t">
-              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/favorites')}>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/comingsoon')}>
                 <FontAwesomeIcon icon={faHeart} className="text-red-500 mr-4" />
                 <span>Favorites</span>
               </div>
-              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/refer')}>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/comingsoon')}>
                 <FontAwesomeIcon icon={faGift} className="text-yellow-500 mr-4" />
                 <span>Refer a friend</span>
               </div>
-              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/packages')}>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/comingsoon')}>
                 <FontAwesomeIcon icon={faBox} className="text-purple-500 mr-4" />
                 <span>Receive packages</span>
               </div>
-              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/terms')}>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/comingsoon')}>
                 <FontAwesomeIcon icon={faFileContract} className="text-blue-500 mr-4" />
                 <span>Terms of Service</span>
               </div>
-              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/cookie-preferences')}>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/comingsoon')}>
                 <FontAwesomeIcon icon={faCookie} className="text-brown-500 mr-4" />
                 <span>Manage cookie preferences</span>
               </div>
-              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/support')}>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/comingsoon')}>
                 <FontAwesomeIcon icon={faLifeRing} className="text-blue-500 mr-4" />
                 <span>Support</span>
               </div>
-              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/signout')}>
+              <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/logout')}>
                 <FontAwesomeIcon icon={faSignOutAlt} className="text-red-500 mr-4" />
-                <span>Sign out</span>
+                <span>Log  out</span>
               </div>
             </div>
           </div>

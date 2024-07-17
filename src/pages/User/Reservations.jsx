@@ -1,8 +1,8 @@
 // components/Reservations.js
 
 import React from 'react';
-import Header from '../../partials/Header'; // Replace with actual path to Header component
-import Sidebar from '../../partials/Sidebar'; // Replace with actual path to Sidebar component
+import ClientHeader from '../../partials/ClientHeader'; // Replace with actual path to Header component
+import ClientSidebar from '../../partials/ClientSidebar'; // Replace with actual path to Sidebar component
 import { Card } from 'flowbite-react'; // Assuming you have a Card component similar to the example
 
 // Dummy data (replace with actual fetched data from API)
@@ -52,9 +52,9 @@ const ReservationCard = ({ reservation }) => {
 const Reservations = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
-      <Header />
+      <ClientHeader />
       <div className="flex">
-        <Sidebar />
+        <ClientSidebar />
         <div className="container mx-7 py-12 px-6 ">
           <h1 className="text-3xl font-semibold mb-8">Your Reservations</h1>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

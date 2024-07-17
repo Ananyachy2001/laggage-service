@@ -12,7 +12,7 @@ import Footer from './Footer';
 import HowitWorks from './HowitWorks';
 import Choose from './Choose';
 import Blog from './Blog';
-import LuggageStorageLocations from '../SearchLugLocation/LuggageStorageSuggestions';
+import LuggageStorageLocations from '../SearchLugLocation/LuggageStorageLocations';
 import ScrollToTopButton from './ScrollToTopButton';
 import ChatbotButton from '../Chatbot/ChatbotButton';
 

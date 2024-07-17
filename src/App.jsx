@@ -55,6 +55,7 @@ import ComingSoon from './pages/CominSoon';
 import PartnerDashboard from './pages/Partner/PartnerDashboard';
 import ClientDetails from './pages/SuperAdmin/ClientDetails';
 import ClientDashboard from './pages/User/ClientDashboard';
+import UnauthorizedPage from './pages/UnauthorizedPage';
 
 
 function App() {
@@ -77,6 +78,8 @@ function App() {
         
         <Route path="/logout" element={<Logout />} />
         <Route path="/comingsoon" element={<ComingSoon />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="*" element={<UnauthorizedPage />} />
 
 
         {/* admin  */}

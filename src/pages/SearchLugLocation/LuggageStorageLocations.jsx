@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
@@ -57,6 +58,7 @@ const locations = [
 
 const LuggageStorageLocations = () => {
   const carouselRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleScrollLeft = () => {
     carouselRef.current.scrollBy({
@@ -72,9 +74,19 @@ const LuggageStorageLocations = () => {
     });
   };
 
-  const handleSearchLocation = (location) => {
-    console.log(`Searching for luggage storage in ${location}`);
-    window.location.href = `/luggage_locations`;
+  const handleSearchLocation = (locationName) => {
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ address: locationName }, (results, status) => {
+      if (status === 'OK' && results[0].geometry) {
+        const location = {
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng(),
+        };
+        navigate('/luggage_locations', { state: { location, inputLocation: locationName } });
+      } else {
+        console.log('Geocode was not successful for the following reason: ' + status);
+      }
+    });
   };
 
   return (

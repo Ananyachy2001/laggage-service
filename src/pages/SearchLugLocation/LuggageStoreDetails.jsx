@@ -7,11 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LuggageNavbar from './LuggageNavbar';
 import UserDetailsModal from './UserDetailsModal';
 import { Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import config from '../../config';
 
 library.add(faMapMarkerAlt, faClock, faStar, faWifi, faGlassMartini, faRestroom, faShieldAlt, faTag);
 
 const LuggageStoreDetails = () => {
+  const location = useLocation();
+  const { title, details, price, image, lat, lng } = location.state || {};
   const [luggageQuantity, setLuggageQuantity] = useState(1);
   const [serviceOption, setServiceOption] = useState('standard');
   const [promoCode, setPromoCode] = useState('');
@@ -35,29 +38,32 @@ const LuggageStoreDetails = () => {
     office: 8.00,
   };
 
+  const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCupdXut4FuMzxoOk6bw8B4gDAYfpOYcvo&callback=initMap";
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+    if (lat && lng) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
 
-    window.initMap = function () {
-      const location = { lat: -33.864, lng: 151.209 };
-      const map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 15,
-        center: location,
-      });
-      new google.maps.Marker({
-        position: location,
-        map: map,
-      });
-    };
+      window.initMap = function () {
+        const location = { lat, lng };
+        const map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: location,
+        });
+        new google.maps.Marker({
+          position: location,
+          map: map,
+        });
+      };
 
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, [lat, lng]);
 
   useEffect(() => {
     const price = servicePrices[serviceOption] * luggageQuantity - discount;
@@ -74,6 +80,10 @@ const LuggageStoreDetails = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isLoggedIn) {
+      setShowModal(true);
+      return;
+    }
     console.log({
       clientDetails,
       totalPrice,
@@ -89,9 +99,16 @@ const LuggageStoreDetails = () => {
       }
     });
   };
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setShowModal(true);
+    }
+  }, [isLoggedIn]);
+
   return (
     <div>
-      <LuggageNavbar/>
+      <LuggageNavbar />
 
       <div className="container mx-auto mt-12 pt-32">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -99,11 +116,11 @@ const LuggageStoreDetails = () => {
             <div className="bg-white shadow-md rounded-lg p-6 mb-4">
               <h3 className="text-2xl font-bold mb-2 flex items-center">
                 <FontAwesomeIcon icon="map-marker-alt" className="text-blue-500 mr-2" />
-                24/7 Circular Quay Storage Spot
+                {title}
               </h3>
               <h6 className="text-gray-600 mb-4 flex items-center">
                 <FontAwesomeIcon icon="clock" className="text-blue-500 mr-2" />
-                Restaurant | Open now 24 hours
+                {details}
               </h6>
               <div id="map" className="h-80 mb-4 rounded-lg shadow-sm"></div>
               <p className="flex items-center mb-2">
@@ -112,7 +129,7 @@ const LuggageStoreDetails = () => {
               </p>
               <p className="flex items-center mb-2">
                 <FontAwesomeIcon icon="tag" className="text-blue-500 mr-2" />
-                <strong>Price:</strong> Prices vary per service and time
+                <strong>Price:</strong> {price}
               </p>
               <p className="flex items-center mb-2">
                 <FontAwesomeIcon icon="star" className="text-yellow-400 mr-2" />

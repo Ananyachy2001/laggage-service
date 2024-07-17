@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import ClientSidebar from '../../partials/ClientSidebar';
 import ClientHeader from '../../partials/ClientHeader';
-import Banner from '../../partials/Banner';
 
 function ClientDashboard() {
 
@@ -24,7 +23,6 @@ function ClientDashboard() {
           
         </main>
 
-        <Banner />
 
       </div>
     </div>

@@ -1,9 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const StorageSpot = ({ title, details, price, link, image }) => {
+const StorageSpot = ({ title, details, price, link, image, lat, lng }) => {
   const defaultImage = "https://via.placeholder.com/150"; // Placeholder image URL
+  const navigate = useNavigate();
+
+  const handleDetailsClick = () => {
+    navigate('/luggage_store_details', {
+      state: { title, details, price, image, lat, lng }
+    });
+  };
+
   return (
-    <div className="storage-spot mt-4 max-w-xl rounded overflow-hidden shadow-lg transition-transform transform  hover:shadow-xl animation-fadeIn">
+    <div className="storage-spot mt-4 max-w-xl rounded overflow-hidden shadow-lg transition-transform transform hover:shadow-xl animation-fadeIn">
       <img className="w-full h-48 object-cover" src={image || defaultImage} alt={title} />
       <div className="p-4">
         <div className="spot-details">
@@ -12,7 +21,9 @@ const StorageSpot = ({ title, details, price, link, image }) => {
         </div>
         <div className="spot-price mt-4 flex justify-between items-center">
           <p className="text-lg font-semibold text-green-600">{price}</p>
-          <a href={link} className="btn btn-primary btn-sm bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">See Details</a>
+          <button onClick={handleDetailsClick} className="btn btn-primary btn-sm bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            See Details
+          </button>
         </div>
       </div>
     </div>

@@ -1,55 +1,66 @@
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import config from '../../config';
 
-const MapContainer = ({ locations }) => {
-  const location = useLocation();
-  const { state } = location;
-  const { lat, lng } = state?.location || {};
-  const inputLocation = state?.inputLocation || '';
+const MapContainer = ({ locations, setVisibleLocations, center }) => {
+    const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
 
-  useEffect(() => {
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+        script.async = true;
+        document.head.appendChild(script);
+
+        window.initMap = initMap;
+
+        return () => {
+            document.head.removeChild(script);
+            delete window.initMap;
+        };
+    }, [GOOGLE_MAPS_API_KEY, locations]);
+
     const initMap = () => {
-      const mapCenter = lat && lng ? { lat: parseFloat(lat), lng: parseFloat(lng) } : { lat: -33.8688, lng: 151.2093 };
-      const map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 12,
-        center: mapCenter
-      });
-
-      locations.forEach((location) => {
-        const marker = new google.maps.Marker({
-          position: { lat: location.lat, lng: location.lng },
-          map,
-          title: location.title
+        const map = new google.maps.Map(document.getElementById('map'), {
+            center: center || { lat: -33.8688, lng: 151.2093 },
+            zoom: 10,
         });
 
-        const infowindow = new google.maps.InfoWindow({
-          content: `<div><h5>${location.title}</h5><p>${location.details}</p></div>`
+        const bounds = new google.maps.LatLngBounds();
+
+        locations.forEach(location => {
+            const marker = new google.maps.Marker({
+                position: { lat: location.lat, lng: location.lng },
+                map: map,
+                title: location.title,
+            });
+
+            bounds.extend(marker.position);
         });
 
-        marker.addListener('click', () => {
-          infowindow.open(map, marker);
+        if (!center) {
+            map.fitBounds(bounds);
+        } else {
+            map.setZoom(14);  // Adjust zoom level as needed
+        }
+
+        google.maps.event.addListener(map, 'idle', () => {
+            updateVisibleLocations(map, locations);
         });
-      });
     };
 
-    if (window.google && window.google.maps) {
-      initMap();
-    } else {
-      const loadScript = (url) => {
-        const script = document.createElement('script');
-        script.src = url;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-        script.onload = () => {
-          initMap();
-        };
-      };
-      loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&callback=initMap`);
-    }
-  }, [lat, lng, locations]);
+    const updateVisibleLocations = (map, locations) => {
+        const bounds = map.getBounds();
 
-  return <div id="map" style={{ height: '100%', width: '100%' }}></div>;
+        if (!bounds) return;
+
+        const visibleLocations = locations.filter(location => {
+            const latLng = new google.maps.LatLng(location.lat, location.lng);
+            return bounds.contains(latLng);
+        });
+
+        setVisibleLocations(visibleLocations);
+    };
+
+    return <div id="map" style={{ width: '100%', height: '100%' }}></div>;
 };
 
 export default MapContainer;

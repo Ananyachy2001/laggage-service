@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import StorageSpot from './StorageSpot';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = ({ storageSpots }) => {
-    const [isAvailable, setIsAvailable] = useState(true);
-
     return (
         <div className="w-full md:w-1/3 bg-white p-4 shadow-lg rounded-lg">
             <div className="filters mb-6">
@@ -25,7 +23,7 @@ const Sidebar = ({ storageSpots }) => {
                 </button>
             </div>
             <div className="storage-spots overflow-y-auto h-[32rem] mt-16">
-                {isAvailable ? (
+                {storageSpots.length > 0 ? (
                     storageSpots.map((spot, index) => (
                         <StorageSpot
                             key={index}
@@ -33,18 +31,16 @@ const Sidebar = ({ storageSpots }) => {
                             details={spot.details}
                             price={spot.price}
                             link={spot.link}
+                            lat={spot.lat}
+                            lng={spot.lng}
+                            image={spot.image}
                         />
                     ))
                 ) : (
                     <div className="text-center">
+                        <FontAwesomeIcon icon={faBoxOpen} className="text-gray-400 text-6xl mb-4" />
                         <p className="text-gray-500 mb-4">No stores available at the moment</p>
-                        <p className="text-gray-700 mb-2">Bounce is available in 200+ cities with more added every week. We hope we can serve you wherever you go next!</p>
-                        <div className="flex justify-center space-x-4">
-                            <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">New York</button>
-                            <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">London</button>
-                            <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">Chicago</button>
-                            <button className="py-2 px-4 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">Rome</button>
-                        </div>
+                        <p className="text-gray-700 mb-6">Urlocker is available in 2+ cities with more added every week. We hope we can serve you wherever you go next!</p>
                     </div>
                 )}
             </div>

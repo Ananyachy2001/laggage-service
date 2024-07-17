@@ -16,8 +16,7 @@ const LuggageNavbar = () => (
                 
             </Navbar.Brand>
             <div className="flex md:order-2 space-x-4 items-center text-white ">
-                <a href="/faq" className=" hover:text-[#FDB139] transition duration-300">FAQ</a>
-                <a href="/menu" className=" hover:text-[#FDB139] transition duration-300">Menu</a>
+                <a href="/comingsoon" className=" hover:text-[#FDB139] transition duration-300">FAQ</a>
                 <Dropdown className='hover:text-[#FDB139]'  label="English" inline>
                     <Dropdown.Item className='hover:text-blue-600'>English</Dropdown.Item>
                     <Dropdown.Item className='hover:text-blue-600'>Spanish</Dropdown.Item>
@@ -28,7 +27,7 @@ const LuggageNavbar = () => (
             <div className="flex-1 flex justify-center md:order-1">
                 <input
                     type="text"
-                    placeholder="Sydney NSW, Australia"
+                    placeholder=""
                     className="w-full max-w-md p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
                 />
             </div>
