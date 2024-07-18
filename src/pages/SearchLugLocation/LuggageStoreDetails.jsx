@@ -22,13 +22,15 @@ const LuggageStoreDetails = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [clientDetails, setClientDetails] = useState({
-    name: 'Jane Smith',
-    email: 'janesmith@example.com',
-    phone: '987-654-3210',
-    address: '456 Elm St, Othertown, USA',
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
     luggagePhotos: []
   });
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Assuming the user is logged in for simplicity
+  const [checkinTime, setCheckinTime] = useState('');
+  const [checkoutTime, setCheckoutTime] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Assuming the user is logged in for simplicity
   const navigate = useNavigate();
 
   const servicePrices = {
@@ -66,9 +68,9 @@ const LuggageStoreDetails = () => {
   }, [lat, lng]);
 
   useEffect(() => {
-    const price = servicePrices[serviceOption] * luggageQuantity - discount;
+    const price = (servicePrices[serviceOption] * luggageQuantity - discount) * calculateDuration(checkinTime, checkoutTime);
     setTotalPrice(price > 0 ? price : 0);
-  }, [luggageQuantity, serviceOption, discount]);
+  }, [luggageQuantity, serviceOption, discount, checkinTime, checkoutTime]);
 
   const handleApplyPromo = () => {
     if (promoCode === 'DISCOUNT10') {
@@ -76,6 +78,14 @@ const LuggageStoreDetails = () => {
     } else {
       setDiscount(0);
     }
+  };
+
+  const calculateDuration = (checkin, checkout) => {
+    if (!checkin || !checkout) return 1; // Default to 1 if times are not set
+    const checkinDate = new Date(checkin);
+    const checkoutDate = new Date(checkout);
+    const duration = (checkoutDate - checkinDate) / (1000 * 24 * 60 * 60); // duration in hours
+    return duration > 0 ? duration : 1; // Return 1 if the duration is negative or zero
   };
 
   const handleSubmit = (e) => {
@@ -89,6 +99,8 @@ const LuggageStoreDetails = () => {
       totalPrice,
       serviceOption,
       luggageQuantity,
+      checkinTime,
+      checkoutTime,
     }); // Log the data being passed
     navigate('/client/bookingconfirmation', {
       state: {
@@ -96,13 +108,15 @@ const LuggageStoreDetails = () => {
         totalPrice,
         serviceOption,
         luggageQuantity,
+        checkinTime,
+        checkoutTime,
       }
     });
   };
 
   useEffect(() => {
     if (!isLoggedIn) {
-      setShowModal(true);
+      setShowModal(false);
     }
   }, [isLoggedIn]);
 
@@ -160,6 +174,28 @@ const LuggageStoreDetails = () => {
             <div className="bg-gray-100 shadow-md rounded-lg p-6">
               <h5 className="text-xl font-bold mb-4">Your Booking</h5>
               <form id="payment-form" onSubmit={handleSubmit}>
+              <div className="flex justify-between mb-4">
+                  <label className="w-1/2 pr-2">
+                    Drop off:
+                    <input 
+                      type="datetime-local" 
+                      className="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
+                      value={checkinTime}
+                      onChange={(e) => setCheckinTime(e.target.value)}
+                      required
+                    />
+                  </label>
+                  <label className="w-1/2 pl-2">
+                    Pick up:
+                    <input 
+                      type="datetime-local" 
+                      className="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
+                      value={checkoutTime}
+                      onChange={(e) => setCheckoutTime(e.target.value)}
+                      required
+                    />
+                  </label>
+                </div>
                 <div className="mb-4">
                   <label htmlFor="luggageQuantity" className="block font-bold mb-1">Number of Bags:</label>
                   <div className="flex items-center">
@@ -184,10 +220,10 @@ const LuggageStoreDetails = () => {
                       value={serviceOption} 
                       onChange={(e) => setServiceOption(e.target.value)}
                     >
-                      <option value="standard">Standard - $5.00</option>
-                      <option value="home">Home Luggage - $7.00</option>
-                      <option value="window">Window Luggage - $6.50</option>
-                      <option value="office">Office Luggage - $8.00</option>
+                      <option value="standard">Standard - $5.00 per/day</option>
+                      <option value="home">Home Luggage - $7.00 per/day</option>
+                      <option value="window">Window Luggage - $6.50 per/day</option>
+                      <option value="office">Office Luggage - $8.00 per/day</option>
                     </select>
                   </div>
                 </div>
@@ -211,22 +247,21 @@ const LuggageStoreDetails = () => {
                     </button>
                   </div>
                 </div>
+
                 <div className="mb-4">
                   <label className="font-bold">Total Price: $</label>
                   <span id="totalPrice">{totalPrice.toFixed(2)}</span>
                 </div>
-                {!isLoggedIn && (
-                  <Button 
-                    variant="primary" 
-                    onClick={() => setShowModal(true)} 
-                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700 transition duration-300 mb-2"
-                  >
-                    Enter User Details
-                  </Button>
-                )}
+                <Button 
+                  variant="primary" 
+                  onClick={() => setShowModal(true)} 
+                  className="w-full bg-[#1A73A7] text-white py-2 rounded hover:bg-blue-700 transition duration-300 mb-2"
+                >
+                  Enter User Details
+                </Button>
                 <button 
                   type="submit" 
-                  className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700 transition duration-300 mb-2"
+                  className="w-full bg-[#1A73A7] text-white py-2 rounded hover:bg-blue-700 transition duration-300 mb-2"
                 >
                   Book Now with Stripe
                 </button>

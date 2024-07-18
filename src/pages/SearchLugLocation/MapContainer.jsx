@@ -28,9 +28,9 @@ const MapContainer = ({ locations, setVisibleLocations, center }) => {
 
         locations.forEach(location => {
             const marker = new google.maps.Marker({
-                position: { lat: location.lat, lng: location.lng },
+                position: { lat: location.coordinates.coordinates[1], lng: location.coordinates.coordinates[0] },
                 map: map,
-                title: location.title,
+                title: location.name,
             });
 
             bounds.extend(marker.position);
@@ -53,7 +53,7 @@ const MapContainer = ({ locations, setVisibleLocations, center }) => {
         if (!bounds) return;
 
         const visibleLocations = locations.filter(location => {
-            const latLng = new google.maps.LatLng(location.lat, location.lng);
+            const latLng = new google.maps.LatLng(location.coordinates.coordinates[1], location.coordinates.coordinates[0]);
             return bounds.contains(latLng);
         });
 

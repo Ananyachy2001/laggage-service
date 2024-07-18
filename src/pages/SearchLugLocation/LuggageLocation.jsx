@@ -7,9 +7,105 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './luggagelocation.css';
 
 const dummyLocations = [
-    { lat: -33.8688, lng: 151.2093, title: '24/7 Circular Quay Storage Spot', details: 'Restaurant | 13 min', price: 'A$6.90 / 24h / bag', link: '/luggage_store_details' },
-    { lat: -33.8700, lng: 151.2150, title: 'Martin Place Storage Spot', details: 'Convenience Store | 2 min', price: 'A$9.00 / 24h / bag', link: '/luggage_store_details' },
-    { lat: -33.8650, lng: 151.2100, title: 'Near Cliveden Storage Spot', details: 'Convenience Store | 9 min', price: 'A$8.00 / 24h / bag', link: '/luggage_store_details' }
+    {
+        coordinates: {
+            type: "Point",
+            coordinates: [151.2093, -33.8688]
+        },
+        address: {
+            street: "24/7 Circular Quay Storage Spot",
+            district: "Sydney",
+            city: "Sydney",
+            state: "NSW",
+            zipCode: "2000",
+            country: "Australia"
+        },
+        closedDays: [],
+        specialClosedDays: [],
+        _id: "1",
+        partner: "partner1",
+        name: "24/7 Circular Quay Storage Spot",
+        description: "Restaurant | 13 min",
+        availableFrom: "2024-07-01T00:00:00.000Z",
+        availableTo: "2025-07-01T00:00:00.000Z",
+        regularPrice: 6.90,
+        discountPercentage: 0,
+        url: "/luggage_store_details",
+        pictures: [],
+        isDeleted: false,
+        isActive: true,
+        createdBy: "partner1",
+        notes: "A convenient storage spot near Circular Quay.",
+        createdAt: "2024-07-13T23:30:40.806Z",
+        updatedAt: "2024-07-13T23:30:40.806Z",
+        __v: 0
+    },
+    {
+        coordinates: {
+            type: "Point",
+            coordinates: [151.2150, -33.8700]
+        },
+        address: {
+            street: "Martin Place Storage Spot",
+            district: "Sydney",
+            city: "Sydney",
+            state: "NSW",
+            zipCode: "2000",
+            country: "Australia"
+        },
+        closedDays: [],
+        specialClosedDays: [],
+        _id: "2",
+        partner: "partner2",
+        name: "Martin Place Storage Spot",
+        description: "Convenience Store | 2 min",
+        availableFrom: "2024-07-01T00:00:00.000Z",
+        availableTo: "2025-07-01T00:00:00.000Z",
+        regularPrice: 9.00,
+        discountPercentage: 0,
+        url: "/luggage_store_details",
+        pictures: [],
+        isDeleted: false,
+        isActive: true,
+        createdBy: "partner2",
+        notes: "A convenient storage spot near Martin Place.",
+        createdAt: "2024-07-13T23:30:40.806Z",
+        updatedAt: "2024-07-13T23:30:40.806Z",
+        __v: 0
+    },
+    {
+        coordinates: {
+            type: "Point",
+            coordinates: [151.2100, -33.8650]
+        },
+        address: {
+            street: "Near Cliveden Storage Spot",
+            district: "Sydney",
+            city: "Sydney",
+            state: "NSW",
+            zipCode: "2000",
+            country: "Australia"
+        },
+        closedDays: [],
+        specialClosedDays: [],
+        _id: "3",
+        partner: "partner3",
+        name: "Near Cliveden Storage Spot",
+        description: "Convenience Store | 9 min",
+        availableFrom: "2024-07-01T00:00:00.000Z",
+        availableTo: "2025-07-01T00:00:00.000Z",
+        regularPrice: 8.00,
+        discountPercentage: 0,
+        url: "/luggage_store_details",
+        pictures: [],
+        isDeleted: false,
+        isActive: true,
+        createdBy: "partner3",
+        notes: "A convenient storage spot near Cliveden.",
+        createdAt: "2024-07-13T23:30:40.806Z",
+        updatedAt: "2024-07-13T23:30:40.806Z",
+        __v: 0
+    }
 ];
 
 const LuggageLocation = () => {

@@ -27,13 +27,13 @@ const Sidebar = ({ storageSpots }) => {
                     storageSpots.map((spot, index) => (
                         <StorageSpot
                             key={index}
-                            title={spot.title}
-                            details={spot.details}
-                            price={spot.price}
-                            link={spot.link}
-                            lat={spot.lat}
-                            lng={spot.lng}
-                            image={spot.image}
+                            title={spot.name}
+                            details={spot.description}
+                            price={`A$${spot.regularPrice.toFixed(2)} / 24h / bag`}
+                            link={spot.url}
+                            lat={spot.coordinates.coordinates[1]}
+                            lng={spot.coordinates.coordinates[0]}
+                            image={spot.pictures[0] || 'https://img.freepik.com/free-vector/cartoon-style-cafe-front-shop-view_134830-697.jpg'}
                         />
                     ))
                 ) : (
