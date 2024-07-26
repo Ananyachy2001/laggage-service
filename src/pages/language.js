@@ -1,4 +1,4 @@
-// src/language.js
+
 const languageOptions = {
     en: 'English',
     es: 'Spanish',

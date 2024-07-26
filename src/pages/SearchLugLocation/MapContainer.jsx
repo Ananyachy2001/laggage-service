@@ -5,23 +5,28 @@ const MapContainer = ({ locations, setVisibleLocations, center }) => {
     const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
 
     useEffect(() => {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-        script.async = true;
-        document.head.appendChild(script);
+        if (!window.google || !window.google.maps) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
 
-        window.initMap = initMap;
+            window.initMap = initMap;
 
-        return () => {
-            document.head.removeChild(script);
-            delete window.initMap;
-        };
+            return () => {
+                document.head.removeChild(script);
+                delete window.initMap;
+            };
+        } else {
+            initMap();
+        }
     }, [GOOGLE_MAPS_API_KEY, locations]);
 
     const initMap = () => {
         const map = new google.maps.Map(document.getElementById('map'), {
             center: center || { lat: -33.8688, lng: 151.2093 },
-            zoom: 10,
+            zoom: 7,
         });
 
         const bounds = new google.maps.LatLngBounds();

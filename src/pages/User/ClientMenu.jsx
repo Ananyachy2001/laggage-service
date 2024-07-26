@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faWallet, faUser, faHeart, faGift, faBox, faFileContract, faCookie, faLifeRing, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import 'tailwindcss/tailwind.css';
+import ClientSidebar from '../../partials/ClientSidebar';
 import ClientHeader from '../../partials/ClientHeader';
 import { useNavigate } from 'react-router-dom';
 
 const ClientMenu = () => {
   const [token, setToken] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,10 +29,16 @@ const ClientMenu = () => {
   };
 
   return (
-    <>
-      <ClientHeader />
-      <div className="flex">
-        <div className="flex flex-1 items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200">
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
+      <ClientSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      {/* Content area */}
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+        {/* Site header */}
+        <ClientHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+        <main className="flex flex-1 items-center justify-center bg-gradient-to-r from-blue-200 to-purple-200 p-6">
           <div className="w-96 bg-white shadow-2xl rounded-lg overflow-hidden">
             <div className="p-6 flex justify-around items-center bg-gradient-to-r from-blue-700 to-purple-500">
               <button className="flex flex-col items-center focus:outline-none" onClick={() => handleNavigation('/comingsoon')}>
@@ -73,13 +81,13 @@ const ClientMenu = () => {
               </div>
               <div className="p-4 flex items-center hover:bg-gray-100 cursor-pointer" onClick={() => handleNavigation('/logout')}>
                 <FontAwesomeIcon icon={faSignOutAlt} className="text-red-500 mr-4" />
-                <span>Log  out</span>
+                <span>Log out</span>
               </div>
             </div>
           </div>
-        </div>
+        </main>
       </div>
-    </>
+    </div>
   );
 };
 

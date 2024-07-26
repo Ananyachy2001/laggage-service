@@ -1,6 +1,6 @@
 // components/Reservations.js
 
-import React from 'react';
+import React, { useState } from 'react';
 import ClientHeader from '../../partials/ClientHeader'; // Replace with actual path to Header component
 import ClientSidebar from '../../partials/ClientSidebar'; // Replace with actual path to Sidebar component
 import { Card } from 'flowbite-react'; // Assuming you have a Card component similar to the example
@@ -34,10 +34,10 @@ const dummyReservations = [
 
 const ReservationCard = ({ reservation }) => {
   return (
-    <Card className="bg-white shadow-md rounded-md p-4">
+    <Card className="bg-white shadow-md rounded-md ">
       <p className="text-lg font-semibold mb-2">Reservation ID: {reservation.id}</p>
-      <p><span className="font-semibold">Start Date:</span> {reservation.startDate}</p>
-      <p><span className="font-semibold">End Date:</span> {reservation.endDate}</p>
+      <p><span className="font-semibold">Start Date:</span> {new Date(reservation.startDate).toLocaleString()}</p>
+      <p><span className="font-semibold">End Date:</span> {new Date(reservation.endDate).toLocaleString()}</p>
       <p><span className="font-semibold">Host ID:</span> {reservation.hostId}</p>
       <p><span className="font-semibold">Storage Slot ID:</span> {reservation.storageSlotId}</p>
       <p><span className="font-semibold">Luggage Details:</span></p>
@@ -50,19 +50,28 @@ const ReservationCard = ({ reservation }) => {
 };
 
 const Reservations = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <ClientHeader />
-      <div className="flex">
-        <ClientSidebar />
-        <div className="container mx-7 py-12 px-6 ">
-          <h1 className="text-3xl font-semibold mb-8">Your Reservations</h1>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {dummyReservations.map((reservation) => (
-              <ReservationCard key={reservation.id} reservation={reservation} />
-            ))}
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
+      <ClientSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      {/* Content area */}
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+        {/* Site header */}
+        <ClientHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+        <main className="bg-gray-100 min-h-screen ">
+          <div className="container mx-auto py-8">
+            <h1 className="text-3xl font-semibold mb-8">Your Reservations</h1>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {dummyReservations.map((reservation) => (
+                <ReservationCard key={reservation.id} reservation={reservation} />
+              ))}
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
