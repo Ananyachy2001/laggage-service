@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-// import axios from 'axios'; // Commented out for dummy data
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import config from '../../config';
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
@@ -8,59 +8,7 @@ import CreateLocation from './CreateLocation';
 import EditLocation from './EditLocation';
 
 const AllLocations = () => {
-    const [locations, setLocations] = useState([
-        {
-            id: 1,
-            name: 'Location1',
-            description: 'A beautiful place with amazing views.',
-            coordinates: { type: 'Point', coordinates: [40.7128, -74.0060] },
-            address: {
-                street: '123 Main St',
-                district: 'District 1',
-                city: 'City1',
-                state: 'State1',
-                zipCode: '12345',
-                country: 'Country1'
-            },
-            availableFrom: new Date('2024-07-01'),
-            availableTo: new Date('2024-07-31'),
-            regularPrice: 100,
-            discountPercentage: 10,
-            url: 'http://location1.com',
-            pictures: ['http://example.com/pic1.jpg'],
-            startDate: new Date('2021-01-01'),
-            endDate: new Date('2021-01-10'),
-            recurringTimes: 3,
-            partnerId: 'P001',
-            locationType: 'Type1'
-        },
-        {
-            id: 2,
-            name: 'Location2',
-            description: 'A serene place with beautiful landscapes.',
-            coordinates: { type: 'Point', coordinates: [34.0522, -118.2437] },
-            address: {
-                street: '456 Market St',
-                district: 'District 2',
-                city: 'City2',
-                state: 'State2',
-                zipCode: '67890',
-                country: 'Country2'
-            },
-            availableFrom: new Date('2024-08-01'),
-            availableTo: new Date('2024-08-31'),
-            regularPrice: 150,
-            discountPercentage: 15,
-            url: 'http://location2.com',
-            pictures: ['http://example.com/pic2.jpg'],
-            startDate: new Date('2021-02-01'),
-            endDate: new Date('2021-02-10'),
-            recurringTimes: 2,
-            partnerId: 'P002',
-            locationType: 'Type2'
-        },
-        // More dummy data...
-    ]);
+    const [locations, setLocations] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -71,6 +19,34 @@ const AllLocations = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
 
+    useEffect(() => {
+        const fetchLocations = async () => {
+            setLoading(true);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/all`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                if (Array.isArray(response.data)) {
+                    setLocations(response.data);
+                } else {
+                    setLocations([]);
+                }
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+                if (error.response && error.response.status === 401) {
+                    window.location.href = '/unauthorized';
+                } else {
+                    setError('Failed to fetch locations');
+                }
+            }
+        };
+        fetchLocations();
+    }, []);
+
     const filteredLocations = locations.filter(location => location.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const indexOfLastLocation = currentPage * locationsPerPage;
@@ -80,16 +56,16 @@ const AllLocations = () => {
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     const softDeleteLocation = (id) => {
-        setLocations(locations.filter(location => location.id !== id));
+        setLocations(locations.filter(location => location._id !== id));
     };
 
     const addLocation = (newLocation) => {
-        setLocations([...locations, { ...newLocation, id: locations.length + 1 }]);
+        setLocations([...locations, { ...newLocation, _id: locations.length + 1 }]);
         setIsCreating(false);
     };
 
     const updateLocation = (updatedLocation) => {
-        setLocations(locations.map(location => location.id === updatedLocation.id ? updatedLocation : location));
+        setLocations(locations.map(location => location._id === updatedLocation._id ? updatedLocation : location));
         setIsEditing(false);
     };
 
@@ -131,57 +107,61 @@ const AllLocations = () => {
 
                         {/* Location List Table */}
                         <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
-                            <table className="min-w-full">
-                                <thead className="bg-[#4A686A] text-white">
-                                    <tr>
-                                        <th className="w-1/12 py-3 px-6 text-left">ID</th>
-                                        <th className="w-1/12 py-3 px-6 text-left">Partner ID</th>
-                                        <th className="w-2/12 py-3 px-6 text-left">Name</th>
-                                        <th className="w-3/12 py-3 px-6 text-left">Description</th>
-                                        <th className="w-1/12 py-3 px-6 text-left">Price</th>
-                                        <th className="w-1/12 py-3 px-6 text-left">Discount</th>
-                                        <th className="w-2/12 py-3 px-6 text-left">Start Date</th>
-                                        <th className="w-2/12 py-3 px-6 text-left">End Date</th>
-                                        <th className="w-1/12 py-3 px-6 text-left">Recurring Times</th>
-                                        <th className="w-1/12 py-3 px-6 text-left">Location Type</th>
-                                        <th className="w-2/12 py-3 px-6 text-left">Actions</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody className="text-gray-800">
-                                    {currentLocations.map(location => (
-                                        <tr key={location.id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                            <td className="w-1/12 py-3 px-6 border">{location.id}</td>
-                                            <td className="w-1/12 py-3 px-6 border">{location.partnerId}</td>
-                                            <td className="w-2/12 py-3 px-6 border">{location.name}</td>
-                                            <td className="w-3/12 py-3 px-6 border">{location.description}</td>
-                                            <td className="w-1/12 py-3 px-6 border">${location.regularPrice}</td>
-                                            <td className="w-1/12 py-3 px-6 border">{location.discountPercentage}%</td>
-                                            <td className="w-2/12 py-3 px-6 border">{location.startDate.toLocaleDateString()}</td>
-                                            <td className="w-2/12 py-3 px-6 border">{location.endDate.toLocaleDateString()}</td>
-                                            <td className="w-1/12 py-3 px-6 border">{location.recurringTimes}</td>    
-                                            <td className="w-1/12 py-3 px-6 border">{location.locationType}</td>
-                                            <td className="w-2/12 py-3 px-6 border text-center">
-                                                <button
-                                                    onClick={() => {
-                                                        setIsEditing(true);
-                                                        setCurrentLocation(location);
-                                                    }}
-                                                    className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => softDeleteLocation(location.id)}
-                                                    className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
+                            {loading ? (
+                                <div className="flex justify-center items-center p-8">Loading...</div>
+                            ) : error ? (
+                                <div className="flex justify-center items-center p-8 text-red-500">{error}</div>
+                            ) : (
+                                <table className="min-w-full">
+                                    <thead className="bg-[#4A686A] text-white">
+                                        <tr>
+                                            <th className="w-1/12 py-3 px-6 text-left">ID</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Partner ID</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Name</th>
+                                            <th className="w-3/12 py-3 px-6 text-left">Description</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Price</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Discount</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Start Date</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">End Date</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Location Type</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+
+                                    <tbody className="text-gray-800">
+                                        {currentLocations.map(location => (
+                                            <tr key={location._id} className="bg-white hover:bg-gray-200 transition duration-150">
+                                                <td className="w-1/12 py-3 px-6 border">{location._id}</td>
+                                                <td className="w-1/12 py-3 px-6 border">{location.partner}</td>
+                                                <td className="w-2/12 py-3 px-6 border">{location.name}</td>
+                                                <td className="w-3/12 py-3 px-6 border">{location.description}</td>
+                                                <td className="w-1/12 py-3 px-6 border">{location.priceCurrency} ${location.regularPrice}</td>
+                                                <td className="w-1/12 py-3 px-6 border">{location.discountPercentage}%</td>
+                                                <td className="w-2/12 py-3 px-6 border">{new Date(location.availableFrom).toLocaleDateString()}</td>
+                                                <td className="w-2/12 py-3 px-6 border">{new Date(location.availableTo).toLocaleDateString()}</td>
+                                                <td className="w-1/12 py-3 px-6 border">{location.locationType}</td>
+                                                <td className="w-2/12 py-3 px-6 border text-center">
+                                                    <button
+                                                        onClick={() => {
+                                                            setIsEditing(true);
+                                                            setCurrentLocation(location);
+                                                        }}
+                                                        className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => softDeleteLocation(location._id)}
+                                                        className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
 
                         {/* Pagination */}
@@ -191,7 +171,7 @@ const AllLocations = () => {
                                     <button
                                         key={number}
                                         onClick={() => paginate(number + 1)}
-                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-[blue-500] text-[#4A686A]' : ''}`}
+                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : ''}`}
                                     >
                                         {number + 1}
                                     </button>

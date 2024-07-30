@@ -4,6 +4,7 @@ import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 import backgroundImage from '../../img/home-two/luggage-1.jpg';
 import './Banner.css';
 import config from '../../config';
+
 const libraries = ['places'];
 
 function Banner() {
@@ -77,7 +78,7 @@ function Banner() {
 
   return (
     <div
-      className="banner mt-28 bg-cover bg-center h-screen flex items-center justify-center relative"
+      className="banner bg-cover bg-center h-screen flex items-center justify-center relative"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="absolute inset-0 bg-gray-800 opacity-40 backdrop-blur-md"></div>

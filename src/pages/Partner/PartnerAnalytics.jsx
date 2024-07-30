@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 import CanvasJSReact from '@canvasjs/react-charts';
-import PartnerHeader from '../../partials/PartnerHeader'; // Replace with actual path to Header component
-import PartnerSidebar from '../../partials/PartnerSidebar'; // Replace with actual path to Sidebar component
+import PartnerHeader from '../../partials/PartnerHeader';
+import PartnerSidebar from '../../partials/PartnerSidebar';
+import config from '../../config';
 
-const CanvasJS = CanvasJSReact.CanvasJS;
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const HostAnalytics = () => {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
     // Dummy data for income from luggages for different periods
     const incomeData = [
         { period: new Date(2024, 0), income: 10000 },
@@ -43,8 +49,25 @@ const HostAnalytics = () => {
     };
 
     useEffect(() => {
-        // Optionally, you can perform any setup or data processing here
-    }, []);
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/');
+            return;
+        }
+
+        // Simulate data fetching
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+    }, [navigate]);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <ClipLoader size={50} color="#4A90E2" />
+            </div>
+        );
+    }
 
     // Prepare dataPoints for CanvasJS chart - Monthly Income from Luggages
     const dataPoints = incomeData.map(data => ({
@@ -161,26 +184,29 @@ const HostAnalytics = () => {
     };
 
     return (
-        <div className="bg-gray-100 min-h-screen">
-            <PartnerHeader /> {/* Include the Header component */}
-            <div className="flex">
-                <PartnerSidebar /> {/* Include the Sidebar component */}
-                <div className="container mx-auto mt-2 bg-white p-6 rounded-lg shadow-md">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                        <div className="w-full">
-                            <CanvasJSChart options={options} />
-                        </div>
-                        <div className="w-full">
-                            <CanvasJSChart options={dailyOptions} />
-                        </div>
-                        <div className="w-full">
-                            <CanvasJSChart options={monthlyOptions} />
-                        </div>
-                        <div className="w-full">
-                            <CanvasJSChart options={yearlyOptions} />
+        <div className="bg-gray-100 min-h-screen flex">
+            <PartnerSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <div className="flex-1 flex flex-col">
+                <PartnerHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+                <main className="flex-grow ">
+                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Host Analytics</h1>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                            <div className="w-full">
+                                <CanvasJSChart options={options} />
+                            </div>
+                            <div className="w-full">
+                                <CanvasJSChart options={dailyOptions} />
+                            </div>
+                            <div className="w-full">
+                                <CanvasJSChart options={monthlyOptions} />
+                            </div>
+                            <div className="w-full">
+                                <CanvasJSChart options={yearlyOptions} />
+                            </div>
                         </div>
                     </div>
-                </div>
+                </main>
             </div>
         </div>
     );

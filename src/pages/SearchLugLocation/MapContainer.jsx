@@ -7,7 +7,7 @@ const MapContainer = ({ locations, setVisibleLocations, center }) => {
     useEffect(() => {
         if (!window.google || !window.google.maps) {
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap&libraries=places&v=weekly`;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
@@ -21,7 +21,7 @@ const MapContainer = ({ locations, setVisibleLocations, center }) => {
         } else {
             initMap();
         }
-    }, [GOOGLE_MAPS_API_KEY, locations]);
+    }, [GOOGLE_MAPS_API_KEY, locations, center]);
 
     const initMap = () => {
         const map = new google.maps.Map(document.getElementById('map'), {
@@ -44,7 +44,7 @@ const MapContainer = ({ locations, setVisibleLocations, center }) => {
         if (!center) {
             map.fitBounds(bounds);
         } else {
-            map.setZoom(14);  // Adjust zoom level as needed
+            map.setZoom(13);  // Adjust zoom level as needed
         }
 
         google.maps.event.addListener(map, 'idle', () => {
@@ -65,7 +65,7 @@ const MapContainer = ({ locations, setVisibleLocations, center }) => {
         setVisibleLocations(visibleLocations);
     };
 
-    return <div id="map" style={{ width: '100%', height: '100%' }}></div>;
+    return <div id="map" className="w-full h-full min-h-[400px] rounded-lg overflow-hidden"></div>;
 };
 
 export default MapContainer;

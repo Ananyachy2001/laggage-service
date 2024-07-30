@@ -5,14 +5,14 @@ import { faSearch, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = ({ storageSpots }) => {
     return (
-        <div className="w-full md:w-1/3 bg-white p-4 shadow-lg rounded-lg">
-            <div className="filters mb-6">
-                <div className="flex justify-between mb-4">
-                    <label className="w-1/2 pr-2">
+        <div className="w-full lg:w-1/3 bg-white p-4 lg:p-6 shadow-lg rounded-lg">
+            <div className="filters mb-6 pt-4">
+                <div className="flex flex-col lg:flex-row justify-between mb-4">
+                    <label className="w-full lg:w-1/2 lg:pr-2 mb-4 lg:mb-0">
                         Drop off:
                         <input type="datetime-local" className="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300" />
                     </label>
-                    <label className="w-1/2 pl-2">
+                    <label className="w-full lg:w-1/2 lg:pl-2">
                         Pick up:
                         <input type="datetime-local" className="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300" />
                     </label>
@@ -22,14 +22,15 @@ const Sidebar = ({ storageSpots }) => {
                     Search
                 </button>
             </div>
-            <div className="storage-spots overflow-y-auto h-[32rem] mt-16">
+            <div className="storage-spots overflow-y-auto h-[32rem] mt-4 lg:mt-16">
                 {storageSpots.length > 0 ? (
                     storageSpots.map((spot, index) => (
                         <StorageSpot
                             key={index}
                             title={spot.name}
                             details={spot.description}
-                            price={`A$${spot.regularPrice.toFixed(2)} / 24h / bag`}
+                            price={`A$${spot.regularPrice.toFixed(2)} / 24h `}
+                            regularprice={spot.regularPrice}
                             link={spot.url}
                             lat={spot.coordinates.coordinates[1]}
                             lng={spot.coordinates.coordinates[0]}

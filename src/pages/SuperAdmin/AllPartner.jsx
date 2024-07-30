@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios'; 
+import Modal from 'react-modal';
 
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import config from '../../config'; 
+
+Modal.setAppElement('#root');
 
 const AllPartner = () => {
     const [partners, setPartners] = useState([]);
@@ -15,6 +18,9 @@ const AllPartner = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [partnersPerPage] = useState(3);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [selectedPartner, setSelectedPartner] = useState(null);
+    const [actionType, setActionType] = useState('');
 
     const navigate = useNavigate(); 
 
@@ -40,6 +46,7 @@ const AllPartner = () => {
                         email: partner.user.email,
                         businessAddress: partner.businessAddress,
                         tradeLicenseNumber: partner.tradeLicenseNumber,
+                        isLocked: partner.user.isLocked,
                     }));
                     setPartners(fetchedPartners);
                 } else {
@@ -58,6 +65,23 @@ const AllPartner = () => {
 
         fetchPartners();
     }, [navigate]);
+
+    const handleAction = (partner, type) => {
+        setSelectedPartner(partner);
+        setActionType(type);
+        setModalIsOpen(true);
+    };
+
+    const confirmAction = () => {
+        if (actionType === 'lock' || actionType === 'unlock') {
+            setPartners(partners.map(partner =>
+                partner.id === selectedPartner.id ? { ...partner, isLocked: actionType === 'lock' } : partner
+            ));
+        }
+        setModalIsOpen(false);
+        setSelectedPartner(null);
+        setActionType('');
+    };
 
     const filteredPartners = partners.filter(partner =>
         partner.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -136,10 +160,22 @@ const AllPartner = () => {
                                                 {partner.businessAddress.street}, {partner.businessAddress.district}, {partner.businessAddress.city}, {partner.businessAddress.state}, {partner.businessAddress.zipCode}, {partner.businessAddress.country}
                                             </td>
                                             <td className="w-1/5 py-3 px-6 border">{partner.tradeLicenseNumber}</td>
-                                            <td className="w-1/5 py-3 px-6 border text-center">
+                                            <td className=" py-4 px-8 border text-center flex justify-center space-x-2">
+                                                <button
+                                                    onClick={() => handleAction(partner, partner.isLocked ? 'unlock' : 'lock')}
+                                                    className={`px-2 py-2 rounded ${partner.isLocked ? 'bg-yellow-500 hover:bg-yellow-700' : 'bg-green-500 hover:bg-green-700'} text-white`}
+                                                >
+                                                    {partner.isLocked ? 'Unlock' : 'Lock'}
+                                                </button>
+                                                <button
+                                                    onClick={() => navigate(`/superadmin/partners/edit/${partner.id}`)}
+                                                    className="px-2 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded"
+                                                >
+                                                    Edit
+                                                </button>
                                                 <button
                                                     onClick={() => softDeletePartner(partner.id)}
-                                                    className="text-red-600 hover:text-red-800 transition duration-150"
+                                                    className="px-2 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
                                                 >
                                                     Delete
                                                 </button>
@@ -157,7 +193,7 @@ const AllPartner = () => {
                                     <button
                                         key={number}
                                         onClick={() => paginate(number + 1)}
-                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-[blue-500] text-[#4A686A]' : ''}`}
+                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue text-sm font-medium hover:bg-blue-500 hover:text-white transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : ''}`}
                                     >
                                         {number + 1}
                                     </button>
@@ -167,6 +203,33 @@ const AllPartner = () => {
                     </div>
                 </main>
             </div>
+
+            {/* Confirmation Modal */}
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+                className="fixed inset-0 flex items-center justify-center"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+            >
+                <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                    <h2 className="text-xl font-semibold mb-4">Confirm {actionType === 'lock' ? 'Lock' : 'Unlock'} Action</h2>
+                    <p className="mb-6">Are you sure you want to {actionType} this partner?</p>
+                    <div className="flex justify-end space-x-4">
+                        <button
+                            onClick={() => setModalIsOpen(false)}
+                            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700 transition duration-300"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={confirmAction}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
+                        >
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };

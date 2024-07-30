@@ -1,43 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import LuggageNavbar from './LuggageNavbar';
 import Sidebar from './Sidebar';
 import MapContainer from './MapContainer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './luggagelocation.css';
 import config from '../../config';
+import LugNavbar from './LugNavbar';
 
 const LuggageLocation = () => {
-    const { state } = useLocation();
-    const [locations, setLocations] = useState([]);
-    const [visibleLocations, setVisibleLocations] = useState([]);
+  const { state } = useLocation();
+  const [locations, setLocations] = useState([]);
+  const [visibleLocations, setVisibleLocations] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState(state?.location);
 
-    useEffect(() => {
-        const fetchLocations = async () => {
-            try {
-                const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/public/all-locations`);
-                setLocations(response.data);
-                setVisibleLocations(response.data);
-            } catch (error) {
-                console.error('Error fetching locations:', error);
-            }
-        };
+  useEffect(() => {
+    const fetchLocations = async (retryCount = 0) => {
+      try {
+        const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/public/all-locations`);
+        setLocations(response.data);
+        setVisibleLocations(response.data);
+      } catch (error) {
+        if (error.response && error.response.status === 429 && retryCount < 5) {
+          const retryAfter = (error.response.headers['retry-after'] || 1) * 1000;
+          setTimeout(() => fetchLocations(retryCount + 1), retryAfter);
+        } else {
+          console.error('Error fetching locations:', error);
+        }
+      }
+    };
 
-        fetchLocations();
-    }, []);
+    fetchLocations();
+  }, []);
 
-    return (
-        <div className="min-h-screen flex flex-col">
-            <LuggageNavbar />
-            <div className="flex flex-col lg:flex-row mt-24 pt-4 flex-grow">
-                <Sidebar className="w-full lg:w-1/3" storageSpots={visibleLocations} isAvailable={visibleLocations.length > 0} />
-                <div className="w-full lg:w-2/3">
-                    <MapContainer locations={locations} setVisibleLocations={setVisibleLocations} center={state?.location} />
-                </div>
-            </div>
+  const handleLocationSelected = (location) => {
+    setCurrentLocation(location);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <LugNavbar onLocationSelected={handleLocationSelected} />
+      <div className="flex flex-col lg:flex-row flex-grow">
+        <Sidebar
+          className="w-full lg:w-1/3 p-4 lg:p-6 h-screen overflow-y-auto"
+          storageSpots={visibleLocations}
+          isAvailable={visibleLocations.length > 0}
+        />
+        <div className="w-full lg:w-2/3 h-screen">
+          <MapContainer locations={locations} setVisibleLocations={setVisibleLocations} center={currentLocation} />
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default LuggageLocation;

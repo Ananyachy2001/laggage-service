@@ -46,7 +46,11 @@ const LoginForm = ({ loginType, onClose }) => {
       if (response.ok) {
         console.log('Success:', result);
         localStorage.setItem('token', result.token); // Store the token in local storage
-        navigate('/client/profile'); // Redirect to profile
+        if (loginType === 'Partner') {
+          navigate('/partner/profile'); // Redirect to partner profile
+        } else {
+          navigate('/client/home'); // Redirect to client profile
+        }
       } else {
         console.error('Error:', result);
         // Handle error
@@ -91,7 +95,7 @@ const LoginForm = ({ loginType, onClose }) => {
 
   return (
     <motion.div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -120,9 +124,10 @@ const LoginForm = ({ loginType, onClose }) => {
                   type="email"
                   id="email"
                   name="email"
-                  className="mt-1 p-2 w-full border rounded-md"
+                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={formData.email}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="mb-4">
@@ -151,9 +156,10 @@ const LoginForm = ({ loginType, onClose }) => {
                     type="email"
                     id="email"
                     name="email"
-                    className="mt-1 p-2 w-full border rounded-md"
+                    className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#518689]"
                     value={formData.email}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="mb-4">
@@ -162,9 +168,10 @@ const LoginForm = ({ loginType, onClose }) => {
                     type="password"
                     id="password"
                     name="password"
-                    className="mt-1 p-2 w-full border rounded-md"
+                    className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#518689]"
                     value={formData.password}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="mb-4">

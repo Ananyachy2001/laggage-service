@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const StorageSpot = ({ title, details, price, link, image, lat, lng }) => {
+const StorageSpot = ({ title, details, price, regularprice, link, image, lat, lng }) => {
   const defaultImage = "https://via.placeholder.com/150"; // Placeholder image URL
   const navigate = useNavigate();
 
   const handleDetailsClick = () => {
     navigate('/luggage_store_details', {
-      state: { title, details, price, image, lat, lng }
+      state: { title, details, price, regularprice, image, lat, lng }
     });
   };
 
@@ -18,6 +18,7 @@ const StorageSpot = ({ title, details, price, link, image, lat, lng }) => {
         <div className="spot-details">
           <h3 className="text-xl font-bold mb-2">{title}</h3>
           <p className="text-gray-700 text-base">{details}</p>
+          
         </div>
         <div className="spot-price mt-4 flex justify-between items-center">
           <p className="text-lg font-semibold text-green-600">{price}</p>

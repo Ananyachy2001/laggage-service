@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ClientProfile.css';
-import ClientSidebar from '../../partials/ClientSidebar';
-import ClientHeader from '../../partials/ClientHeader';
+import ClientNavbarComp from './ClientNavbarComp';
 import config from '../../config';
+import { ClipLoader } from 'react-spinners';
 
 const ClientProfile = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState({
         name: '',
         email: '',
@@ -14,11 +15,13 @@ const ClientProfile = () => {
         phoneNumber: '',
     });
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchProfileData = async () => {
             const token = localStorage.getItem('token');
             if (!token) {
-                // Handle the case where there is no token
+                navigate('/');
                 return;
             }
 
@@ -38,16 +41,16 @@ const ClientProfile = () => {
                     });
                 } else {
                     console.error('Error:', result);
-                    // Handle error
                 }
             } catch (error) {
                 console.error('Error:', error);
-                // Handle error
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchProfileData();
-    }, []);
+    }, [navigate]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -66,32 +69,38 @@ const ClientProfile = () => {
         // Add save functionality here, e.g., API call to save the profile details
     };
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <ClipLoader size={70} color="#4A90E2" />
+            </div>
+        );
+    }
+
     return (
         <div className="flex h-screen overflow-hidden">
-            {/* Sidebar */}
-            <ClientSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <ClientNavbarComp />
 
-            {/* Content area */}
-            <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-                {/* Site header */}
-                <ClientHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-                <main className="flex flex-grow bg-gray-100 ">
-                    <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
+            <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden mt-16 pt-12">
+                <main className="flex flex-grow bg-gradient-to-r from-indigo-500 to-purple-500 ">
+                    <div className="flex-grow bg-white shadow-lg p-6 transition-all duration-500 ease-in-out">
                         <div className="flex flex-col md:flex-row">
                             <div className="flex flex-col items-center md:w-1/3">
                                 <img
-                                    className="rounded-full h-32 w-32 mt-5"
+                                    className="rounded-full h-32 w-32 mt-5 border-4 border-indigo-500 shadow-lg"
                                     src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
                                     alt="Profile"
                                 />
-                                <h2 className="text-xl font-bold mt-4">{profile.name}</h2>
+                                <h2 className="text-2xl font-bold mt-4 text-gray-800">{profile.name}</h2>
                                 <p className="text-gray-600">{profile.email}</p>
                             </div>
                             <div className="md:w-2/3 mt-6 md:mt-0 md:pl-6">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="text-xl font-semibold">Client Profile Settings</h3>
-                                    <button className="btn btn-secondary" onClick={handleEditClick}>
+                                    <h3 className="text-xl font-semibold text-gray-800">Client Profile Settings</h3>
+                                    <button
+                                        className="btn btn-secondary transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+                                        onClick={handleEditClick}
+                                    >
                                         {editMode ? 'Cancel' : 'Edit'}
                                     </button>
                                 </div>
@@ -145,7 +154,7 @@ const ClientProfile = () => {
                                         </div>
                                         <div className="mt-6 text-center">
                                             <button
-                                                className="bg-purple-600 text-white px-4 py-2 rounded-md"
+                                                className="bg-indigo-600 text-white px-4 py-2 rounded-md transition duration-500 ease-in-out transform hover:bg-indigo-700 hover:-translate-y-1 hover:scale-110"
                                                 onClick={handleSaveClick}
                                             >
                                                 Save Profile
@@ -174,11 +183,6 @@ const ClientProfile = () => {
                                         </div>
                                     </div>
                                 )}
-
-                                <div className="mt-6">
-                                    <h3 className="text-xl font-semibold">Booking History</h3>
-                                    {/* Add booking history components here */}
-                                </div>
                             </div>
                         </div>
                     </div>

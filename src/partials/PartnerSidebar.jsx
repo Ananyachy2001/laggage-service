@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import logo from '../img/home-two/logo3.svg';
 import SidebarLinkGroup from './SidebarLinkGroup';
 
-function Sidebar({ sidebarOpen, setSidebarOpen }) {
+function PartnerSidebar({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
   const { pathname } = location;
 
@@ -57,7 +57,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
       <div
         id="sidebar"
         ref={sidebar}
-        className={`flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-slate-800 p-4 transition-all duration-200 ease-in-out ${
+        className={`flex flex-col fixed z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-slate-800 p-4 transition-all duration-200 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-64'
         }`}
       >
@@ -78,7 +78,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
           </button>
           {/* Logo */}
           <NavLink end to="/" className="block">
-            <img src={logo} className='h-20' alt="" />
+            <img src={logo} className="h-20" alt="" />
           </NavLink>
         </div>
 
@@ -157,16 +157,14 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               </span>
                             </NavLink>
                           </li>
-
-
                         </ul>
                       </div>
                     </React.Fragment>
                   );
                 }}
               </SidebarLinkGroup>
- 
-                {/* Partner*/}
+
+              {/* Partner*/}
               <SidebarLinkGroup activecondition={pathname.includes('')}>
                 {(handleClick, open) => {
                   return (
@@ -281,12 +279,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </React.Fragment>
                   );
                 }}
-                </SidebarLinkGroup>
-
-
+              </SidebarLinkGroup>
             </ul>
           </div>
-
         </div>
 
         {/* Expand / collapse button */}
@@ -306,4 +301,4 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
   );
 }
 
-export default Sidebar;
+export default PartnerSidebar;

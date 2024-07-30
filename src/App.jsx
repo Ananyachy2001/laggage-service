@@ -29,7 +29,7 @@ import PartnerAnalytics from './pages/Partner/PartnerAnalytics';
 import AdminAnalytics from './pages/SuperAdmin/AdminAnalytics';
 import SearchNearLocation from './pages/SearchNearLocation';
 import Home from './pages/Home/Home';
-import LuggageStoreDetails from './pages/SearchLugLocation/LuggageStoreDetails';
+import LuggageStoreDetails from './pages/SearchLugLocation/LuggageDetails/LuggageStoreDetails';
 import LuggageLocation from './pages/SearchLugLocation/LuggageLocation';
 import PartnerAvailabilityCalendar from './pages/Partner/PartnerAvailabilityCalender';
 import UserReminder from './pages/User/ClientBooking';
@@ -54,9 +54,11 @@ import PartnerDetails from './pages/SuperAdmin/PartnerDetails';
 import ComingSoon from './pages/CominSoon';
 import PartnerDashboard from './pages/Partner/PartnerDashboard';
 import ClientDetails from './pages/SuperAdmin/ClientDetails';
-import ClientDashboard from './pages/User/ClientDashboard';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 import ClientRefundForm from './pages/User/ClientRefundFOrm';
+import ClientHome from './pages/User/ClientHome';
+import PaymentSuccess from './pages/SearchLugLocation/LuggageDetails/PaymentSuccess';
+import PaymentCancel from './pages/SearchLugLocation/LuggageDetails/PaymentCancel';
 
 function App() {
 
@@ -107,15 +109,18 @@ function App() {
 
 
         {/* clients  */}
-        <Route exact path="/reservations" element={<Reservations/>} />
-        <Route exact path="/clientbooking" element={<ClientBooking />} />
+        <Route exact path="/client/home" element={<ClientHome/>} />
+        <Route exact path="/client/reservations" element={<Reservations/>} />
+        <Route exact path="/client/booking" element={<ClientBooking />} />
         <Route exact path="/client/profile" element={<ClientProfile />} />
         <Route exact path="/client/menu" element={<ClientMenu />} />
         <Route exact path="/client/refundform" element={<ClientRefundForm />} />
         <Route exact path="/client/bookingconfirmation" element={<BookingConfirmation />} />
         <Route exact path="/client/bookinghistory" element={<ClientBookingHistory />} />
         <Route exact path="/client/wallet" element={<ClientWallet />} />
-        <Route exact path="/client/dashboard" element={<ClientDashboard />} />
+        <Route path="/payment-success" element={<PaymentSuccess />}  />
+        <Route path="/payment-cancel" element={<PaymentCancel />}  />
+
 
 
 

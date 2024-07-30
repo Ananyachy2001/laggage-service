@@ -58,6 +58,12 @@ const AllClient = () => {
         fetchClients();
     }, [navigate]);
 
+    const toggleStatus = (id) => {
+        setClients(clients.map(client =>
+            client.id === id ? { ...client, isActive: !client.isActive } : client
+        ));
+    };
+
     const filteredClients = clients.filter(client =>
         client.username.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -130,11 +136,24 @@ const AllClient = () => {
                                                 </button>
                                             </td>
                                             <td className="w-1/4 py-3 px-6 border">{client.email}</td>
-                                            <td className="w-1/4 py-3 px-6 border">{client.isActive ? 'Active' : 'Inactive'}</td>
-                                            <td className="w-1/4 py-3 px-6 border text-center">
+                                            <td className="w-1/4 py-3 px-6 border">
+                                                <button
+                                                    onClick={() => toggleStatus(client.id)}
+                                                    className={`px-2 py-1 rounded ${client.isActive ? 'bg-green-500 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-700'} text-white`}
+                                                >
+                                                    {client.isActive ? 'Active' : 'Inactive'}
+                                                </button>
+                                            </td>
+                                            <td className=" py-3 px-6 border text-center flex justify-center space-x-2">
+                                                <button
+                                                    onClick={() => navigate(`/superadmin/clients/edit/${client.id}`)}
+                                                    className="px-2 py-1 bg-blue-500 hover:bg-blue-700 text-white rounded"
+                                                >
+                                                    Edit
+                                                </button>
                                                 <button
                                                     onClick={() => softDeleteClient(client.id)}
-                                                    className="text-red-600 hover:text-red-800 transition duration-150"
+                                                    className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded"
                                                 >
                                                     Delete
                                                 </button>
@@ -152,7 +171,7 @@ const AllClient = () => {
                                     <button
                                         key={number}
                                         onClick={() => paginate(number + 1)}
-                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-[blue-500] text-[#4A686A]' : ''}`}
+                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue text-sm font-medium hover:bg-blue-500 hover:text-white transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : ''}`}
                                     >
                                         {number + 1}
                                     </button>

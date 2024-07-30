@@ -1,20 +1,40 @@
-import React, { useState } from 'react';
-import ClientHeader from '../../partials/ClientHeader';
-import ClientSidebar from '../../partials/ClientSidebar';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ClientNavbarComp from './ClientNavbarComp';
+import { ClipLoader } from 'react-spinners';
 
 const ClientBooking = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    // Simulate data fetching or any other async operation
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ClipLoader size={50} color="#4A90E2" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
-      <ClientSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      {/* Navbar */}
+      <ClientNavbarComp />
 
       {/* Content area */}
-      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-        {/* Site header */}
-        <ClientHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden mt-20 pt-16">
         <main className="flex-grow container mx-auto mt-4 mb-4">
           <div className="flex justify-center">
             <div className="w-full max-w-md">
