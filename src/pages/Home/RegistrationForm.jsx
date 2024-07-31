@@ -5,33 +5,33 @@ import config from '../../config';
 
 const RegistrationForm = ({ loginType, onClose }) => {
   const [formData, setFormData] = useState({
-    directorFirstName: '',
-    directorLastName: '',
-    companyABN: '',
-    companyName: '',
-    tradingName: '',
-    shopAddress: '',
-    bankDetails: {
-      bsb: '',
-      accountNumber: '',
-    },
+    username: '',
     email: '',
-    phoneNumber: '',
     password: '',
+    businessAddress: {
+      street: '',
+      district: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: 'Australia',
+    },
+    tradeLicenseNumber: '',
   });
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.includes('bankDetails')) {
-      const bankField = name.split('.')[1];
+    if (name.includes('businessAddress')) {
+      const addressField = name.split('.')[1];
       setFormData((prevData) => ({
         ...prevData,
-        bankDetails: {
-          ...prevData.bankDetails,
-          [bankField]: value,
+        businessAddress: {
+          ...prevData.businessAddress,
+          [addressField]: value,
         },
       }));
     } else {
@@ -42,12 +42,29 @@ const RegistrationForm = ({ loginType, onClose }) => {
     }
   };
 
-  const handleNext = () => {
-    setCurrentStep((prevStep) => prevStep + 1);
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.username) newErrors.username = 'Username is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    if (!formData.password) newErrors.password = 'Password is required';
+    if (!formData.businessAddress.street) newErrors.street = 'Street is required';
+    if (!formData.businessAddress.district) newErrors.district = 'District is required';
+    if (!formData.businessAddress.city) newErrors.city = 'City is required';
+    if (!formData.businessAddress.state) newErrors.state = 'State is required';
+    if (!formData.businessAddress.zipCode) newErrors.zipCode = 'Zip Code is required';
+    if (!formData.businessAddress.country) newErrors.country = 'Country is required';
+    if (!formData.tradeLicenseNumber) newErrors.tradeLicenseNumber = 'Trade License Number is required';
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
 
     const endpoint = loginType === 'Partner'
       ? `${config.API_BASE_URL}/api/v1/users/register/partner`
@@ -55,16 +72,11 @@ const RegistrationForm = ({ loginType, onClose }) => {
 
     const body = loginType === 'Partner'
       ? {
-          directorFirstName: formData.directorFirstName,
-          directorLastName: formData.directorLastName,
-          companyABN: formData.companyABN,
-          companyName: formData.companyName,
-          tradingName: formData.tradingName,
-          shopAddress: formData.shopAddress,
-          bankDetails: formData.bankDetails,
+          username: formData.username,
           email: formData.email,
-          phoneNumber: formData.phoneNumber,
           password: formData.password,
+          businessAddress: formData.businessAddress,
+          tradeLicenseNumber: formData.tradeLicenseNumber,
         }
       : {
           username: formData.username,
@@ -83,7 +95,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
       const result = await response.json();
       if (response.ok) {
         console.log('Success:', result);
-        navigate('/'); // Redirect to dashboard
+        navigate('/logout'); // Redirect to home page
       } else {
         console.error('Error:', result);
         // Handle error
@@ -112,123 +124,19 @@ const RegistrationForm = ({ loginType, onClose }) => {
             {currentStep === 1 && (
               <form>
                 <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="directorFirstName">Director First Name</label>
+                  <label className="block text-[#4A686A] font-medium" htmlFor="username">Username</label>
                   <input
                     type="text"
-                    id="directorFirstName"
-                    name="directorFirstName"
+                    id="username"
+                    name="username"
                     className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                    value={formData.directorFirstName}
+                    value={formData.username}
                     onChange={handleChange}
                   />
+                  {errors.username && <span className="text-red-500">{errors.username}</span>}
                 </div>
                 <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="directorLastName">Director Last Name</label>
-                  <input
-                    type="text"
-                    id="directorLastName"
-                    name="directorLastName"
-                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                    value={formData.directorLastName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="companyABN">Company ABN</label>
-                  <input
-                    type="text"
-                    id="companyABN"
-                    name="companyABN"
-                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                    value={formData.companyABN}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="companyName">Company Name</label>
-                  <input
-                    type="text"
-                    id="companyName"
-                    name="companyName"
-                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="flex justify-center items-center mb-4">
-                  <button
-                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
-                    type="button"
-                    onClick={handleNext}
-                  >
-                    Next
-                  </button>
-                </div>
-              </form>
-            )}
-            {currentStep === 2 && (
-              <form>
-                <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="tradingName">Trading Name</label>
-                  <input
-                    type="text"
-                    id="tradingName"
-                    name="tradingName"
-                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                    value={formData.tradingName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="shopAddress">Shop Address</label>
-                  <input
-                    type="text"
-                    id="shopAddress"
-                    name="shopAddress"
-                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                    value={formData.shopAddress}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-[#4A686A] font-medium" htmlFor="bankDetails.bsb">BSB</label>
-                    <input
-                      type="text"
-                      id="bankDetails.bsb"
-                      name="bankDetails.bsb"
-                      className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                      value={formData.bankDetails.bsb}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[#4A686A] font-medium" htmlFor="bankDetails.accountNumber">Account Number</label>
-                    <input
-                      type="text"
-                      id="bankDetails.accountNumber"
-                      name="bankDetails.accountNumber"
-                      className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                      value={formData.bankDetails.accountNumber}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center mb-4">
-                  <button
-                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
-                    type="button"
-                    onClick={handleNext}
-                  >
-                    Next
-                  </button>
-                </div>
-              </form>
-            )}
-            {currentStep === 3 && (
-              <form onSubmit={handleFormSubmit}>
-                <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="email">Email address</label>
+                  <label className="block text-[#4A686A] font-medium" htmlFor="email">Email</label>
                   <input
                     type="email"
                     id="email"
@@ -237,17 +145,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                     value={formData.email}
                     onChange={handleChange}
                   />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="phoneNumber">Phone Number</label>
-                  <input
-                    type="text"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                  />
+                  {errors.email && <span className="text-red-500">{errors.email}</span>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-[#4A686A] font-medium" htmlFor="password">Password</label>
@@ -259,6 +157,117 @@ const RegistrationForm = ({ loginType, onClose }) => {
                     value={formData.password}
                     onChange={handleChange}
                   />
+                  {errors.password && <span className="text-red-500">{errors.password}</span>}
+                </div>
+                <div className="flex justify-center items-center mb-4">
+                  <button
+                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
+                    type="button"
+                    onClick={() => setCurrentStep(2)}
+                  >
+                    Next
+                  </button>
+                </div>
+              </form>
+            )}
+            {currentStep === 2 && (
+              <form>
+                <div className="mb-4">
+                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.street">Street</label>
+                  <input
+                    type="text"
+                    id="businessAddress.street"
+                    name="businessAddress.street"
+                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
+                    value={formData.businessAddress.street}
+                    onChange={handleChange}
+                  />
+                  {errors.street && <span className="text-red-500">{errors.street}</span>}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.district">District</label>
+                  <input
+                    type="text"
+                    id="businessAddress.district"
+                    name="businessAddress.district"
+                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
+                    value={formData.businessAddress.district}
+                    onChange={handleChange}
+                  />
+                  {errors.district && <span className="text-red-500">{errors.district}</span>}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.city">City</label>
+                  <input
+                    type="text"
+                    id="businessAddress.city"
+                    name="businessAddress.city"
+                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
+                    value={formData.businessAddress.city}
+                    onChange={handleChange}
+                  />
+                  {errors.city && <span className="text-red-500">{errors.city}</span>}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.state">State</label>
+                  <input
+                    type="text"
+                    id="businessAddress.state"
+                    name="businessAddress.state"
+                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
+                    value={formData.businessAddress.state}
+                    onChange={handleChange}
+                  />
+                  {errors.state && <span className="text-red-500">{errors.state}</span>}
+                </div>
+                <div className="flex justify-center items-center mb-4">
+                  <button
+                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
+                    type="button"
+                    onClick={() => setCurrentStep(3)}
+                  >
+                    Next
+                  </button>
+                </div>
+              </form>
+            )}
+            {currentStep === 3 && (
+              <form onSubmit={handleFormSubmit}>
+                <div className="mb-4">
+                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.zipCode">Zip Code</label>
+                  <input
+                    type="text"
+                    id="businessAddress.zipCode"
+                    name="businessAddress.zipCode"
+                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
+                    value={formData.businessAddress.zipCode}
+                    onChange={handleChange}
+                  />
+                  {errors.zipCode && <span className="text-red-500">{errors.zipCode}</span>}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.country">Country</label>
+                  <input
+                    type="text"
+                    id="businessAddress.country"
+                    name="businessAddress.country"
+                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
+                    value={formData.businessAddress.country}
+                    onChange={handleChange}
+                  />
+                  {errors.country && <span className="text-red-500">{errors.country}</span>}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-[#4A686A] font-medium" htmlFor="tradeLicenseNumber">Trade License Number</label>
+                  <input
+                    type="text"
+                    id="tradeLicenseNumber"
+                    name="tradeLicenseNumber"
+                    className="mt-1 p-2 w-full border border-[#4A686A] rounded-md focus:outline-none focus:border-[#518689]"
+                    value={formData.tradeLicenseNumber}
+                    onChange={handleChange}
+                  />
+                  {errors.tradeLicenseNumber && <span className="text-red-500">{errors.tradeLicenseNumber}</span>}
                 </div>
                 <div className="flex justify-center items-center mb-4">
                   <button
@@ -284,6 +293,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                 value={formData.username}
                 onChange={handleChange}
               />
+              {errors.username && <span className="text-red-500">{errors.username}</span>}
             </div>
             <div className="mb-4">
               <label className="block text-[#4A686A] font-medium" htmlFor="email">Email address</label>
@@ -295,6 +305,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                 value={formData.email}
                 onChange={handleChange}
               />
+              {errors.email && <span className="text-red-500">{errors.email}</span>}
             </div>
             <div className="mb-4">
               <label className="block text-[#4A686A] font-medium" htmlFor="password">Password</label>
@@ -306,6 +317,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                 value={formData.password}
                 onChange={handleChange}
               />
+              {errors.password && <span className="text-red-500">{errors.password}</span>}
             </div>
             <div className="flex justify-center items-center mb-4">
               <button

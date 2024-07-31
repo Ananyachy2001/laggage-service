@@ -69,31 +69,8 @@ const NavbarComp = () => {
         <nav className={`flex-col md:flex md:flex-row md:space-x-4 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
           <div className="md:flex md:flex-row md:space-x-4">
             <a href="/" className="hover:text-[#FDB139]">Home</a>
-            <div 
-              className="relative group" 
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              <button onClick={() => handleDropdownToggle('pages')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
-                Pages <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'pages' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
-                {[
-
-                  "Dashboard",
-                ].map((page) => (
-                  <a
-                    href={`/${page.toLowerCase().replace(/ /g, '_')}`}
-                    key={page}
-                    className="block px-4 py-2 hover:bg-blue-800"
-                  >
-                    {page}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <a href="about.html" className="hover:text-[#FDB139]">About</a>
-            <a href="contact.html" className="hover:text-[#FDB139]">Contact</a>
+            <a href="/guideline" className="hover:text-[#FDB139]">Guideline</a>
+            <a href="/service" className="hover:text-[#FDB139]">Service</a>
           </div>
           <div className="md:flex md:flex-row md:space-x-4">
             <div 

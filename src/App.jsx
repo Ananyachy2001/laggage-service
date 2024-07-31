@@ -23,7 +23,6 @@ import AllUser from './pages/SuperAdmin/AllUser';
 import Reservations from './pages/User/Reservations';
 import AllLuggage from './pages/Luggage/AllLuggage';
 import LuggageDetails from './pages/Luggage/LuggageDetails';
-import AddLocation from './pages/Partner/AddLocation';
 import AllCustomer from './pages/Partner/AllCustomer';
 import PartnerAnalytics from './pages/Partner/PartnerAnalytics';
 import AdminAnalytics from './pages/SuperAdmin/AdminAnalytics';
@@ -32,7 +31,6 @@ import Home from './pages/Home/Home';
 import LuggageStoreDetails from './pages/SearchLugLocation/LuggageDetails/LuggageStoreDetails';
 import LuggageLocation from './pages/SearchLugLocation/LuggageLocation';
 import PartnerAvailabilityCalendar from './pages/Partner/PartnerAvailabilityCalender';
-import UserReminder from './pages/User/ClientBooking';
 import AdminLoginForm from './pages/SuperAdmin/AdminLoginForm';
 import PartnerProfile from './pages/Partner/PartnerProfile';
 import AdminProfile from './pages/SuperAdmin/AdminProfile';
@@ -41,6 +39,7 @@ import ClientProfile from './pages/User/ClientProfile';
 
 import ClientBooking from './pages/User/ClientBooking';
 import AllLocations from './pages/SuperAdmin/AllLocations';
+import CreateLocation from './pages/SuperAdmin/CreateLocation';
 import PartnerLocations from './pages/Partner/PartnerLocation';
 import AllBookings from './pages/SuperAdmin/AllBookings';
 import PartnerBookings from './pages/Partner/PartnerBookings';
@@ -59,6 +58,9 @@ import ClientRefundForm from './pages/User/ClientRefundFOrm';
 import ClientHome from './pages/User/ClientHome';
 import PaymentSuccess from './pages/SearchLugLocation/LuggageDetails/PaymentSuccess';
 import PaymentCancel from './pages/SearchLugLocation/LuggageDetails/PaymentCancel';
+import GuidelineCom from './pages/Static/GuidelineCom';
+import ServiceCom from './pages/Static/ServiceCom';
+import CreatePartnerLocation from './pages/Partner/AddLocation/CreatePartnerLocation';
 
 function App() {
 
@@ -76,6 +78,8 @@ function App() {
         {/* common  */}
         <Route exact path="/" element={<Home />} />
         <Route exact path="/dashboard" element={<Dashboard />} />
+        <Route exact path="/service" element={<ServiceCom />} />
+        <Route exact path="/guideline" element={<GuidelineCom />} />
         
         
         <Route path="/logout" element={<Logout />} />
@@ -94,11 +98,12 @@ function App() {
         <Route exact path="/superadmin/partners/:id" element={<PartnerDetails />} />
         <Route exact path="/superadmin/clients/:id" element={<ClientDetails />} />
         <Route exact path="/superadmin/locations" element={<AllLocations/>} />
+        <Route exact path="/superadmin/create-location" element={<CreateLocation/>} />
         <Route exact path="/superadmin/bookings" element={<AllBookings/>} />
         <Route exact path="/superadmin/analytics" element={<AdminAnalytics/>} />
 
         {/* patner  */}
-        <Route exact path="/partner/addlocation" element={<AddLocation/>} />
+        <Route exact path="/partner/create-location" element={<CreatePartnerLocation/>} />
         <Route exact path="/partner/profile" element={<PartnerProfile />} />
         <Route exact path="/partner/allcustomers" element={<AllCustomer/>} />
         <Route exact path="/partner/analytics" element={<PartnerAnalytics/>} />

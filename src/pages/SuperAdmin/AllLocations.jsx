@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../config';
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
-import CreateLocation from './CreateLocation';
-import EditLocation from './EditLocation';
 
 const AllLocations = () => {
     const [locations, setLocations] = useState([]);
@@ -15,9 +14,10 @@ const AllLocations = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [locationsPerPage] = useState(3);
-    const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchLocations = async () => {
@@ -59,11 +59,6 @@ const AllLocations = () => {
         setLocations(locations.filter(location => location._id !== id));
     };
 
-    const addLocation = (newLocation) => {
-        setLocations([...locations, { ...newLocation, _id: locations.length + 1 }]);
-        setIsCreating(false);
-    };
-
     const updateLocation = (updatedLocation) => {
         setLocations(locations.map(location => location._id === updatedLocation._id ? updatedLocation : location));
         setIsEditing(false);
@@ -87,7 +82,7 @@ const AllLocations = () => {
                         {/* Create Location Button */}
                         <div className="mb-4">
                             <button
-                                onClick={() => setIsCreating(true)}
+                                onClick={() => navigate('/superadmin/create-location')}
                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
                             >
                                 Create Location
@@ -181,8 +176,6 @@ const AllLocations = () => {
                     </div>
                 </main>
             </div>
-            {isCreating && <CreateLocation addLocation={addLocation} setIsCreating={setIsCreating} />}
-            {isEditing && <EditLocation currentLocation={currentLocation} updateLocation={updateLocation} setIsEditing={setIsEditing} />}
         </div>
     );
 };
