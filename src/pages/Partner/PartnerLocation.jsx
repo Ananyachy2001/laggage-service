@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; 
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 import PartnerSidebar from '../../partials/PartnerSidebar';
 import PartnerHeader from '../../partials/PartnerHeader';
@@ -18,35 +18,54 @@ const PartnerLocations = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
 
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchLocations = async () => {
-            setLoading(true);
-            setError(null);
+        fetchLocations();
+    }, []);
+
+    const fetchLocations = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/my-locations`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setLocations(response.data);
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                localStorage.removeItem('token');
+                navigate('/');
+            } else {
+                setError('Unable to fetch locations. Please try again later.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteLocation = async (id) => {
+        if (window.confirm("Are you sure you want to delete this location?")) {
             try {
-                const token = localStorage.getItem('token'); // Retrieve token from local storage
-                const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/my-locations`, {
+                const token = localStorage.getItem('token');
+                const response = await axios.delete(`${config.API_BASE_URL}/api/v1/locations/${id}`, {
                     headers: {
-                        Authorization: `Bearer ${token}` // Include token in the request headers
+                        Authorization: `Bearer ${token}`
                     }
                 });
-                setLocations(response.data); // Assuming the API returns an array of locations
-            } catch (error) {
-                if (error.response && error.response.status === 401) {
-                    // Unauthorized, clear the token and redirect to login
-                    localStorage.removeItem('token');
-                    navigate('/');
+                if (response.status === 200) {
+                    fetchLocations();
                 } else {
-                    setError('Unable to fetch locations. Please try again later.');
+                    alert('Failed to delete location.');
                 }
-            } finally {
-                setLoading(false);
+            } catch (error) {
+                alert('An error occurred. Please try again.');
             }
-        };
-
-        fetchLocations();
-    }, [navigate]);
+        }
+    };
 
     const filteredLocations = locations.filter(location => location.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -55,10 +74,6 @@ const PartnerLocations = () => {
     const currentLocations = filteredLocations.slice(indexOfFirstLocation, indexOfLastLocation);
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
-
-    const softDeleteLocation = (id) => {
-        setLocations(locations.filter(location => location._id !== id));
-    };
 
     const updateLocation = (updatedLocation) => {
         setLocations(locations.map(location => location._id === updatedLocation._id ? updatedLocation : location));
@@ -83,7 +98,7 @@ const PartnerLocations = () => {
                         {/* Create Location Button */}
                         <div className="mb-4">
                             <button
-                                onClick={() => navigate('/partner/create-location')} // Navigate to the create location route
+                                onClick={() => navigate('/partner/create-location')}
                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
                             >
                                 Create Location
@@ -143,7 +158,7 @@ const PartnerLocations = () => {
                                                         Edit
                                                     </button>
                                                     <button
-                                                        onClick={() => softDeleteLocation(location._id)}
+                                                        onClick={() => deleteLocation(location._id)}
                                                         className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
                                                     >
                                                         Delete

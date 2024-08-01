@@ -5,9 +5,11 @@ import config from '../../config';
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
+import EditLocationModal from './EditLocationModal';
 
 const AllLocations = () => {
     const [locations, setLocations] = useState([]);
+    const [partners, setPartners] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -16,38 +18,94 @@ const AllLocations = () => {
     const [locationsPerPage] = useState(3);
     const [isEditing, setIsEditing] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
+    const [showDeleted, setShowDeleted] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchLocations = async () => {
-            setLoading(true);
+        fetchLocations();
+        fetchPartners();
+    }, []);
+
+    const fetchLocations = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/all`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (Array.isArray(response.data)) {
+                setLocations(response.data.filter(location => !location.isDeleted));
+            } else {
+                setLocations([]);
+            }
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            if (error.response && error.response.status === 401) {
+                window.location.href = '/logout';
+            } else {
+                setError('Failed to fetch locations');
+            }
+        }
+    };
+
+    const fetchPartners = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${config.API_BASE_URL}/api/v1/users/all-partners`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.data.status === 'success') {
+                setPartners(response.data.data);
+            } else {
+                setError('Failed to fetch partner data');
+            }
+        } catch (err) {
+            if (err.response && err.response.status === 401) {
+                navigate('/logout');
+            } else {
+                setError('Failed to fetch partner data');
+            }
+        }
+    };
+
+    const deleteLocation = async (id) => {
+        if (window.confirm("Are you sure you want to delete this location?")) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/all`, {
+                const response = await axios.delete(`${config.API_BASE_URL}/api/v1/locations/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                if (Array.isArray(response.data)) {
-                    setLocations(response.data);
+                if (response.status === 200) {
+                    fetchLocations();
                 } else {
-                    setLocations([]);
+                    alert('Failed to delete location.');
                 }
-                setLoading(false);
             } catch (error) {
-                setLoading(false);
-                if (error.response && error.response.status === 401) {
-                    window.location.href = '/unauthorized';
-                } else {
-                    setError('Failed to fetch locations');
-                }
+                alert('An error occurred. Please try again.');
             }
-        };
-        fetchLocations();
-    }, []);
+        }
+    };
 
-    const filteredLocations = locations.filter(location => location.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const toggleShowDeleted = () => {
+        setShowDeleted(!showDeleted);
+    };
+
+    const getPartnerDetails = (partnerId) => {
+        const partner = partners.find(p => p._id === partnerId);
+        return partner ? { username: partner.user.username, tradeLicenseNumber: partner.tradeLicenseNumber } : { username: '', tradeLicenseNumber: '' };
+    };
+
+    const filteredLocations = locations.filter(location =>
+        location.name.toLowerCase().includes(searchQuery.toLowerCase()) && (showDeleted || !location.isDeleted)
+    );
 
     const indexOfLastLocation = currentPage * locationsPerPage;
     const indexOfFirstLocation = indexOfLastLocation - locationsPerPage;
@@ -55,13 +113,14 @@ const AllLocations = () => {
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-    const softDeleteLocation = (id) => {
-        setLocations(locations.filter(location => location._id !== id));
-    };
-
     const updateLocation = (updatedLocation) => {
         setLocations(locations.map(location => location._id === updatedLocation._id ? updatedLocation : location));
         setIsEditing(false);
+    };
+
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
     return (
@@ -79,13 +138,19 @@ const AllLocations = () => {
                         {/* Welcome banner */}
                         <WelcomeBanner />
 
-                        {/* Create Location Button */}
-                        <div className="mb-4">
+                        {/* Buttons */}
+                        <div className="mb-4 flex justify-between">
                             <button
                                 onClick={() => navigate('/superadmin/create-location')}
                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
                             >
                                 Create Location
+                            </button>
+                            <button
+                                onClick={toggleShowDeleted}
+                                className="px-4 py-2 bg-gray-500 text-white rounded-lg"
+                            >
+                                {showDeleted ? 'Hide Deleted' : 'Show Deleted'}
                             </button>
                         </div>
 
@@ -110,50 +175,55 @@ const AllLocations = () => {
                                 <table className="min-w-full">
                                     <thead className="bg-[#4A686A] text-white">
                                         <tr>
-                                            <th className="w-1/12 py-3 px-6 text-left">ID</th>
-                                            <th className="w-1/12 py-3 px-6 text-left">Partner ID</th>
                                             <th className="w-2/12 py-3 px-6 text-left">Name</th>
-                                            <th className="w-3/12 py-3 px-6 text-left">Description</th>
-                                            <th className="w-1/12 py-3 px-6 text-left">Price</th>
-                                            <th className="w-1/12 py-3 px-6 text-left">Discount</th>
-                                            <th className="w-2/12 py-3 px-6 text-left">Start Date</th>
-                                            <th className="w-2/12 py-3 px-6 text-left">End Date</th>
-                                            <th className="w-1/12 py-3 px-6 text-left">Location Type</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Available From</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Available To</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Open Time</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Close Time</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Price</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Discount</th>
                                             <th className="w-2/12 py-3 px-6 text-left">Actions</th>
                                         </tr>
                                     </thead>
 
                                     <tbody className="text-gray-800">
-                                        {currentLocations.map(location => (
-                                            <tr key={location._id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                                <td className="w-1/12 py-3 px-6 border">{location._id}</td>
-                                                <td className="w-1/12 py-3 px-6 border">{location.partner}</td>
-                                                <td className="w-2/12 py-3 px-6 border">{location.name}</td>
-                                                <td className="w-3/12 py-3 px-6 border">{location.description}</td>
-                                                <td className="w-1/12 py-3 px-6 border">{location.priceCurrency} ${location.regularPrice}</td>
-                                                <td className="w-1/12 py-3 px-6 border">{location.discountPercentage}%</td>
-                                                <td className="w-2/12 py-3 px-6 border">{new Date(location.availableFrom).toLocaleDateString()}</td>
-                                                <td className="w-2/12 py-3 px-6 border">{new Date(location.availableTo).toLocaleDateString()}</td>
-                                                <td className="w-1/12 py-3 px-6 border">{location.locationType}</td>
-                                                <td className="w-2/12 py-3 px-6 border text-center">
-                                                    <button
-                                                        onClick={() => {
-                                                            setIsEditing(true);
-                                                            setCurrentLocation(location);
-                                                        }}
-                                                        className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        onClick={() => softDeleteLocation(location._id)}
-                                                        className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {currentLocations.map(location => {
+                                            const { username, tradeLicenseNumber } = getPartnerDetails(location.partner);
+                                            return (
+                                                <tr key={location._id} className="bg-white hover:bg-gray-200 transition duration-150">
+                                                    <td className="w-2/12 py-3 px-6 border">
+                                                        {location.name}
+                                                        <br />
+                                                        <span className="text-sm text-gray-500">
+                                                            {username} - {tradeLicenseNumber}
+                                                        </span>
+                                                    </td>
+                                                    <td className="w-2/12 py-3 px-6 border">{formatDate(location.availableFrom)}</td>
+                                                    <td className="w-2/12 py-3 px-6 border">{formatDate(location.availableTo)}</td>
+                                                    <td className="w-2/12 py-3 px-6 border">{location.openTime}</td>
+                                                    <td className="w-2/12 py-3 px-6 border">{location.closeTime}</td>
+                                                    <td className="w-2/12 py-3 px-6 border">{location.priceCurrency} ${location.regularPrice}</td>
+                                                    <td className="w-2/12 py-3 px-6 border">{location.discountPercentage}%</td>
+                                                    <td className="w-2/12 py-3 px-6 border text-center">
+                                                        <button
+                                                            onClick={() => {
+                                                                setIsEditing(true);
+                                                                setCurrentLocation(location);
+                                                            }}
+                                                            className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => deleteLocation(location._id)}
+                                                            className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             )}
@@ -175,6 +245,13 @@ const AllLocations = () => {
                         </div>
                     </div>
                 </main>
+                {isEditing && (
+                    <EditLocationModal
+                        location={currentLocation}
+                        onClose={() => setIsEditing(false)}
+                        onUpdate={updateLocation}
+                    />
+                )}
             </div>
         </div>
     );

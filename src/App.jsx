@@ -61,6 +61,7 @@ import PaymentCancel from './pages/SearchLugLocation/LuggageDetails/PaymentCance
 import GuidelineCom from './pages/Static/GuidelineCom';
 import ServiceCom from './pages/Static/ServiceCom';
 import CreatePartnerLocation from './pages/Partner/AddLocation/CreatePartnerLocation';
+import CreateAdminLocation from './pages/SuperAdmin/AddLocation/CreateAdminLocation';
 
 function App() {
 
@@ -98,11 +99,11 @@ function App() {
         <Route exact path="/superadmin/partners/:id" element={<PartnerDetails />} />
         <Route exact path="/superadmin/clients/:id" element={<ClientDetails />} />
         <Route exact path="/superadmin/locations" element={<AllLocations/>} />
-        <Route exact path="/superadmin/create-location" element={<CreateLocation/>} />
+        <Route exact path="/superadmin/create-location" element={<CreateAdminLocation/>} />
         <Route exact path="/superadmin/bookings" element={<AllBookings/>} />
         <Route exact path="/superadmin/analytics" element={<AdminAnalytics/>} />
 
-        {/* patner  */}
+        {/* partner  */}
         <Route exact path="/partner/create-location" element={<CreatePartnerLocation/>} />
         <Route exact path="/partner/profile" element={<PartnerProfile />} />
         <Route exact path="/partner/allcustomers" element={<AllCustomer/>} />

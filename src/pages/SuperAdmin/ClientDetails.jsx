@@ -26,7 +26,7 @@ const ClientDetails = () => {
             setLoading(true);
             try {
                 console.log('Fetching client details...');
-                const response = await axios.get(`${config.API_BASE_URL}/api/v1/profile/client/${id}`, {
+                const response = await axios.get(`${config.API_BASE_URL}/api/v1/users/client/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

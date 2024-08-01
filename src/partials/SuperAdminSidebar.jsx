@@ -224,7 +224,7 @@ function SuperAdminSidebar({ sidebarOpen, setSidebarOpen }) {
                               </span>
                             </NavLink>
                           </li>
-                          <li className="mb-1 last:mb-0">
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/superadmin/user"
@@ -236,7 +236,7 @@ function SuperAdminSidebar({ sidebarOpen, setSidebarOpen }) {
                                 All User
                               </span>
                             </NavLink>
-                          </li>
+                          </li> */}
 
 
                         </ul>
@@ -282,7 +282,7 @@ function SuperAdminSidebar({ sidebarOpen, setSidebarOpen }) {
                               </span>
                             </NavLink>
                           </li>
-                          <li className="mb-1 last:mb-0">
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/superadmin/login"
@@ -294,7 +294,7 @@ function SuperAdminSidebar({ sidebarOpen, setSidebarOpen }) {
                                 SuperAdminLogin
                               </span>
                             </NavLink>
-                          </li>
+                          </li> */}
 
                           {/* <li className="mb-1 last:mb-0">
                             <NavLink
@@ -309,7 +309,7 @@ function SuperAdminSidebar({ sidebarOpen, setSidebarOpen }) {
                               </span>
                             </NavLink>
                           </li> */}
-                          <li className="mb-1 last:mb-0">
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/allluggage"
@@ -321,7 +321,7 @@ function SuperAdminSidebar({ sidebarOpen, setSidebarOpen }) {
                                 View All Luggage
                               </span>
                             </NavLink>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </React.Fragment>

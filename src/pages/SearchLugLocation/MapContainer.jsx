@@ -1,27 +1,16 @@
 import React, { useEffect } from 'react';
+import useGoogleMapsApi from '../Partner/AddLocation/useGoogleMapsApi';
 import config from '../../config';
 
 const MapContainer = ({ locations, setVisibleLocations, center }) => {
     const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
+    const isLoaded = useGoogleMapsApi(GOOGLE_MAPS_API_KEY);
 
     useEffect(() => {
-        if (!window.google || !window.google.maps) {
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap&libraries=places&v=weekly`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-
-            window.initMap = initMap;
-
-            return () => {
-                document.head.removeChild(script);
-                delete window.initMap;
-            };
-        } else {
+        if (isLoaded) {
             initMap();
         }
-    }, [GOOGLE_MAPS_API_KEY, locations, center]);
+    }, [isLoaded, locations, center]);
 
     const initMap = () => {
         const map = new google.maps.Map(document.getElementById('map'), {

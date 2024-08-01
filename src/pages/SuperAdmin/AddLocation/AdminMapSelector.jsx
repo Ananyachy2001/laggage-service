@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce';
 import useGoogleMapsApi from './useGoogleMapsApi'; // Import the custom hook
 import config from '../../../config';
 
-const MapSelector = ({ onSelect }) => {
+const AdminMapSelector = ({ onSelect }) => {
     const isLoaded = useGoogleMapsApi(config.GOOGLE_API_KEY);
     const [selectedPosition, setSelectedPosition] = useState(null);
     const [autocomplete, setAutocomplete] = useState(null);
@@ -51,7 +51,13 @@ const MapSelector = ({ onSelect }) => {
                     }
                 });
 
-                onSelect({ position, addressDetails });
+                const additionalDetails = {
+                    name: response.data.results[0].address_components[0]?.long_name || '',
+                    formattedAddress: response.data.results[0].formatted_address,
+                    placeId: response.data.results[0].place_id,
+                };
+
+                onSelect({ position, addressDetails, additionalDetails });
             } else {
                 console.log('Failed to fetch address details:', response.data.status);
             }
@@ -119,4 +125,4 @@ const MapSelector = ({ onSelect }) => {
     );
 };
 
-export default MapSelector;
+export default AdminMapSelector;
