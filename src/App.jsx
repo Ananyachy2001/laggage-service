@@ -51,7 +51,6 @@ import ClientWallet from './pages/User/ClientWallet';
 import ClientBookingHistory from './pages/User/ClientBookingHistory';
 import PartnerDetails from './pages/SuperAdmin/PartnerDetails';
 import ComingSoon from './pages/CominSoon';
-import PartnerDashboard from './pages/Partner/PartnerDashboard';
 import ClientDetails from './pages/SuperAdmin/ClientDetails';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 import ClientRefundForm from './pages/User/ClientRefundFOrm';
@@ -107,11 +106,12 @@ function App() {
         <Route exact path="/partner/create-location" element={<CreatePartnerLocation/>} />
         <Route exact path="/partner/profile" element={<PartnerProfile />} />
         <Route exact path="/partner/allcustomers" element={<AllCustomer/>} />
-        <Route exact path="/partner/analytics" element={<PartnerAnalytics/>} />
+        {/* <Route exact path="/partner/analytics" element={<PartnerAnalytics/>} /> */}
+        <Route exact path="/partner/home" element={<PartnerAnalytics/>} />
         <Route exact path="/partner_availability_calender" element={<PartnerAvailabilityCalendar />} />
         <Route exact path="/partner/locations" element={<PartnerLocations/>} />
         <Route exact path="/partner/bookings" element={<PartnerBookings/>} />
-        <Route exact path="/partner/dashboard" element={<PartnerDashboard />} />
+
 
 
         {/* clients  */}

@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
-import StripePaymentForm from './StripePaymentForm';
-
-const stripePromise = loadStripe('pk_live_51PbxMUBwcWogP8JA1YhMcYc9tiSrLV04XsjkS5dEQZsKhdst7Y6KaVK8SmsvK4rVAXouklr8UTQl3YlYeqtNu98T00PVhgg5jk');
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import config from '../../../config';
 
 const BookingForm = ({
+  locationid,
   handleSubmit,
   luggageQuantity,
   setLuggageQuantity,
@@ -25,17 +24,29 @@ const BookingForm = ({
   servicePrices,
   regularprice,
   clientDetails,
-  setClientDetails
+  setClientDetails,
+  clientLoggedIn
 }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [promoApplied, setPromoApplied] = useState(false);
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     setTotalPrice(0); // Initialize total price to 0
-  }, []);
+
+    if (clientLoggedIn) {
+      // Fetch client profile data
+      axios.get(`${config.API_BASE_URL}/api/v1/client/profile`, { withCredentials: true })
+        .then(response => {
+          setClientDetails(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching client profile:', error);
+        });
+    }
+  }, [clientLoggedIn, setClientDetails]);
 
   const handleApplyPromo = () => {
     if (promoCode === 'DISCOUNT10') {
@@ -104,24 +115,47 @@ const BookingForm = ({
       newErrors.email = 'Email is invalid';
     }
     if (!clientDetails.phone) newErrors.phone = 'Phone number is required';
-    if (!clientDetails.address) newErrors.address = 'Address is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      setShowModal(false); // Close the modal on successful submit
-      setShowPaymentModal(true); // Open payment modal
-    }
-  };
+      const bookingData = {
+        location: locationid,
+        startDate: checkinTime,
+        endDate: checkoutTime,
+        startTime: new Date(checkinTime).toLocaleTimeString('en-GB'),
+        endTime: new Date(checkoutTime).toLocaleTimeString('en-GB'),
+        payment: {
+          amount: totalPrice,
+          method: 'stripe',
+          currency: 'aud'
+        },
+        specialRequests: clientDetails.specialRequests,
+        discount: discount,
+        notes: clientDetails.notes
+      };
 
-  const handlePaymentSuccess = (paymentMethodId) => {
-    // Process payment and booking here
-    console.log('Payment successful with method ID:', paymentMethodId);
-    handleSubmit(clientDetails);
+      try {
+        if (clientLoggedIn) {
+          bookingData.client = clientDetails._id;
+          await axios.post(`${config.API_BASE_URL}/api/v1/bookings`, bookingData);
+        } else {
+          bookingData.guest = {
+            name: clientDetails.name,
+            email: clientDetails.email,
+            phone: clientDetails.phone
+          };
+          await axios.post(`${config.API_BASE_URL}/api/v1/bookings/guest`, bookingData);
+        }
+        navigate('/client/bookingconfirmation', { state: { bookingDetails: bookingData } });
+      } catch (error) {
+        setErrorMessage('An error occurred while processing your booking. Please try again.');
+      }
+    }
   };
 
   const openUserDetailsModal = () => {
@@ -136,7 +170,7 @@ const BookingForm = ({
     <div className="bg-gray-100 shadow-md rounded-lg p-6">
       <h5 className="text-xl font-bold mb-4">Your Booking</h5>
       {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
-      <form id="payment-form" onSubmit={handleFormSubmit}>
+      <form id="booking-form" onSubmit={handleFormSubmit}>
         <div className="flex justify-between mb-4">
           <label className="w-1/2 pr-2">
             Drop off:
@@ -285,17 +319,26 @@ const BookingForm = ({
               {errors.phone && <p className="text-red-500">{errors.phone}</p>}
             </div>
             <div>
-              <label htmlFor="clientAddress" className="block font-semibold mb-1">Address:</label>
+              <label htmlFor="specialRequests" className="block font-semibold mb-1">Special Requests:</label>
               <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                id="clientAddress"
-                name="address"
-                value={clientDetails.address}
+                id="specialRequests"
+                name="specialRequests"
+                value={clientDetails.specialRequests}
                 onChange={handleInputChange}
-                required
               />
-              {errors.address && <p className="text-red-500">{errors.address}</p>}
+            </div>
+            <div>
+              <label htmlFor="notes" className="block font-semibold mb-1">Notes:</label>
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                id="notes"
+                name="notes"
+                value={clientDetails.notes}
+                onChange={handleInputChange}
+              />
             </div>
             <div>
               <label htmlFor="luggagePhotos" className="block font-semibold mb-1">Luggage Photos (optional):</label>
@@ -312,21 +355,6 @@ const BookingForm = ({
               Submit
             </Button>
           </form>
-        </Modal.Body>
-      </Modal>
-
-      <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} className="modal-dialog-centered">
-        <Modal.Header closeButton className="bg-[#1A73A7] text-white">
-          <Modal.Title>Payment Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="bg-gray-100 p-6 rounded-lg">
-          <Elements stripe={stripePromise}>
-            <StripePaymentForm 
-              handlePaymentSuccess={handlePaymentSuccess}
-              totalPrice={totalPrice}
-              clientDetails={clientDetails}
-            />
-          </Elements>
         </Modal.Body>
       </Modal>
     </div>

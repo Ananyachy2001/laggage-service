@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import CanvasJSReact from '@canvasjs/react-charts';
-import PartnerHeader from '../../partials/PartnerHeader';
-import PartnerSidebar from '../../partials/PartnerSidebar';
+import PartnerNavbarComp from './PartnerNavbarComp';
 import config from '../../config';
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const HostAnalytics = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -184,30 +182,27 @@ const HostAnalytics = () => {
     };
 
     return (
-        <div className="bg-gray-100 min-h-screen flex">
-            <PartnerSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            <div className="flex-1 flex flex-col">
-                <PartnerHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-                <main className="flex-grow ">
-                    <div className="bg-white p-8 rounded-lg shadow-lg">
-                        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Host Analytics</h1>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                            <div className="w-full">
-                                <CanvasJSChart options={options} />
-                            </div>
-                            <div className="w-full">
-                                <CanvasJSChart options={dailyOptions} />
-                            </div>
-                            <div className="w-full">
-                                <CanvasJSChart options={monthlyOptions} />
-                            </div>
-                            <div className="w-full">
-                                <CanvasJSChart options={yearlyOptions} />
-                            </div>
+        <div className="bg-gray-100 min-h-screen flex flex-col">
+            <PartnerNavbarComp />
+            <main className="flex-grow">
+                <div className="bg-white p-8 mt-28 rounded-lg shadow-lg">
+                    <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Partner Analytics</h1>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                        <div className="w-full">
+                            <CanvasJSChart options={options} />
+                        </div>
+                        <div className="w-full">
+                            <CanvasJSChart options={dailyOptions} />
+                        </div>
+                        <div className="w-full">
+                            <CanvasJSChart options={monthlyOptions} />
+                        </div>
+                        <div className="w-full">
+                            <CanvasJSChart options={yearlyOptions} />
                         </div>
                     </div>
-                </main>
-            </div>
+                </div>
+            </main>
         </div>
     );
 };

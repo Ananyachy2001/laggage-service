@@ -2,37 +2,31 @@ import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import config from '../../config';
 import RegistrationForm from './RegistrationForm';
+
+const schema = yup.object().shape({
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+});
 
 const LoginForm = ({ loginType, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const handleFormSubmit = async (data) => {
     const endpoint = loginType === 'Partner'
       ? `${config.API_BASE_URL}/api/v1/users/login/partner`
       : `${config.API_BASE_URL}/api/v1/users/login/client`;
-
-    const body = {
-      email: formData.email,
-      password: formData.password,
-    };
 
     try {
       const response = await fetch(endpoint, {
@@ -40,7 +34,7 @@ const LoginForm = ({ loginType, onClose }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(data),
       });
       const result = await response.json();
       if (response.ok) {
@@ -52,22 +46,15 @@ const LoginForm = ({ loginType, onClose }) => {
           navigate('/client/home'); // Redirect to client profile
         }
       } else {
-        console.error('Error:', result);
-        // Handle error
+        setErrorMessage(result.message || 'Login failed');
       }
     } catch (error) {
-      console.error('Error:', error);
-      // Handle error
+      setErrorMessage('An error occurred. Please try again.');
     }
   };
 
-  const handleForgotPasswordSubmit = async (e) => {
-    e.preventDefault();
+  const handleForgotPasswordSubmit = async (data) => {
     const endpoint = `${config.API_BASE_URL}/api/v1/users/reset-password`;
-
-    const body = {
-      email: formData.email,
-    };
 
     try {
       const response = await fetch(endpoint, {
@@ -75,19 +62,17 @@ const LoginForm = ({ loginType, onClose }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(data),
       });
       const result = await response.json();
       if (response.ok) {
         console.log('Success:', result);
         navigate('/'); // Redirect to home page
       } else {
-        console.error('Error:', result);
-        // Handle error
+        setErrorMessage(result.message || 'Password reset failed');
       }
     } catch (error) {
-      console.error('Error:', error);
-      // Handle error
+      setErrorMessage('An error occurred. Please try again.');
     }
   };
 
@@ -117,18 +102,16 @@ const LoginForm = ({ loginType, onClose }) => {
         {showForgotPassword ? (
           <>
             <h2 className="text-center mb-4 text-3xl font-bold text-blue-700">Forgot Password</h2>
-            <form onSubmit={handleForgotPasswordSubmit}>
+            <form onSubmit={handleSubmit(handleForgotPasswordSubmit)}>
               <div className="mb-4">
                 <label className="block text-gray-700" htmlFor="email">Email address</label>
                 <input
                   type="email"
                   id="email"
-                  name="email"
+                  {...register('email')}
                   className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
                 />
+                {errors.email && <p className="text-red-600">{errors.email.message}</p>}
               </div>
               <div className="mb-4">
                 <button className="w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105" type="submit">
@@ -136,6 +119,7 @@ const LoginForm = ({ loginType, onClose }) => {
                 </button>
               </div>
             </form>
+            {errorMessage && <p className="text-red-600 text-center">{errorMessage}</p>}
             <div className="text-center">
               <button
                 className="text-blue-600 hover:underline"
@@ -149,30 +133,26 @@ const LoginForm = ({ loginType, onClose }) => {
           isLogin ? (
             <>
               <h2 className="text-center mb-4 text-3xl font-bold text-[#4A686A]">{`Login as ${loginType}`}</h2>
-              <form onSubmit={handleFormSubmit}>
+              <form onSubmit={handleSubmit(handleFormSubmit)}>
                 <div className="mb-4">
                   <label className="block text-gray-700" htmlFor="email">Email address</label>
                   <input
                     type="email"
                     id="email"
-                    name="email"
+                    {...register('email')}
                     className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#518689]"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
                   />
+                  {errors.email && <p className="text-red-600">{errors.email.message}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700" htmlFor="password">Password</label>
                   <input
                     type="password"
                     id="password"
-                    name="password"
+                    {...register('password')}
                     className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#518689]"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
                   />
+                  {errors.password && <p className="text-red-600">{errors.password.message}</p>}
                 </div>
                 <div className="mb-4">
                   <button className="w-full bg-[#518689] hover:bg-[#4A686A] text-white py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105" type="submit">
@@ -180,6 +160,7 @@ const LoginForm = ({ loginType, onClose }) => {
                   </button>
                 </div>
               </form>
+              {errorMessage && <p className="text-red-600 text-center">{errorMessage}</p>}
               <div className="text-center">
                 <button
                   className="text-[#4A686A] hover:underline me-4"

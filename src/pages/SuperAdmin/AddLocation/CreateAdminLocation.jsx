@@ -9,24 +9,18 @@ const CreateAdminLocation = () => {
     const [location, setLocation] = useState({});
     const navigate = useNavigate();
 
-    const handleSelect = async ({ position, addressDetails, additionalDetails }) => {
+    const handleSelect = async ({ position, addressDetails }) => {
         try {
-            const timezoneResponse = await axios.get(`https://maps.googleapis.com/maps/api/timezone/json?location=${position.lat},${position.lng}&timestamp=${Math.floor(Date.now() / 1000)}&key=${config.GOOGLE_API_KEY}`);
-            const timezone = timezoneResponse.data.timeZoneId || "Asia/Dhaka";
-            setLocation({
-                coordinates: position,
-                address: addressDetails,
-                additionalDetails: additionalDetails,
-                timezone: timezone
-            });
+            const timezoneResponse = await axios.get(
+                `https://maps.googleapis.com/maps/api/timezone/json?location=${position.lat},${position.lng}&timestamp=${Math.floor(
+                    Date.now() / 1000
+                )}&key=${config.GOOGLE_API_KEY}`
+            );
+            const timezone = timezoneResponse.data.timeZoneId || 'Asia/Dhaka';
+            setLocation({ coordinates: position, addressDetails, timezone });
         } catch (error) {
             console.error('Error fetching timezone:', error);
-            setLocation({
-                coordinates: position,
-                address: addressDetails,
-                additionalDetails: additionalDetails,
-                timezone: "Asia/Dhaka"
-            });
+            setLocation({ coordinates: position, addressDetails, timezone: 'Asia/Dhaka' });
         }
     };
 
@@ -35,8 +29,8 @@ const CreateAdminLocation = () => {
             name: values.name,
             description: values.description,
             coordinates: {
-                type: "Point",
-                coordinates: [location.coordinates.lng, location.coordinates.lat]
+                type: 'Point',
+                coordinates: [location.coordinates.lng, location.coordinates.lat],
             },
             address: {
                 street: values.street,
@@ -44,18 +38,25 @@ const CreateAdminLocation = () => {
                 city: values.city,
                 state: values.state,
                 zipCode: values.zipCode,
-                country: values.country
+                country: values.country,
             },
-            regularPrice: values.regularPrice,
-            discountPercentage: values.discountPercentage,
             availableFrom: values.availableFrom,
             availableTo: values.availableTo,
-            notes: values.notes,
-            pictures: values.pictures.split(',').map(item => item.trim()),
+            regularPrice: values.regularPrice,
+            discountPercentage: values.discountPercentage,
+            priceCurrency: values.priceCurrency,
+            url: values.url,
             openTime: values.openTime,
             closeTime: values.closeTime,
+            closedDays: values.closedDays.split(',').map((item) => item.trim()),
+            specialClosedDays: values.specialClosedDays.split(',').map((item) => item.trim()),
             locationType: values.locationType,
-            timezone: location.timezone
+            pictures: values.pictures.split(',').map((item) => item.trim()),
+            timezone: location.timezone,
+            isDeleted: values.isDeleted,
+            isActive: values.isActive,
+            createdBy: values.createdBy,
+            notes: values.notes,
         };
 
         const token = localStorage.getItem('token');
@@ -65,8 +66,8 @@ const CreateAdminLocation = () => {
             const response = await axios.post(url, locationData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                },
             });
 
             if (response.status >= 200 && response.status < 300) {
@@ -84,8 +85,8 @@ const CreateAdminLocation = () => {
     return (
         <div className="container mx-auto px-4">
             <div className="flex justify-between items-center mb-4">
-                <button 
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" 
+                <button
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                     onClick={() => navigate(-1)}
                 >
                     Back

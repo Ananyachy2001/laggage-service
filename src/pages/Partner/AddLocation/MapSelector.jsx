@@ -88,11 +88,11 @@ const MapSelector = ({ onSelect }) => {
     };
 
     if (!isLoaded) {
-        return <div>Loading...</div>;
+        return <div className="flex items-center justify-center h-full">Loading...</div>;
     }
 
     return (
-        <div className="relative">
+        <div className="relative p-4 bg-white shadow-lg rounded-lg">
             <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
                 <div className="relative mb-4">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -101,7 +101,7 @@ const MapSelector = ({ onSelect }) => {
                     <input
                         type="text"
                         id="location"
-                        className="form-input p-2 pl-10 pr-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 w-full"
+                        className="form-input p-2 pl-10 pr-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full transition duration-300"
                         placeholder="Search location..."
                         ref={locationInputRef}
                     />
@@ -112,6 +112,7 @@ const MapSelector = ({ onSelect }) => {
                 center={selectedPosition || { lat: -33.856779, lng: 151.215256 }}
                 zoom={15}
                 onClick={handleMapClick}
+                className="rounded-lg overflow-hidden"
             >
                 {selectedPosition && <Marker position={selectedPosition} />}
             </GoogleMap>

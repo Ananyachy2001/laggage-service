@@ -20,15 +20,26 @@ const BookingConfirmation = () => {
         }
     }, []);
 
-    const clientDetails = location.state?.clientDetails || {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: '123 Main St, Anytown, USA'
+    const bookingDetails = location.state?.bookingDetails || {
+        location: 'Default Location',
+        startDate: '2024-02-29T00:00:00',
+        endDate: '2024-03-01T00:00:00',
+        startTime: '00:00',
+        endTime: '00:00',
+        payment: {
+            amount: 120.00,
+            method: 'stripe',
+            currency: 'aud'
+        },
+        specialRequests: 'None',
+        discount: 0,
+        notes: 'No notes',
+        guest: {
+            name: 'John Doe',
+            email: 'johndoe@example.com',
+            phone: '123-456-7890'
+        }
     };
-    const totalPrice = location.state?.totalPrice || 120.00;
-    const serviceOption = location.state?.serviceOption || 'Standard Service';
-    const luggageQuantity = location.state?.luggageQuantity || 2;
 
     const handleDownload = () => {
         setIsDownloading(true);
@@ -59,15 +70,17 @@ const BookingConfirmation = () => {
                         </div>
                         <h2 className="text-2xl font-semibold mb-6 text-center">Booking Confirmation</h2>
                         <div className="mb-4">
-                            <p className="mb-2"><strong>Booking #:</strong> 0000011</p>
-                            <p className="mb-2"><strong>Booking Date:</strong> 02-29-2024</p>
-                            <p className="mb-2"><strong>Name:</strong> {clientDetails.name}</p>
-                            <p className="mb-2"><strong> Email:</strong> {clientDetails.email}</p>
-                            <p className="mb-2"><strong> Phone:</strong> {clientDetails.phone}</p>
-                            <p className="mb-2"><strong> Address:</strong> {clientDetails.address}</p>
-                            <p className="mb-2"><strong>Service:</strong> {serviceOption}</p>
-                            <p className="mb-2"><strong>Number of Bags:</strong> {luggageQuantity}</p>
-                            <p className="mb-2"><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
+                            <p className="mb-2"><strong>Location:</strong> {bookingDetails.location}</p>
+                            <p className="mb-2"><strong>Booking Date:</strong> {new Date(bookingDetails.startDate).toLocaleDateString()}</p>
+                            <p className="mb-2"><strong>Check-in Time:</strong> {bookingDetails.startTime}</p>
+                            <p className="mb-2"><strong>Check-out Time:</strong> {bookingDetails.endTime}</p>
+                            <p className="mb-2"><strong>Name:</strong> {bookingDetails.guest.name}</p>
+                            <p className="mb-2"><strong>Email:</strong> {bookingDetails.guest.email}</p>
+                            <p className="mb-2"><strong>Phone:</strong> {bookingDetails.guest.phone}</p>
+                            <p className="mb-2"><strong>Special Requests:</strong> {bookingDetails.specialRequests}</p>
+                            <p className="mb-2"><strong>Discount:</strong> ${bookingDetails.discount.toFixed(2)}</p>
+                            <p className="mb-2"><strong>Notes:</strong> {bookingDetails.notes}</p>
+                            <p className="mb-2"><strong>Total Price:</strong> ${bookingDetails.payment.amount.toFixed(2)}</p>
                         </div>
                         <div className="flex justify-center">
                             {!isDownloading && (

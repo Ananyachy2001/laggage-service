@@ -29,7 +29,6 @@ const UserDetailsModal = ({ showModal, setShowModal, clientDetails, setClientDet
       newErrors.email = 'Email is invalid';
     }
     if (!clientDetails.phone) newErrors.phone = 'Phone number is required';
-    if (!clientDetails.address) newErrors.address = 'Address is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -38,7 +37,7 @@ const UserDetailsModal = ({ showModal, setShowModal, clientDetails, setClientDet
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      handleSubmit(); // Call the passed handleSubmit function
+      handleSubmit({ ...clientDetails });
       setShowModal(false); // Close the modal on successful submit
     }
   };
@@ -90,17 +89,26 @@ const UserDetailsModal = ({ showModal, setShowModal, clientDetails, setClientDet
             {errors.phone && <p className="text-danger">{errors.phone}</p>}
           </div>
           <div>
-            <label htmlFor="clientAddress" className="block font-semibold mb-1">Address:</label>
+            <label htmlFor="specialRequests" className="block font-semibold mb-1">Special Requests:</label>
             <input
               type="text"
               className="form-control"
-              id="clientAddress"
-              name="address"
-              value={clientDetails.address}
+              id="specialRequests"
+              name="specialRequests"
+              value={clientDetails.specialRequests}
               onChange={handleInputChange}
-              required
             />
-            {errors.address && <p className="text-danger">{errors.address}</p>}
+          </div>
+          <div>
+            <label htmlFor="notes" className="block font-semibold mb-1">Notes:</label>
+            <input
+              type="text"
+              className="form-control"
+              id="notes"
+              name="notes"
+              value={clientDetails.notes}
+              onChange={handleInputChange}
+            />
           </div>
           <div>
             <label htmlFor="luggagePhotos" className="block font-semibold mb-1">Luggage Photos (optional):</label>

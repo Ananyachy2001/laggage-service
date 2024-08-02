@@ -1,3 +1,5 @@
+// Sidebar.js
+
 import React, { useState, useEffect } from 'react';
 import StorageSpot from './StorageSpot';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -75,6 +77,7 @@ const Sidebar = ({ storageSpots }) => {
                         return (
                             <StorageSpot
                                 key={index}
+                                id={spot._id}
                                 title={spot.name}
                                 details={spot.description}
                                 price={`A$${spot.regularPrice.toFixed(2)} / 24h `}
@@ -84,6 +87,12 @@ const Sidebar = ({ storageSpots }) => {
                                 lng={spot.coordinates.coordinates[0]}
                                 image={spot.pictures[0] || 'https://img.freepik.com/free-vector/cartoon-style-cafe-front-shop-view_134830-697.jpg'}
                                 isOpen={isOpen}
+                                availableFrom={spot.availableFrom}
+                                availableTo={spot.availableTo}
+                                discountPercentage={spot.discountPercentage}
+                                openTime={spot.openTime}
+                                closeTime={spot.closeTime}
+                                notes={spot.notes}
                             />
                         );
                     })

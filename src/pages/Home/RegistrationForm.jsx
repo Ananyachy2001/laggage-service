@@ -48,13 +48,15 @@ const RegistrationForm = ({ loginType, onClose }) => {
     if (!formData.username) newErrors.username = 'Username is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.password) newErrors.password = 'Password is required';
-    if (!formData.businessAddress.street) newErrors.street = 'Street is required';
-    if (!formData.businessAddress.district) newErrors.district = 'District is required';
-    if (!formData.businessAddress.city) newErrors.city = 'City is required';
-    if (!formData.businessAddress.state) newErrors.state = 'State is required';
-    if (!formData.businessAddress.zipCode) newErrors.zipCode = 'Zip Code is required';
-    if (!formData.businessAddress.country) newErrors.country = 'Country is required';
-    if (!formData.tradeLicenseNumber) newErrors.tradeLicenseNumber = 'Trade License Number is required';
+    if (loginType === 'Partner') {
+      if (!formData.businessAddress.street) newErrors.street = 'Street is required';
+      if (!formData.businessAddress.district) newErrors.district = 'District is required';
+      if (!formData.businessAddress.city) newErrors.city = 'City is required';
+      if (!formData.businessAddress.state) newErrors.state = 'State is required';
+      if (!formData.businessAddress.zipCode) newErrors.zipCode = 'Zip Code is required';
+      if (!formData.businessAddress.country) newErrors.country = 'Country is required';
+      if (!formData.tradeLicenseNumber) newErrors.tradeLicenseNumber = 'Trade License Number is required';
+    }
 
     setErrors(newErrors);
 
@@ -98,11 +100,11 @@ const RegistrationForm = ({ loginType, onClose }) => {
         navigate('/logout'); // Redirect to home page
       } else {
         console.error('Error:', result);
-        // Handle error
+        setErrors(result.errors || { general: 'Registration failed' }); // Set server-side validation errors
       }
     } catch (error) {
       console.error('Error:', error);
-      // Handle error
+      setErrors({ general: 'An unexpected error occurred. Please try again later.' });
     }
   };
 
@@ -119,6 +121,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
           <FaTimes />
         </button>
         <h2 className="text-center mb-6 text-4xl font-semibold text-[#4A686A]">{`Register as ${loginType}`}</h2>
+        {errors.general && <p className="text-red-500 text-center mb-4">{errors.general}</p>}
         {loginType === 'Partner' && (
           <>
             {currentStep === 1 && (

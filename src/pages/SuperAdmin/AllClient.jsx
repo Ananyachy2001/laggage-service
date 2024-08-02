@@ -79,7 +79,19 @@ const AllClient = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex items-center justify-center h-screen bg-gray-100">
+                <div className="relative">
+                    <div className="loader ease-linear rounded-full border-8 border-t-8 border-blue-400 h-32 w-32"></div>
+                    <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center">
+                        <svg className="animate-spin h-24 w-24 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l-3 3-1-1-3 3a8 8 0 010-8z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (error) {

@@ -1,13 +1,15 @@
+// StorageSpot.js
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const StorageSpot = ({ title, details, price, regularprice, link, image, lat, lng }) => {
+const StorageSpot = ({ id, title, details, price, regularprice, link, image, lat, lng, availableFrom, availableTo, discountPercentage, openTime, closeTime, notes }) => {
   const defaultImage = "https://via.placeholder.com/150"; // Placeholder image URL
   const navigate = useNavigate();
 
   const handleDetailsClick = () => {
     navigate('/luggage_store_details', {
-      state: { title, details, price, regularprice, image, lat, lng }
+      state: { id, title, details, price, regularprice, image, lat, lng, availableFrom, availableTo, discountPercentage, openTime, closeTime, notes }
     });
   };
 
@@ -23,7 +25,7 @@ const StorageSpot = ({ title, details, price, regularprice, link, image, lat, ln
         <div className="spot-price mt-4 flex justify-between items-center">
           <p className="text-lg font-semibold text-green-600">{price}</p>
           <button onClick={handleDetailsClick} className="btn btn-primary btn-sm bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            See Details
+            Book This Store
           </button>
         </div>
       </div>

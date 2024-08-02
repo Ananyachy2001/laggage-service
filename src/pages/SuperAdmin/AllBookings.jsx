@@ -9,6 +9,7 @@ import config from '../../config';
 
 const AllBookings = () => {
     const [bookings, setBookings] = useState([]);
+    const [clients, setClients] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -44,10 +45,31 @@ const AllBookings = () => {
                 }
             }
         };
+
+        const fetchClients = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`${config.API_BASE_URL}/api/v1/users/all-clients`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setClients(response.data.data);
+            } catch (error) {
+                console.error('Failed to fetch clients', error);
+            }
+        };
+
         fetchBookings();
+        fetchClients();
     }, []);
 
-    const filteredBookings = bookings.filter(booking => 
+    const clientMap = clients.reduce((map, client) => {
+        map[client._id] = client.user;
+        return map;
+    }, {});
+
+    const filteredBookings = bookings.filter(booking =>
         booking.location.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -71,6 +93,38 @@ const AllBookings = () => {
         setBookings(bookings.filter(booking => booking._id !== id));
     };
 
+    const getClientInfo = (client, status) => {
+        if (client && client._id && clientMap[client._id]) {
+            const clientDetails = clientMap[client._id];
+            return (
+                <>
+                    <div>{clientDetails.username}</div>
+                    <div>{clientDetails.email}</div>
+                    
+                </>
+            );
+        } else if (client && client.guest) {
+            return (
+                <>
+                    <div>{client.guest.name}</div>
+                    <div>{client.guest.email}</div>
+                    
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <div>Guest</div>
+                </>
+            );
+        }
+    };
+
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
     return (
         <div className="flex h-screen overflow-hidden">
             {/* Sidebar */}
@@ -85,8 +139,6 @@ const AllBookings = () => {
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                         {/* Welcome banner */}
                         <WelcomeBanner />
-
-
 
                         {/* Search bar */}
                         <div className="mb-4">
@@ -109,22 +161,30 @@ const AllBookings = () => {
                                 <table className="min-w-full">
                                     <thead className="bg-[#4A686A] text-white">
                                         <tr>
-                                            <th className="w-1/6 py-3 px-6 text-left">Client ID</th>
-                                            <th className="w-1/4 py-3 px-6 text-left">Location</th>
-                                            <th className="w-1/4 py-3 px-6 text-left">Booking Date</th>
-                                            <th className="w-1/6 py-3 px-6 text-left">Status</th>
-                                            <th className="w-1/6 py-3 px-6 text-left">Actions</th>
+                                            <th className="w-1/7 py-3 px-6 text-left">Client Info</th>
+                                            <th className="w-1/7 py-3 px-6 text-left">Location Name</th>
+                                            <th className="w-1/7 py-3 px-6 text-left">Regular Price</th>
+                                            <th className="w-1/7 py-3 px-6 text-left">Discount Percentage</th>
+                                            <th className="w-1/7 py-3 px-6 text-left">Start Date</th>
+                                            <th className="w-1/7 py-3 px-6 text-left">Booking Date</th>
+                                            <th className="w-1/7 py-3 px-6 text-left">Status</th>
+                                            <th className="w-1/7 py-3 px-6 text-left">Actions</th>
                                         </tr>
                                     </thead>
 
                                     <tbody className="text-gray-800">
                                         {currentBookings.map(booking => (
                                             <tr key={booking._id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                                <td className="w-1/6 py-3 px-6 border">{booking.client ? booking.client._id : 'N/A'}</td>
-                                                <td className="w-1/4 py-3 px-6 border">{booking.location.name}</td>
-                                                <td className="w-1/4 py-3 px-6 border">{new Date(booking.bookingDate).toLocaleDateString()}</td>
-                                                <td className="w-1/6 py-3 px-6 border">{booking.status}</td>
-                                                <td className="w-1/6 py-3 px-6 border text-center">
+                                                <td className="w-1/7 py-3 px-6 border">
+                                                    {getClientInfo(booking.client, booking.status)}
+                                                </td>
+                                                <td className="w-1/7 py-3 px-6 border">{booking.location.name}</td>
+                                                <td className="w-1/7 py-3 px-6 border">{`${booking.location.priceCurrency} ${booking.location.regularPrice} `}</td>
+                                                <td className="w-1/7 py-3 px-6 border">{`${booking.location.discountPercentage}%`}</td>
+                                                <td className="w-1/7 py-3 px-6 border">{formatDate(booking.bookingDate)}</td>
+                                                <td className="w-1/7 py-3 px-6 border">{formatDate(booking.startDate)}</td>
+                                                <td className="w-1/7 py-3 px-6 border">{booking.status}</td>
+                                                <td className="w-1/7 py-3 px-6 border text-center">
                                                     <button
                                                         onClick={() => {
                                                             setIsEditing(true);
@@ -147,7 +207,6 @@ const AllBookings = () => {
                                 </table>
                             )}
                         </div>
-
                         {/* Pagination */}
                         <div className="mt-6 flex justify-center">
                             <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -155,7 +214,7 @@ const AllBookings = () => {
                                     <button
                                         key={number}
                                         onClick={() => paginate(number + 1)}
-                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : ''}`}
+                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : ''}`}
                                     >
                                         {number + 1}
                                     </button>
@@ -165,7 +224,7 @@ const AllBookings = () => {
                     </div>
                 </main>
             </div>
-            
+
             {isEditing && <EditBooking currentBooking={currentBooking} updateBooking={updateBooking} setIsEditing={setIsEditing} />}
         </div>
     );

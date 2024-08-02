@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 // import axios from 'axios'; // Commented out for dummy data
 
-import PartnerSidebar from '../../partials/PartnerSidebar';
-import Header from '../../partials/Header';
-import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
+import PartnerNavbarComp from './PartnerNavbarComp';
+
 
 const AllCustomer = () => {
     // Commented out API related states and useEffect for dummy data
     const [customers, setCustomers] = useState([
-        { id: 1, name: 'Customer Name 1', locationBooked: 'Location 1', startDate: '2021-01-01', endDate: '2021-01-10',  amountPaid: '$1000', recurringTimes: 3 },
-        { id: 2, name: 'Customer Name 2', locationBooked: 'Location 2', startDate: '2021-02-01', endDate: '2021-02-10', amountPaid: '$2000',  recurringTimes: 2 },
-        { id: 3, name: 'Customer Name 3', locationBooked: 'Location 3', startDate: '2021-03-01', endDate: '2021-03-10',  amountPaid: '$1500', recurringTimes: 4 }
+        { id: 1, name: 'Customer Name 1', locationBooked: 'Location 1', startDate: '2021-01-01', endDate: '2021-01-10', amountPaid: '$1000', recurringTimes: 3 },
+        { id: 2, name: 'Customer Name 2', locationBooked: 'Location 2', startDate: '2021-02-01', endDate: '2021-02-10', amountPaid: '$2000', recurringTimes: 2 },
+        { id: 3, name: 'Customer Name 3', locationBooked: 'Location 3', startDate: '2021-03-01', endDate: '2021-03-10', amountPaid: '$1500', recurringTimes: 4 }
     ]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -44,19 +42,14 @@ const AllCustomer = () => {
     // if (error) return <p>Error loading data: {error.message}</p>;
 
     return (
-        <div className="flex h-screen overflow-hidden">
-            {/* Sidebar */}
-            <PartnerSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <div className="flex flex-col h-screen overflow-hidden">
+            <PartnerNavbarComp />
 
             {/* Content area */}
             <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-                {/* Site header */}
-                <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
                 <main>
-                    <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-                        {/* Welcome banner */}
-                        <WelcomeBanner />
+                    <div className="px-4 sm:px-6 mt-32 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+
 
                         {/* Search bar */}
                         <div className="mb-4">

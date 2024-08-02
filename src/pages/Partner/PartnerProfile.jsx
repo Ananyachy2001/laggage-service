@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
-import PartnerHeader from '../../partials/PartnerHeader';
-import PartnerSidebar from '../../partials/PartnerSidebar'; // Assuming you have a sidebar component for Partner
+import PartnerNavbarComp from './PartnerNavbarComp';
 import config from '../../config';
 import './PartnerProfile.css'; // If you still have some custom styles
 
 const PartnerProfile = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState({
@@ -96,13 +94,11 @@ const PartnerProfile = () => {
     }
 
     return (
-        <div className="flex h-screen overflow-hidden">
-            <PartnerSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <div className="flex flex-col h-screen overflow-hidden">
+            <PartnerNavbarComp />
 
             <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-                <PartnerHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-                <main className="flex-grow container mx-auto mt-4 mb-4">
+                <main className="flex-grow container mx-auto mt-32 mb-4">
                     <div className="flex justify-center">
                         <div className="w-full max-w-4xl">
                             <div className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 transition-transform duration-500 hover:shadow-2xl">

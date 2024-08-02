@@ -4,7 +4,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import debounce from 'lodash/debounce';
-import useGoogleMapsApi from './useGoogleMapsApi'; // Import the custom hook
+import useGoogleMapsApi from './useGoogleMapsApi';
 import config from '../../../config';
 
 const AdminMapSelector = ({ onSelect }) => {
@@ -51,13 +51,7 @@ const AdminMapSelector = ({ onSelect }) => {
                     }
                 });
 
-                const additionalDetails = {
-                    name: response.data.results[0].address_components[0]?.long_name || '',
-                    formattedAddress: response.data.results[0].formatted_address,
-                    placeId: response.data.results[0].place_id,
-                };
-
-                onSelect({ position, addressDetails, additionalDetails });
+                onSelect({ position, addressDetails });
             } else {
                 console.log('Failed to fetch address details:', response.data.status);
             }

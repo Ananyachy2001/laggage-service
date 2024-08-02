@@ -6,6 +6,7 @@ import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import EditLocationModal from './EditLocationModal';
+import AssignPartnerModal from './AssignPartnerModal'; // Assuming you have or will create this component
 
 const AllLocations = () => {
     const [locations, setLocations] = useState([]);
@@ -18,7 +19,7 @@ const AllLocations = () => {
     const [locationsPerPage] = useState(3);
     const [isEditing, setIsEditing] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
-    const [showDeleted, setShowDeleted] = useState(false);
+    const [isAssigning, setIsAssigning] = useState(false);
 
     const navigate = useNavigate();
 
@@ -27,10 +28,26 @@ const AllLocations = () => {
         fetchPartners();
     }, []);
 
+    const getToken = () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/logout';
+            return null;
+        }
+        return token;
+    };
+
+    const handleUnauthorized = () => {
+        navigate('/logout');
+    };
+    
+
     const fetchLocations = async () => {
         setLoading(true);
+        const token = getToken();
+        if (!token) return;
+    
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -45,16 +62,18 @@ const AllLocations = () => {
         } catch (error) {
             setLoading(false);
             if (error.response && error.response.status === 401) {
-                window.location.href = '/logout';
+                handleUnauthorized();
             } else {
                 setError('Failed to fetch locations');
             }
         }
     };
-
+    
     const fetchPartners = async () => {
+        const token = getToken();
+        if (!token) return;
+    
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get(`${config.API_BASE_URL}/api/v1/users/all-partners`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -67,17 +86,19 @@ const AllLocations = () => {
             }
         } catch (err) {
             if (err.response && err.response.status === 401) {
-                navigate('/logout');
+                handleUnauthorized();
             } else {
                 setError('Failed to fetch partner data');
             }
         }
     };
-
+    
     const deleteLocation = async (id) => {
         if (window.confirm("Are you sure you want to delete this location?")) {
+            const token = getToken();
+            if (!token) return;
+    
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.delete(`${config.API_BASE_URL}/api/v1/locations/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -93,10 +114,7 @@ const AllLocations = () => {
             }
         }
     };
-
-    const toggleShowDeleted = () => {
-        setShowDeleted(!showDeleted);
-    };
+    
 
     const getPartnerDetails = (partnerId) => {
         const partner = partners.find(p => p._id === partnerId);
@@ -104,7 +122,7 @@ const AllLocations = () => {
     };
 
     const filteredLocations = locations.filter(location =>
-        location.name.toLowerCase().includes(searchQuery.toLowerCase()) && (showDeleted || !location.isDeleted)
+        location.name.toLowerCase().includes(searchQuery.toLowerCase()) 
     );
 
     const indexOfLastLocation = currentPage * locationsPerPage;
@@ -116,6 +134,27 @@ const AllLocations = () => {
     const updateLocation = (updatedLocation) => {
         setLocations(locations.map(location => location._id === updatedLocation._id ? updatedLocation : location));
         setIsEditing(false);
+    };
+
+    const assignPartner = async (locationId, partnerId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(`${config.API_BASE_URL}/api/v1/locations/assign`, {
+                locationId,
+                partnerId
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.status === 200) {
+                fetchLocations();
+            } else {
+                alert('Failed to assign partner.');
+            }
+        } catch (error) {
+            alert('An error occurred. Please try again.');
+        }
     };
 
     const formatDate = (dateString) => {
@@ -146,12 +185,7 @@ const AllLocations = () => {
                             >
                                 Create Location
                             </button>
-                            <button
-                                onClick={toggleShowDeleted}
-                                className="px-4 py-2 bg-gray-500 text-white rounded-lg"
-                            >
-                                {showDeleted ? 'Hide Deleted' : 'Show Deleted'}
-                            </button>
+
                         </div>
 
                         {/* Search bar */}
@@ -168,7 +202,11 @@ const AllLocations = () => {
                         {/* Location List Table */}
                         <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
                             {loading ? (
-                                <div className="flex justify-center items-center p-8">Loading...</div>
+                                <div className="flex justify-center items-center p-8">
+                                    <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
                             ) : error ? (
                                 <div className="flex justify-center items-center p-8 text-red-500">{error}</div>
                             ) : (
@@ -176,13 +214,14 @@ const AllLocations = () => {
                                     <thead className="bg-[#4A686A] text-white">
                                         <tr>
                                             <th className="w-2/12 py-3 px-6 text-left">Name</th>
-                                            <th className="w-2/12 py-3 px-6 text-left">Available From</th>
-                                            <th className="w-2/12 py-3 px-6 text-left">Available To</th>
-                                            <th className="w-2/12 py-3 px-6 text-left">Open Time</th>
-                                            <th className="w-2/12 py-3 px-6 text-left">Close Time</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Available From</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Available To</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Open Time</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Close Time</th>
                                             <th className="w-2/12 py-3 px-6 text-left">Price</th>
                                             <th className="w-2/12 py-3 px-6 text-left">Discount</th>
-                                            <th className="w-2/12 py-3 px-6 text-left">Actions</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Partner</th>
+                                            <th className="w-4/12 py-3 px-6 text-left">Actions</th>
                                         </tr>
                                     </thead>
 
@@ -191,19 +230,30 @@ const AllLocations = () => {
                                             const { username, tradeLicenseNumber } = getPartnerDetails(location.partner);
                                             return (
                                                 <tr key={location._id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                                    <td className="w-2/12 py-3 px-6 border">
-                                                        {location.name}
-                                                        <br />
-                                                        <span className="text-sm text-gray-500">
-                                                            {username} - {tradeLicenseNumber}
-                                                        </span>
-                                                    </td>
+                                                    <td className="w-2/12 py-3 px-6 border">{location.name}</td>
                                                     <td className="w-2/12 py-3 px-6 border">{formatDate(location.availableFrom)}</td>
                                                     <td className="w-2/12 py-3 px-6 border">{formatDate(location.availableTo)}</td>
                                                     <td className="w-2/12 py-3 px-6 border">{location.openTime}</td>
                                                     <td className="w-2/12 py-3 px-6 border">{location.closeTime}</td>
                                                     <td className="w-2/12 py-3 px-6 border">{location.priceCurrency} ${location.regularPrice}</td>
                                                     <td className="w-2/12 py-3 px-6 border">{location.discountPercentage}%</td>
+                                                    <td className="w-2/12 py-3 px-6 border">
+                                                        {location.partner ? (
+                                                            <>
+                                                                {username} - {tradeLicenseNumber}
+                                                            </>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => {
+                                                                    setIsAssigning(true);
+                                                                    setCurrentLocation(location);
+                                                                }}
+                                                                className="px-4 py-2 rounded-lg bg-blue-500 text-white transition duration-150"
+                                                            >
+                                                                Assign Partner
+                                                            </button>
+                                                        )}
+                                                    </td>
                                                     <td className="w-2/12 py-3 px-6 border text-center">
                                                         <button
                                                             onClick={() => {
@@ -250,6 +300,14 @@ const AllLocations = () => {
                         location={currentLocation}
                         onClose={() => setIsEditing(false)}
                         onUpdate={updateLocation}
+                    />
+                )}
+                {isAssigning && (
+                    <AssignPartnerModal
+                        location={currentLocation}
+                        partners={partners}
+                        onClose={() => setIsAssigning(false)}
+                        onAssign={assignPartner}
                     />
                 )}
             </div>

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 // import axios from 'axios'; // Commented out for dummy data
 
-import PartnerSidebar from '../../partials/PartnerSidebar';
-import PartnerHeader from '../../partials/PartnerHeader';
+import PartnerNavbarComp from './PartnerNavbarComp';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import CreatePartnerBooking from './CreatePartnerBooking';
 import EditPartnerBooking from './EditPartnerBooking';
@@ -26,11 +25,9 @@ const PartnerBookings = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [bookingsPerPage] = useState(3);
     const [isCreating, setIsCreating] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
     const [currentBooking, setCurrentBooking] = useState(null);
 
     const filteredBookings = bookings.filter(booking => 
@@ -43,44 +40,23 @@ const PartnerBookings = () => {
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-    const addBooking = (newBooking) => {
-        setBookings([...bookings, { ...newBooking, bookingDate: new Date(newBooking.bookingDate) }]);
-        setIsCreating(false);
-    };
 
-    const updateBooking = (updatedBooking) => {
-        setBookings(bookings.map(booking => booking.clientId === updatedBooking.clientId ? updatedBooking : booking));
-        setIsEditing(false);
-    };
 
-    const deleteBooking = (clientId) => {
-        setBookings(bookings.filter(booking => booking.clientId !== clientId));
-    };
+
+
 
     return (
-        <div className="flex h-screen overflow-hidden">
-            {/* Sidebar */}
-            <PartnerSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <div className="flex flex-col h-screen overflow-hidden bg-gray-100">
+            {/* Navbar */}
+            <PartnerNavbarComp />
 
             {/* Content area */}
-            <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gray-100">
-                {/* Site PartnerHeader */}
-                <PartnerHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
+            <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
                 <main>
-                    <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+                    <div className="px-4 mt-32 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                         {/* Welcome banner */}
                         <WelcomeBanner />
 
-                        {/* Create Booking Button */}
-                        <div className="mb-4">
-                            <button
-                                onClick={() => setIsCreating(true)}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-                            >
-                                Create Booking
-                            </button>
-                        </div>
 
                         {/* Search bar */}
                         <div className="mb-4">
@@ -102,7 +78,6 @@ const PartnerBookings = () => {
                                         <th className="w-1/4 py-3 px-6 text-left">Location</th>
                                         <th className="w-1/4 py-3 px-6 text-left">Booking Date</th>
                                         <th className="w-1/6 py-3 px-6 text-left">Status</th>
-                                        <th className="w-1/6 py-3 px-6 text-left">Actions</th>
                                     </tr>
                                 </thead>
 
@@ -113,23 +88,7 @@ const PartnerBookings = () => {
                                             <td className="w-1/4 py-3 px-6 border">{booking.location}</td>
                                             <td className="w-1/4 py-3 px-6 border">{booking.bookingDate.toLocaleDateString()}</td>
                                             <td className="w-1/6 py-3 px-6 border">{booking.status}</td>
-                                            <td className="w-1/6 py-3 px-6 border text-center">
-                                                <button
-                                                    onClick={() => {
-                                                        setIsEditing(true);
-                                                        setCurrentBooking(booking);
-                                                    }}
-                                                    className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => deleteBooking(booking.clientId)}
-                                                    className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
+
                                         </tr>
                                     ))}
                                 </tbody>
@@ -153,8 +112,6 @@ const PartnerBookings = () => {
                     </div>
                 </main>
             </div>
-            {isCreating && <CreatePartnerBooking addBooking={addBooking} setIsCreating={setIsCreating} />}
-            {isEditing && <EditPartnerBooking currentBooking={currentBooking} updateBooking={updateBooking} setIsEditing={setIsEditing} />}
         </div>
     );
 };

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import PartnerNavbarComp from './PartnerNavbarComp';
 
-import PartnerSidebar from '../../partials/PartnerSidebar';
-import PartnerHeader from '../../partials/PartnerHeader';
-import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import config from '../../config';
 
 const PartnerLocations = () => {
@@ -12,12 +10,8 @@ const PartnerLocations = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [locationsPerPage] = useState(3);
-    const [isEditing, setIsEditing] = useState(false);
-    const [currentLocation, setCurrentLocation] = useState(null);
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -75,25 +69,15 @@ const PartnerLocations = () => {
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-    const updateLocation = (updatedLocation) => {
-        setLocations(locations.map(location => location._id === updatedLocation._id ? updatedLocation : location));
-        setIsEditing(false);
-    };
-
     return (
-        <div className="flex h-screen overflow-hidden">
-            {/* Sidebar */}
-            <PartnerSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <div className="flex flex-col h-screen overflow-hidden">
+            <PartnerNavbarComp />
 
             {/* Content area */}
             <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gray-100">
-                {/* Site PartnerHeader */}
-                <PartnerHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
                 <main>
-                    <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-                        {/* Welcome banner */}
-                        <WelcomeBanner />
+                    <div className="px-4 mt-32 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+
 
                         {/* Create Location Button */}
                         <div className="mb-4">
@@ -149,15 +133,6 @@ const PartnerLocations = () => {
                                                 <td className="w-2/12 py-3 px-6 border">{new Date(location.availableTo).toLocaleDateString()}</td>
                                                 <td className="w-1/12 py-3 px-6 border text-center">
                                                     <button
-                                                        onClick={() => {
-                                                            setIsEditing(true);
-                                                            setCurrentLocation(location);
-                                                        }}
-                                                        className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button
                                                         onClick={() => deleteLocation(location._id)}
                                                         className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
                                                     >
@@ -188,7 +163,6 @@ const PartnerLocations = () => {
                     </div>
                 </main>
             </div>
-            {isEditing && <EditPartnerLocation currentLocation={currentLocation} updateLocation={updateLocation} setIsEditing={setIsEditing} />}
         </div>
     );
 };

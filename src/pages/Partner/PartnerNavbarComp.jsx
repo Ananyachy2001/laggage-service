@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import logo from '../../img/home-two/logo3.svg';
 
-const ClientNavbarComp = () => {
+const PartnerNavbarComp = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isHovering, setIsHovering] = useState(false);
@@ -42,7 +42,7 @@ const ClientNavbarComp = () => {
   return (
     <div className="fixed top-0 w-full bg-white shadow-md z-50">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
-        <a href="/client/home" className="flex items-center">
+        <a href="/partner/home" className="flex items-center">
           <img src={logo} alt="logo1" className="h-16 w-40" />
         </a>
         <div className="md:hidden">
@@ -68,9 +68,8 @@ const ClientNavbarComp = () => {
         </div>
         <nav className={`flex-col md:flex md:flex-row md:space-x-4 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
           <div className="md:flex md:flex-row md:space-x-4">
-            <a href="/client/home" className="hover:text-[#FDB139]">Home</a>
-            <a href="/about" className="hover:text-[#FDB139]">About</a>
-            <a href="/contact" className="hover:text-[#FDB139]">Contact</a>
+            <a href="/partner/home" className="hover:text-[#FDB139]">Home</a>
+
           </div>
           {isAuthenticated && (
             <div className="md:flex md:flex-row md:space-x-4">
@@ -79,13 +78,14 @@ const ClientNavbarComp = () => {
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
               >
-                <button onClick={() => handleDropdownToggle('userOptions')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
-                  User Menu <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                <button onClick={() => handleDropdownToggle('partnerOptions')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
+                  Partner Menu <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
-                <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'userOptions' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
-                  {["Menu", "Reservations", "Profile", "Booking", "RefundForm"].map(userOption => (
-                    <a href={`/client/${userOption.toLowerCase().replace(/ /g, '-')}`} key={userOption} className="block px-4 py-2 hover:bg-blue-800">{userOption}</a>
-                  ))}
+                <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'partnerOptions' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
+                  <NavLink to="/partner/bookings" className="block px-4 py-2 hover:bg-blue-800">Partner Bookings</NavLink>
+                  <NavLink to="/partner/locations" className="block px-4 py-2 hover:bg-blue-800">Partner's Location</NavLink>
+                  <NavLink to="/partner/allcustomers" className="block px-4 py-2 hover:bg-blue-800">All Customers</NavLink>
+                  <NavLink to="/partner/profile" className="block px-4 py-2 hover:bg-blue-800">Partner Profile</NavLink>
                 </div>
               </div>
               <a href="/logout" className="hover:text-[#FDB139]">Logout</a>
@@ -97,4 +97,4 @@ const ClientNavbarComp = () => {
   );
 };
 
-export default ClientNavbarComp;
+export default PartnerNavbarComp;
