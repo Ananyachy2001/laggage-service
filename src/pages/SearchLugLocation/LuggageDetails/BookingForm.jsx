@@ -1,52 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import config from '../../../config';
 
-const BookingForm = ({
-  locationid,
-  handleSubmit,
-  luggageQuantity,
-  setLuggageQuantity,
-  serviceOption,
-  setServiceOption,
-  promoCode,
-  setPromoCode,
-  discount,
-  setDiscount,
-  checkinTime,
-  setCheckinTime,
-  checkoutTime,
-  setCheckoutTime,
-  totalPrice,
-  setTotalPrice,
-  servicePrices,
-  regularprice,
-  clientDetails,
-  setClientDetails,
-  clientLoggedIn
-}) => {
+const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, serviceOption, setServiceOption, promoCode, setPromoCode, discount, setDiscount, checkinTime, setCheckinTime, checkoutTime, setCheckoutTime, totalPrice, setTotalPrice, servicePrices, regularprice, locationid, clientDetails, setClientDetails }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [promoApplied, setPromoApplied] = useState(false);
-  const navigate = useNavigate();
+  const [clientId, setClientId] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // To track if user is logged in
+
+  const [guestDetails, setGuestDetails] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
 
   useEffect(() => {
     setTotalPrice(0); // Initialize total price to 0
+    setDiscount(0); // Initialize discount to 0
+  }, []);
 
-    if (clientLoggedIn) {
-      // Fetch client profile data
-      axios.get(`${config.API_BASE_URL}/api/v1/client/profile`, { withCredentials: true })
-        .then(response => {
-          setClientDetails(response.data);
-        })
-        .catch(error => {
-          console.error('Error fetching client profile:', error);
-        });
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // Retrieve token from localStorage
+    if (token) {
+      setIsLoggedIn(true); // Set user as logged in if token exists
+      const fetchUserProfile = async () => {
+        try {
+          const response = await fetch(`${config.API_BASE_URL}/api/v1/users/profile/client`, {
+            headers: {
+              'Authorization': `Bearer ${token}` // Include token in request headers
+            }
+          });
+          const data = await response.json();
+          if (data._id) {
+            setClientId(data._id);
+          } else {
+            console.error('User ID not found in the response');
+          }
+        } catch (error) {
+          console.error('Failed to fetch user profile:', error);
+          setErrorMessage("Failed to fetch user profile. Please check your network connection.");
+        }
+      };
+
+      fetchUserProfile();
     }
-  }, [clientLoggedIn, setClientDetails]);
+  }, []);
 
   const handleApplyPromo = () => {
     if (promoCode === 'DISCOUNT10') {
@@ -55,6 +55,7 @@ const BookingForm = ({
     } else {
       setDiscount(0);
       setPromoApplied(false);
+      setErrorMessage("Invalid promo code. Please try again.");
     }
   };
 
@@ -92,10 +93,17 @@ const BookingForm = ({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setClientDetails({
-      ...clientDetails,
-      [name]: value,
-    });
+    if (isLoggedIn) {
+      setClientDetails({
+        ...clientDetails,
+        [name]: value,
+      });
+    } else {
+      setGuestDetails({
+        ...guestDetails,
+        [name]: value,
+      });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -108,13 +116,15 @@ const BookingForm = ({
 
   const validateForm = () => {
     const newErrors = {};
-    if (!clientDetails.name) newErrors.name = 'Name is required';
-    if (!clientDetails.email) {
+    const details = isLoggedIn ? clientDetails : guestDetails;
+    if (!details.name) newErrors.name = 'Name is required';
+    if (!details.email) {
       newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(clientDetails.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(details.email)) {
       newErrors.email = 'Email is invalid';
     }
-    if (!clientDetails.phone) newErrors.phone = 'Phone number is required';
+    if (!details.phone) newErrors.phone = 'Phone number is required';
+    if (!details.address) newErrors.address = 'Address is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -122,45 +132,40 @@ const BookingForm = ({
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      const bookingData = {
-        location: locationid,
-        startDate: checkinTime,
-        endDate: checkoutTime,
-        startTime: new Date(checkinTime).toLocaleTimeString('en-GB'),
-        endTime: new Date(checkoutTime).toLocaleTimeString('en-GB'),
-        payment: {
-          amount: totalPrice,
-          method: 'stripe',
-          currency: 'aud'
-        },
-        specialRequests: clientDetails.specialRequests,
-        discount: discount,
-        notes: clientDetails.notes
-      };
-
-      try {
-        if (clientLoggedIn) {
-          bookingData.client = clientDetails._id;
-          await axios.post(`${config.API_BASE_URL}/api/v1/bookings`, bookingData);
-        } else {
-          bookingData.guest = {
-            name: clientDetails.name,
-            email: clientDetails.email,
-            phone: clientDetails.phone
-          };
-          await axios.post(`${config.API_BASE_URL}/api/v1/bookings/guest`, bookingData);
-        }
-        navigate('/client/bookingconfirmation', { state: { bookingDetails: bookingData } });
-      } catch (error) {
-        setErrorMessage('An error occurred while processing your booking. Please try again.');
-      }
+    if (!validateForm()) {
+      return;
     }
+
+    const bookingData = {
+      location: locationid,
+      startDate: new Date(checkinTime).toISOString().split('T')[0],
+      startTime: new Date(checkinTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+      endDate: new Date(checkoutTime).toISOString().split('T')[0],
+      endTime: new Date(checkoutTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+      totalPricePaid: totalPrice,
+      specialRequests: clientDetails.specialRequests || 'No requirement',
+    };
+
+    if (isLoggedIn) {
+      bookingData.client = clientId;
+    } else {
+      bookingData.guest = {
+        name: guestDetails.name,
+        email: guestDetails.email,
+        phone: guestDetails.phone
+      };
+    }
+
+    handleSubmit(bookingData);
   };
 
   const openUserDetailsModal = () => {
     if (validateDateTime(checkinTime, checkoutTime) && luggageQuantity > 0 && serviceOption) {
-      setShowModal(true);
+      if (isLoggedIn) {
+        handleFormSubmit();
+      } else {
+        setShowModal(true);
+      }
     } else {
       setErrorMessage('Please fill out all required fields before proceeding.');
     }
@@ -263,6 +268,16 @@ const BookingForm = ({
             <span id="totalPrice">{totalPrice.toFixed(2)}</span>
           </div>
         )}
+        {clientId && (
+          <div>
+            <label className="font-bold">Client ID: </label>
+            <span id="clientId">{clientId}</span>
+          </div>
+        )}
+        <div className="mb-4">
+          <label className="font-bold">Location ID: </label>
+          <span id="locationid">{locationid}</span>
+        </div>
         <Button 
           variant="primary" 
           onClick={openUserDetailsModal} 
@@ -286,7 +301,7 @@ const BookingForm = ({
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 id="clientName"
                 name="name"
-                value={clientDetails.name}
+                value={isLoggedIn ? clientDetails.name : guestDetails.name}
                 onChange={handleInputChange}
                 required
               />
@@ -299,7 +314,7 @@ const BookingForm = ({
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 id="clientEmail"
                 name="email"
-                value={clientDetails.email}
+                value={isLoggedIn ? clientDetails.email : guestDetails.email}
                 onChange={handleInputChange}
                 required
               />
@@ -312,33 +327,24 @@ const BookingForm = ({
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 id="clientPhone"
                 name="phone"
-                value={clientDetails.phone}
+                value={isLoggedIn ? clientDetails.phone : guestDetails.phone}
                 onChange={handleInputChange}
                 required
               />
               {errors.phone && <p className="text-red-500">{errors.phone}</p>}
             </div>
             <div>
-              <label htmlFor="specialRequests" className="block font-semibold mb-1">Special Requests:</label>
+              <label htmlFor="clientAddress" className="block font-semibold mb-1">Address:</label>
               <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                id="specialRequests"
-                name="specialRequests"
-                value={clientDetails.specialRequests}
+                id="clientAddress"
+                name="address"
+                value={clientDetails.address}
                 onChange={handleInputChange}
+                required
               />
-            </div>
-            <div>
-              <label htmlFor="notes" className="block font-semibold mb-1">Notes:</label>
-              <input
-                type="text"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                id="notes"
-                name="notes"
-                value={clientDetails.notes}
-                onChange={handleInputChange}
-              />
+              {errors.address && <p className="text-red-500">{errors.address}</p>}
             </div>
             <div>
               <label htmlFor="luggagePhotos" className="block font-semibold mb-1">Luggage Photos (optional):</label>
@@ -351,6 +357,12 @@ const BookingForm = ({
                 onChange={handleFileChange}
               />
             </div>
+            {isLoggedIn && (
+              <div>
+                <label className="font-bold">Client ID: </label>
+                <span id="clientId">{clientId}</span>
+              </div>
+            )}
             <Button variant="primary" type="submit" className="w-full bg-[#1A73A7] text-white py-3 rounded-lg hover:bg-blue-500 transition duration-300">
               Submit
             </Button>

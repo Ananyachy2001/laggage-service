@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -22,16 +22,17 @@ const adminLocationSchema = Yup.object().shape({
     closedDays: Yup.string().required('Required'),
     specialClosedDays: Yup.string().required('Required'),
     locationType: Yup.string().required('Required'),
-    pictures: Yup.string().required('Required'),
+    pictures: Yup.mixed().required('Required'),
     notes: Yup.string().required('Required'),
     availableFrom: Yup.date().required('Required'),
     availableTo: Yup.date().required('Required'),
 });
 
 const AdminLocationForm = ({ onSubmit, location }) => {
+    const [previewPictures, setPreviewPictures] = useState([]);
+
     useEffect(() => {
         if (location.additionalDetails) {
-            // Fetch picture URLs from Google API
             const fetchPictures = async () => {
                 try {
                     const response = await axios.get(
@@ -50,6 +51,14 @@ const AdminLocationForm = ({ onSubmit, location }) => {
             fetchPictures();
         }
     }, [location]);
+
+    const handleFileChange = (event, setFieldValue) => {
+        const files = event.currentTarget.files;
+        setFieldValue('pictures', files);
+
+        const filePreviews = Array.from(files).map(file => URL.createObjectURL(file));
+        setPreviewPictures(filePreviews);
+    };
 
     return (
         <Formik
@@ -71,7 +80,7 @@ const AdminLocationForm = ({ onSubmit, location }) => {
                 closedDays: location?.additionalDetails?.closedDays.join(', ') || 'Saturday, Sunday',
                 specialClosedDays: location?.additionalDetails?.specialClosedDays.join(', ') || 'Christmas, New Year\'s Day',
                 locationType: location?.additionalDetails?.locationType || '',
-                pictures: location?.additionalDetails?.pictures || '',
+                pictures: [],
                 notes: location?.additionalDetails?.notes || '',
                 availableFrom: location?.additionalDetails?.availableFrom || '',
                 availableTo: location?.additionalDetails?.availableTo || '',
@@ -105,7 +114,6 @@ const AdminLocationForm = ({ onSubmit, location }) => {
                             { name: 'closedDays', label: 'Closed Days (comma separated)' },
                             { name: 'specialClosedDays', label: 'Special Closed Days (comma separated)' },
                             { name: 'locationType', label: 'Location Type' },
-                            { name: 'pictures', label: 'Pictures (URLs, comma separated)' },
                             { name: 'notes', label: 'Notes' },
                             { name: 'availableFrom', label: 'Available From', type: 'date' },
                             { name: 'availableTo', label: 'Available To', type: 'date' },
@@ -125,6 +133,34 @@ const AdminLocationForm = ({ onSubmit, location }) => {
                                 )}
                             </div>
                         ))}
+                        <div className="form-group">
+                            <label htmlFor="pictures" className="block text-sm font-medium text-gray-700">
+                                Pictures
+                            </label>
+                            <input
+                                id="pictures"
+                                name="pictures"
+                                type="file"
+                                multiple
+                                className={`form-input mt-1 block w-full rounded-md ${
+                                    errors.pictures && touched.pictures ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                                onChange={(event) => handleFileChange(event, setFieldValue)}
+                            />
+                            {errors.pictures && touched.pictures && (
+                                <div className="text-red-500 text-sm">{errors.pictures}</div>
+                            )}
+                            <div className="mt-2 flex flex-wrap">
+                                {previewPictures.map((src, index) => (
+                                    <img
+                                        key={index}
+                                        src={src}
+                                        alt={`Preview ${index}`}
+                                        className="h-20 w-20 object-cover mr-2 mb-2 rounded"
+                                    />
+                                ))}
+                            </div>
+                        </div>
                         <button
                             type="submit"
                             className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${

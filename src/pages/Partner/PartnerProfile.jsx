@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import PartnerNavbarComp from './PartnerNavbarComp';
 import config from '../../config';
+import PartnerChangePasswordModal from './PartnerChangePasswordModal'; // Import the modal
 import './PartnerProfile.css'; // If you still have some custom styles
 
 const PartnerProfile = () => {
@@ -22,6 +23,7 @@ const PartnerProfile = () => {
         earnings: 0,
         locations: '',
     });
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
     const navigate = useNavigate();
 
@@ -83,6 +85,14 @@ const PartnerProfile = () => {
     const handleSaveClick = () => {
         setEditMode(false);
         // Add save functionality here, e.g., API call to save the profile details
+    };
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
     };
 
     if (loading) {
@@ -322,6 +332,14 @@ const PartnerProfile = () => {
                                                         <p className="mt-1">{profile.locations}</p>
                                                     </div>
                                                 </div>
+                                                <div className="mt-6 text-center">
+                                                    <button
+                                                        className="bg-indigo-600 text-white px-4 py-2 rounded-md transition duration-500 ease-in-out transform hover:bg-indigo-700 hover:-translate-y-1 hover:scale-110"
+                                                        onClick={handleOpenModal}
+                                                    >
+                                                        Change Password
+                                                    </button>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -331,6 +349,8 @@ const PartnerProfile = () => {
                     </div>
                 </main>
             </div>
+
+            <PartnerChangePasswordModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </div>
     );
 };

@@ -1,37 +1,53 @@
-import React, { useState } from 'react';
-// import axios from 'axios'; // Commented out for dummy data
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import PartnerNavbarComp from './PartnerNavbarComp';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import CreatePartnerBooking from './CreatePartnerBooking';
 import EditPartnerBooking from './EditPartnerBooking';
+import config from '../../config';
 
 const PartnerBookings = () => {
-    const [bookings, setBookings] = useState([
-        {
-            clientId: 'client1',
-            location: 'Location1',
-            bookingDate: new Date('2024-07-01'),
-            status: 'pending'
-        },
-        {
-            clientId: 'client2',
-            location: 'Location2',
-            bookingDate: new Date('2024-07-02'),
-            status: 'confirmed'
-        },
-        // More dummy data...
-    ]);
+    const [bookings, setBookings] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [bookingsPerPage] = useState(3);
     const [isCreating, setIsCreating] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [currentBooking, setCurrentBooking] = useState(null);
 
-    const filteredBookings = bookings.filter(booking => 
-        booking.location.toLowerCase().includes(searchQuery.toLowerCase())
+    useEffect(() => {
+        const fetchBookings = async () => {
+            setLoading(true);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`${config.API_BASE_URL}/bookings/fetch/all/booking-info/`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                if (Array.isArray(response.data)) {
+                    setBookings(response.data);
+                } else {
+                    setBookings([]);
+                }
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+                if (error.response && error.response.status === 401) {
+                    window.location.href = '/logout';
+                } else {
+                    setError('Failed to fetch bookings');
+                }
+            }
+        };
+
+        fetchBookings();
+    }, []);
+
+    const filteredBookings = bookings.filter(booking =>
+        booking.location.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const indexOfLastBooking = currentPage * bookingsPerPage;
@@ -40,10 +56,10 @@ const PartnerBookings = () => {
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-
-
-
-
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
 
     return (
         <div className="flex flex-col h-screen overflow-hidden bg-gray-100">
@@ -56,7 +72,6 @@ const PartnerBookings = () => {
                     <div className="px-4 mt-32 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                         {/* Welcome banner */}
                         <WelcomeBanner />
-
 
                         {/* Search bar */}
                         <div className="mb-4">
@@ -71,28 +86,51 @@ const PartnerBookings = () => {
 
                         {/* Booking List Table */}
                         <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
-                            <table className="min-w-full">
-                                <thead className="bg-[#4A686A] text-white">
-                                    <tr>
-                                        <th className="w-1/6 py-3 px-6 text-left">Client ID</th>
-                                        <th className="w-1/4 py-3 px-6 text-left">Location</th>
-                                        <th className="w-1/4 py-3 px-6 text-left">Booking Date</th>
-                                        <th className="w-1/6 py-3 px-6 text-left">Status</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody className="text-gray-800">
-                                    {currentBookings.map((booking, index) => (
-                                        <tr key={index} className="bg-white hover:bg-gray-200 transition duration-150">
-                                            <td className="w-1/6 py-3 px-6 border">{booking.clientId}</td>
-                                            <td className="w-1/4 py-3 px-6 border">{booking.location}</td>
-                                            <td className="w-1/4 py-3 px-6 border">{booking.bookingDate.toLocaleDateString()}</td>
-                                            <td className="w-1/6 py-3 px-6 border">{booking.status}</td>
-
+                            {loading ? (
+                                <div className="flex justify-center items-center p-8">Loading...</div>
+                            ) : error ? (
+                                <div className="flex justify-center items-center p-8 text-red-500">{error}</div>
+                            ) : (
+                                <table className="min-w-full">
+                                    <thead className="bg-[#4A686A] text-white">
+                                        <tr>
+                                            <th className="w-1/6 py-3 px-6 text-left">Client ID</th>
+                                            <th className="w-1/4 py-3 px-6 text-left">Location</th>
+                                            <th className="w-1/4 py-3 px-6 text-left">Booking Date</th>
+                                            <th className="w-1/6 py-3 px-6 text-left">Status</th>
+                                            <th className="w-1/6 py-3 px-6 text-left">Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+
+                                    <tbody className="text-gray-800">
+                                        {currentBookings.map((booking, index) => (
+                                            <tr key={index} className="bg-white hover:bg-gray-200 transition duration-150">
+                                                <td className="w-1/6 py-3 px-6 border">{booking.clientId}</td>
+                                                <td className="w-1/4 py-3 px-6 border">{booking.location}</td>
+                                                <td className="w-1/4 py-3 px-6 border">{formatDate(booking.bookingDate)}</td>
+                                                <td className="w-1/6 py-3 px-6 border">{booking.status}</td>
+                                                <td className="w-1/6 py-3 px-6 border text-center">
+                                                    <button
+                                                        onClick={() => {
+                                                            setIsEditing(true);
+                                                            setCurrentBooking(booking);
+                                                        }}
+                                                        className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setBookings(bookings.filter(b => b !== booking))}
+                                                        className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
 
                         {/* Pagination */}
@@ -102,7 +140,7 @@ const PartnerBookings = () => {
                                     <button
                                         key={number}
                                         onClick={() => paginate(number + 1)}
-                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-[blue-500] text-[#4A686A]' : ''}`}
+                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : ''}`}
                                     >
                                         {number + 1}
                                     </button>
@@ -112,6 +150,8 @@ const PartnerBookings = () => {
                     </div>
                 </main>
             </div>
+
+            {isEditing && <EditPartnerBooking currentBooking={currentBooking} setIsEditing={setIsEditing} />}
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 
@@ -19,13 +19,15 @@ const locationSchema = Yup.object().shape({
     availableTo: Yup.date().required('Required'),
     amenities: Yup.string().required('Required'),
     notes: Yup.string().required('Required'),
-    pictures: Yup.string().required('Required'),
+    pictures: Yup.mixed().required('Required'),
     openTime: Yup.string().required('Required'),
     closeTime: Yup.string().required('Required'),
     locationType: Yup.string().required('Required'),
 });
 
 const LocationForm = ({ onSubmit, location }) => {
+    const [previewPictures, setPreviewPictures] = useState([]);
+
     return (
         <Formik
             initialValues={{
@@ -45,7 +47,7 @@ const LocationForm = ({ onSubmit, location }) => {
                 availableTo: location?.additionalDetails?.availableTo || '',
                 amenities: location?.additionalDetails?.amenities || '',
                 notes: location?.additionalDetails?.notes || '',
-                pictures: location?.additionalDetails?.pictures.join(', ') || '',
+                pictures: [],
                 openTime: location?.additionalDetails?.openTime || '',
                 closeTime: location?.additionalDetails?.closeTime || '',
                 locationType: location?.additionalDetails?.locationType || '',
@@ -76,13 +78,20 @@ const LocationForm = ({ onSubmit, location }) => {
                         setFieldValue('availableTo', location.additionalDetails.availableTo);
                         setFieldValue('amenities', location.additionalDetails.amenities);
                         setFieldValue('notes', location.additionalDetails.notes);
-                        setFieldValue('pictures', location.additionalDetails.pictures.join(', '));
                         setFieldValue('openTime', location.additionalDetails.openTime);
                         setFieldValue('closeTime', location.additionalDetails.closeTime);
                         setFieldValue('locationType', location.additionalDetails.locationType);
                         setFieldValue('timezone', location.timezone);
                     }
                 }, [location, setFieldValue]);
+
+                const handleFileChange = (event) => {
+                    const files = event.currentTarget.files;
+                    setFieldValue('pictures', files);
+
+                    const filePreviews = Array.from(files).map(file => URL.createObjectURL(file));
+                    setPreviewPictures(filePreviews);
+                };
 
                 return (
                     <Form className="overflow-y-auto" style={{ maxHeight: '80vh' }}>
@@ -105,7 +114,6 @@ const LocationForm = ({ onSubmit, location }) => {
                                 { name: 'availableTo', label: 'Available To', type: 'date' },
                                 { name: 'amenities', label: 'Amenities (comma separated)' },
                                 { name: 'notes', label: 'Notes' },
-                                { name: 'pictures', label: 'Pictures (URLs, comma separated)' },
                                 { name: 'openTime', label: 'Open Time', type: 'time' },
                                 { name: 'closeTime', label: 'Close Time', type: 'time' },
                                 { name: 'locationType', label: 'Location Type' },
@@ -128,6 +136,36 @@ const LocationForm = ({ onSubmit, location }) => {
                                     )}
                                 </div>
                             ))}
+                            <div className="form-group">
+                                <label htmlFor="pictures" className="block text-sm font-medium text-gray-700">
+                                    Pictures
+                                </label>
+                                <input
+                                    id="pictures"
+                                    name="pictures"
+                                    type="file"
+                                    multiple
+                                    className={`form-input mt-1 block w-full rounded-md ${
+                                        errors.pictures && touched.pictures
+                                            ? 'border-red-500'
+                                            : 'border-gray-300'
+                                    }`}
+                                    onChange={handleFileChange}
+                                />
+                                {errors.pictures && touched.pictures && (
+                                    <div className="text-red-500 text-sm">{errors.pictures}</div>
+                                )}
+                                <div className="mt-2 flex flex-wrap">
+                                    {previewPictures.map((src, index) => (
+                                        <img
+                                            key={index}
+                                            src={src}
+                                            alt={`Preview ${index}`}
+                                            className="h-20 w-20 object-cover mr-2 mb-2 rounded"
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                             <button 
                                 type="submit" 
                                 className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${isSubmitting || !isValid ? 'opacity-50 cursor-not-allowed' : ''}`}

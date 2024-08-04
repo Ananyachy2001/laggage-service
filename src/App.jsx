@@ -84,6 +84,7 @@ function App() {
         
         <Route path="/logout" element={<Logout />} />
         <Route path="/comingsoon" element={<ComingSoon />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<UnauthorizedPage />} />
 
@@ -91,7 +92,7 @@ function App() {
         {/* admin  */}
         <Route exact path="/superadmin/dashboard" element={<AdminDashboard />} />
         <Route exact path="/superadmin/login" element={<AdminLoginForm />} />
-        {/* <Route exact path="/superadmin/profile" element={<AdminProfile />} /> */}
+        <Route exact path="/superadmin/profile" element={<AdminProfile />} />
         <Route exact path="/superadmin/clients" element={<AllClient />} />
         <Route exact path="/superadmin/user" element={<AllUser/>} />
         <Route exact path="/superadmin/partners" element={<AllPartner/>} />

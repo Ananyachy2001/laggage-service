@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'tailwindcss/tailwind.css';
+import { Elements } from '@stripe/react-stripe-js';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faMapMarkerAlt, faClock, faStar, faWifi, faShieldAlt, faTag } from '@fortawesome/free-solid-svg-icons';
+import { loadStripe } from '@stripe/stripe-js';
 import ClientNavbarComp from '../../User/ClientNavbarComp';
 import { useLocation, useNavigate } from 'react-router-dom';
 import config from '../../../config';
@@ -11,6 +13,8 @@ import BookingForm from './BookingForm';
 import NavbarComp from '../../Home/NavbarComp';
 
 library.add(faMapMarkerAlt, faClock, faStar, faWifi, faShieldAlt, faTag);
+
+const stripePromise = loadStripe(config.STRIPE_PUBLIC_KEY);
 
 const LuggageStoreDetails = () => {
   const location = useLocation();
@@ -43,59 +47,34 @@ const LuggageStoreDetails = () => {
 
   const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
 
-  const handleSubmit = (clientDetails) => {
-    const payload = {
-      location: id,
-      startDate: new Date(checkinTime).toISOString(),
-      endDate: new Date(checkoutTime).toISOString(),
-      startTime: new Date(checkinTime).toTimeString().slice(0, 8),
-      endTime: new Date(checkoutTime).toTimeString().slice(0, 8),
-      payment: {
-        amount: totalPrice,
-        method: 'stripe'
+  const handleSubmit = async (bookingData) => {
+    const token = localStorage.getItem('token');
+    const url = `${config.API_BASE_URL}/api/v1/bookings/instant-booking`;
+
+    const fetchOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(isLoggedIn && { 'Authorization': `Bearer ${token}` })
       },
-      specialRequests: clientDetails.specialRequests || 'No requirement',
-      discount,
-      notes: clientDetails.notes || 'No notes'
+      body: JSON.stringify(bookingData)
     };
 
-    if (isLoggedIn) {
-      payload.client = clientId;
-      fetch(`${config.API_BASE_URL}/bookings`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(data => {
-        navigate('/client/bookingconfirmation', {
-          state: { ...data, clientDetails }
+    try {
+      const response = await fetch(url, fetchOptions);
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        const { clientSecret, bookingId } = result;
+
+        navigate('/payment-success', {
+          state: { clientSecret, bookingId, clientDetails }
         });
-      })
-      .catch(error => console.error('Error:', error));
-    } else {
-      payload.guest = {
-        name: clientDetails.name,
-        email: clientDetails.email,
-        phone: clientDetails.phone
-      };
-      fetch(`${config.API_BASE_URL}/bookings/guest`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(data => {
-        navigate('/client/bookingconfirmation', {
-          state: { ...data, clientDetails }
-        });
-      })
-      .catch(error => console.error('Error:', error));
+      } else {
+        console.error('Booking error:', result);
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
@@ -111,7 +90,7 @@ const LuggageStoreDetails = () => {
           });
           const result = await response.json();
           if (response.ok) {
-            setClientId(result.user._id);  // Assuming the client ID is stored in _id
+            setClientId(result.user._id);
             setClientDetails({
               name: result.user.username,
               email: result.user.email,
@@ -134,55 +113,57 @@ const LuggageStoreDetails = () => {
   }, []);
 
   return (
-    <div>
-      {isLoggedIn ? <ClientNavbarComp /> : <NavbarComp />}
+    <Elements stripe={stripePromise}>
+      <div>
+        {isLoggedIn ? <ClientNavbarComp /> : <NavbarComp />}
 
-      <div className="container mx-auto mt-12 pt-32">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="col-span-2">
-            <LuggageStoreInfo 
-              id={id}
-              title={title}
-              details={details}
-              price={price}
-              lat={lat}
-              lng={lng}
-              availableFrom={availableFrom}
-              availableTo={availableTo}
-              discountPercentage={discountPercentage}
-              openTime={openTime}
-              closeTime={closeTime}
-              notes={notes}
-              GOOGLE_MAPS_API_KEY={GOOGLE_MAPS_API_KEY}
-            />
-          </div>
-          <div>
-            <BookingForm 
-              locationid={id}
-              handleSubmit={handleSubmit}
-              luggageQuantity={luggageQuantity}
-              setLuggageQuantity={setLuggageQuantity}
-              serviceOption={serviceOption}
-              setServiceOption={setServiceOption}
-              promoCode={promoCode}
-              setPromoCode={setPromoCode}
-              discount={discount}
-              setDiscount={setDiscount}
-              checkinTime={checkinTime}
-              setCheckinTime={setCheckinTime}
-              checkoutTime={checkoutTime}
-              setCheckoutTime={setCheckoutTime}
-              totalPrice={totalPrice}
-              setTotalPrice={setTotalPrice}
-              servicePrices={servicePrices}
-              regularprice={regularprice}
-              clientDetails={clientDetails}
-              setClientDetails={setClientDetails}
-            />
+        <div className="container mx-auto mt-12 pt-32">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="col-span-2">
+              <LuggageStoreInfo 
+                id={id}
+                title={title}
+                details={details}
+                price={price}
+                lat={lat}
+                lng={lng}
+                availableFrom={availableFrom}
+                availableTo={availableTo}
+                discountPercentage={discountPercentage}
+                openTime={openTime}
+                closeTime={closeTime}
+                notes={notes}
+                GOOGLE_MAPS_API_KEY={GOOGLE_MAPS_API_KEY}
+              />
+            </div>
+            <div>
+              <BookingForm 
+                locationid={id}
+                handleSubmit={handleSubmit}
+                luggageQuantity={luggageQuantity}
+                setLuggageQuantity={setLuggageQuantity}
+                serviceOption={serviceOption}
+                setServiceOption={setServiceOption}
+                promoCode={promoCode}
+                setPromoCode={setPromoCode}
+                discount={discount}
+                setDiscount={setDiscount}
+                checkinTime={checkinTime}
+                setCheckinTime={setCheckinTime}
+                checkoutTime={checkoutTime}
+                setCheckoutTime={setCheckoutTime}
+                totalPrice={totalPrice}
+                setTotalPrice={setTotalPrice}
+                servicePrices={servicePrices}
+                regularprice={regularprice}
+                clientDetails={clientDetails}
+                setClientDetails={setClientDetails}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Elements>
   );
 };
 

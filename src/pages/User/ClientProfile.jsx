@@ -4,6 +4,7 @@ import './ClientProfile.css';
 import ClientNavbarComp from './ClientNavbarComp';
 import config from '../../config';
 import { ClipLoader } from 'react-spinners';
+import ClientChangePasswordModal from './ClientChangePasswordModal'; // Import the modal
 
 const ClientProfile = () => {
     const [editMode, setEditMode] = useState(false);
@@ -14,6 +15,7 @@ const ClientProfile = () => {
         username: '',
         phoneNumber: '',
     });
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
     const navigate = useNavigate();
 
@@ -67,6 +69,14 @@ const ClientProfile = () => {
     const handleSaveClick = () => {
         setEditMode(false);
         // Add save functionality here, e.g., API call to save the profile details
+    };
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
     };
 
     if (loading) {
@@ -181,6 +191,14 @@ const ClientProfile = () => {
                                                 <p className="mt-1">{profile.phoneNumber}</p>
                                             </div>
                                         </div>
+                                        <div className="mt-6 text-center">
+                                            <button
+                                                className="bg-indigo-600 text-white px-4 py-2 rounded-md transition duration-500 ease-in-out transform hover:bg-indigo-700 hover:-translate-y-1 hover:scale-110"
+                                                onClick={handleOpenModal}
+                                            >
+                                                Change Password
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -188,6 +206,8 @@ const ClientProfile = () => {
                     </div>
                 </main>
             </div>
+
+            <ClientChangePasswordModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </div>
     );
 };

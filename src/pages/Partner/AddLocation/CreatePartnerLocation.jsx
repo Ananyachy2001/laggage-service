@@ -22,47 +22,45 @@ const CreatePartnerLocation = () => {
     };
 
     const handleSubmit = async (values) => {
-        const locationData = {
-            name: values.name,
-            description: values.description,
-            coordinates: {
-                type: "Point",
-                coordinates: [location.coordinates.lng, location.coordinates.lat]
-            },
-            address: {
-                street: values.street,
-                district: values.district,
-                city: values.city,
-                state: values.state,
-                zipCode: values.zipCode,
-                country: values.country
-            },
-            capacity: values.capacity,
-            availableSpace: values.availableSpace,
-            amenities: values.amenities.split(',').map(item => item.trim()),
-            availableFrom: values.availableFrom,
-            availableTo: values.availableTo,
-            regularPrice: values.regularPrice,
-            discountPercentage: values.discountPercentage,
-            pictures: values.pictures.split(',').map(item => item.trim()),
-            notes: values.notes,
-            openTime: values.openTime,
-            closeTime: values.closeTime,
-            locationType: values.locationType,
-            timezone: location.timezone 
-        };
-        console.log(locationData);
+        const formData = new FormData();
+        formData.append('name', values.name);
+        formData.append('description', values.description);
+        formData.append('street', values.street);
+        formData.append('district', values.district);
+        formData.append('city', values.city);
+        formData.append('state', values.state);
+        formData.append('zipCode', values.zipCode);
+        formData.append('country', values.country);
+        formData.append('capacity', values.capacity);
+        formData.append('availableSpace', values.availableSpace);
+        formData.append('regularPrice', values.regularPrice);
+        formData.append('discountPercentage', values.discountPercentage);
+        formData.append('availableFrom', values.availableFrom);
+        formData.append('availableTo', values.availableTo);
+        formData.append('amenities', values.amenities);
+        formData.append('notes', values.notes);
+        formData.append('openTime', values.openTime);
+        formData.append('closeTime', values.closeTime);
+        formData.append('locationType', values.locationType);
+        formData.append('timezone', location.timezone);
+        
+        Array.from(values.pictures).forEach((file) => {
+            formData.append('pictures', file);
+        });
+
+        formData.append('coordinates', JSON.stringify({
+            type: "Point",
+            coordinates: [location.coordinates.lng, location.coordinates.lat]
+        }));
 
         const token = localStorage.getItem('token');
         const url = `${config.API_BASE_URL}/api/v1/locations/create`;
 
-        console.log("API URL:", url);
-
         try {
-            const response = await axios.post(url, locationData, {
+            const response = await axios.post(url, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'multipart/form-data'
                 }
             });
 

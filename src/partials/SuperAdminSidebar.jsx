@@ -296,7 +296,7 @@ function SuperAdminSidebar({ sidebarOpen, setSidebarOpen }) {
                             </NavLink>
                           </li> */}
 
-                          {/* <li className="mb-1 last:mb-0">
+                          <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/superadmin/profile"
@@ -308,7 +308,7 @@ function SuperAdminSidebar({ sidebarOpen, setSidebarOpen }) {
                                 Super Admin Profile
                               </span>
                             </NavLink>
-                          </li> */}
+                          </li>
                           {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './AdminProfile.css';
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
+import AdminChangePasswordModal from './AdminChangePasswordModal'; // Import the modal
 import config from '../../config';
 
 const AdminProfile = () => {
@@ -13,6 +14,7 @@ const AdminProfile = () => {
         username: '',
         phoneNumber: '',
     });
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
     const navigate = useNavigate();
 
@@ -67,6 +69,14 @@ const AdminProfile = () => {
     const handleSaveClick = () => {
         setEditMode(false);
         // Add save functionality here, e.g., API call to save the profile details
+    };
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
     };
 
     return (
@@ -139,6 +149,12 @@ const AdminProfile = () => {
                                 </div>
                             )}
 
+                            <div className="mt-6 text-center">
+                                <button className="bg-indigo-600 text-white px-4 py-2 rounded-md" onClick={handleOpenModal}>
+                                    Change Password
+                                </button>
+                            </div>
+
                             <div className="mt-6">
                                 <h3 className="text-xl font-semibold">Management History</h3>
                                 {/* Add management history components here */}
@@ -148,6 +164,7 @@ const AdminProfile = () => {
                     </div>
                 </div>
             </div>
+            <AdminChangePasswordModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </div>
     );
 };

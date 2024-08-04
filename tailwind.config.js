@@ -22,6 +22,10 @@ module.exports = {
         '100%': { opacity: 1 }
       }
     },
+    fontFamily: {
+      sans: ['Roboto', 'sans-serif'],
+    },
+
   },
   plugins: [
     require('flowbite/plugin')
