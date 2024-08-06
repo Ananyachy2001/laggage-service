@@ -1,14 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import config from '../../../config';
 
-const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, serviceOption, setServiceOption, promoCode, setPromoCode, discount, setDiscount, checkinTime, setCheckinTime, checkoutTime, setCheckoutTime, totalPrice, setTotalPrice, servicePrices, regularprice, locationid, clientDetails, setClientDetails }) => {
+const BookingForm = ({ 
+  handleSubmit, 
+  luggageQuantity, 
+  setLuggageQuantity, 
+  serviceOption, 
+  setServiceOption, 
+  promoCode, 
+  setPromoCode, 
+  discount, 
+  setDiscount, 
+  checkinTime, 
+  setCheckinTime, 
+  checkoutTime, 
+  setCheckoutTime, 
+  totalPrice, 
+  setTotalPrice, 
+  servicePrices, 
+  regularprice, 
+  locationid, 
+  clientId, 
+  clientDetails, 
+  setClientDetails
+}) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [promoApplied, setPromoApplied] = useState(false);
-  const [clientId, setClientId] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // To track if user is logged in
 
   const [guestDetails, setGuestDetails] = useState({
     name: '',
@@ -17,36 +36,9 @@ const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, servic
   });
 
   useEffect(() => {
-    setTotalPrice(0); // Initialize total price to 0
-    setDiscount(0); // Initialize discount to 0
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token'); // Retrieve token from localStorage
-    if (token) {
-      setIsLoggedIn(true); // Set user as logged in if token exists
-      const fetchUserProfile = async () => {
-        try {
-          const response = await fetch(`${config.API_BASE_URL}/api/v1/users/profile/client`, {
-            headers: {
-              'Authorization': `Bearer ${token}` // Include token in request headers
-            }
-          });
-          const data = await response.json();
-          if (data._id) {
-            setClientId(data._id);
-          } else {
-            console.error('User ID not found in the response');
-          }
-        } catch (error) {
-          console.error('Failed to fetch user profile:', error);
-          setErrorMessage("Failed to fetch user profile. Please check your network connection.");
-        }
-      };
-
-      fetchUserProfile();
-    }
-  }, []);
+    setTotalPrice(0); 
+    setDiscount(0); 
+  }, [setTotalPrice, setDiscount]);
 
   const handleApplyPromo = () => {
     if (promoCode === 'DISCOUNT10') {
@@ -86,24 +78,18 @@ const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, servic
   useEffect(() => {
     if (validateDateTime(checkinTime, checkoutTime) && checkinTime && checkoutTime) {
       const servicePrice = servicePrices[serviceOption];
-      const price = ((regularprice + servicePrice) * luggageQuantity - discount) * calculateDuration(checkinTime, checkoutTime);
+      const duration = calculateDuration(checkinTime, checkoutTime);
+      const price = ((regularprice + servicePrice) * luggageQuantity * duration) - discount;
       setTotalPrice(price > 0 ? price : 0);
     }
   }, [luggageQuantity, serviceOption, discount, checkinTime, checkoutTime, regularprice, servicePrices, setTotalPrice]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (isLoggedIn) {
-      setClientDetails({
-        ...clientDetails,
-        [name]: value,
-      });
-    } else {
-      setGuestDetails({
-        ...guestDetails,
-        [name]: value,
-      });
-    }
+    setGuestDetails({
+      ...guestDetails,
+      [name]: value,
+    });
   };
 
   const handleFileChange = (e) => {
@@ -116,15 +102,13 @@ const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, servic
 
   const validateForm = () => {
     const newErrors = {};
-    const details = isLoggedIn ? clientDetails : guestDetails;
-    if (!details.name) newErrors.name = 'Name is required';
-    if (!details.email) {
+    if (!guestDetails.name && !clientId) newErrors.name = 'Name is required';
+    if (!guestDetails.email && !clientId) {
       newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(details.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(guestDetails.email) && !clientId) {
       newErrors.email = 'Email is invalid';
     }
-    if (!details.phone) newErrors.phone = 'Phone number is required';
-    if (!details.address) newErrors.address = 'Address is required';
+    if (!guestDetails.phone && !clientId) newErrors.phone = 'Phone number is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -146,7 +130,7 @@ const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, servic
       specialRequests: clientDetails.specialRequests || 'No requirement',
     };
 
-    if (isLoggedIn) {
+    if (clientId) {
       bookingData.client = clientId;
     } else {
       bookingData.guest = {
@@ -161,11 +145,7 @@ const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, servic
 
   const openUserDetailsModal = () => {
     if (validateDateTime(checkinTime, checkoutTime) && luggageQuantity > 0 && serviceOption) {
-      if (isLoggedIn) {
-        handleFormSubmit();
-      } else {
-        setShowModal(true);
-      }
+      setShowModal(true);
     } else {
       setErrorMessage('Please fill out all required fields before proceeding.');
     }
@@ -294,45 +274,49 @@ const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, servic
         </Modal.Header>
         <Modal.Body className="bg-gray-100 p-6 rounded-lg">
           <form onSubmit={handleFormSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="clientName" className="block font-semibold mb-1">Name:</label>
-              <input
-                type="text"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                id="clientName"
-                name="name"
-                value={isLoggedIn ? clientDetails.name : guestDetails.name}
-                onChange={handleInputChange}
-                required
-              />
-              {errors.name && <p className="text-red-500">{errors.name}</p>}
-            </div>
-            <div>
-              <label htmlFor="clientEmail" className="block font-semibold mb-1">Email:</label>
-              <input
-                type="email"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                id="clientEmail"
-                name="email"
-                value={isLoggedIn ? clientDetails.email : guestDetails.email}
-                onChange={handleInputChange}
-                required
-              />
-              {errors.email && <p className="text-red-500">{errors.email}</p>}
-            </div>
-            <div>
-              <label htmlFor="clientPhone" className="block font-semibold mb-1">Phone Number:</label>
-              <input
-                type="text"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                id="clientPhone"
-                name="phone"
-                value={isLoggedIn ? clientDetails.phone : guestDetails.phone}
-                onChange={handleInputChange}
-                required
-              />
-              {errors.phone && <p className="text-red-500">{errors.phone}</p>}
-            </div>
+            {!clientId && (
+              <>
+                <div>
+                  <label htmlFor="clientName" className="block font-semibold mb-1">Name:</label>
+                  <input
+                    type="text"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    id="clientName"
+                    name="name"
+                    value={guestDetails.name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {errors.name && <p className="text-red-500">{errors.name}</p>}
+                </div>
+                <div>
+                  <label htmlFor="clientEmail" className="block font-semibold mb-1">Email:</label>
+                  <input
+                    type="email"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    id="clientEmail"
+                    name="email"
+                    value={guestDetails.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {errors.email && <p className="text-red-500">{errors.email}</p>}
+                </div>
+                <div>
+                  <label htmlFor="clientPhone" className="block font-semibold mb-1">Phone Number:</label>
+                  <input
+                    type="text"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    id="clientPhone"
+                    name="phone"
+                    value={guestDetails.phone}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {errors.phone && <p className="text-red-500">{errors.phone}</p>}
+                </div>
+              </>
+            )}
             <div>
               <label htmlFor="clientAddress" className="block font-semibold mb-1">Address:</label>
               <input
@@ -357,7 +341,7 @@ const BookingForm = ({ handleSubmit, luggageQuantity, setLuggageQuantity, servic
                 onChange={handleFileChange}
               />
             </div>
-            {isLoggedIn && (
+            {clientId && (
               <div>
                 <label className="font-bold">Client ID: </label>
                 <span id="clientId">{clientId}</span>

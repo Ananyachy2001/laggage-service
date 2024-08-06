@@ -39,6 +39,7 @@ const LuggageStoreDetails = () => {
   });
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
+  const [bookingId, setBookingId] = useState('');
   const navigate = useNavigate();
 
   const servicePrices = {
@@ -66,9 +67,13 @@ const LuggageStoreDetails = () => {
     try {
       const response = await fetch(url, fetchOptions);
       const result = await response.json();
+      console.log(result);
 
       if (result.status === 'success') {
         setClientSecret(result.clientSecret);
+        setBookingId(result.booking._id);  // Assuming bookingId is available in result.booking._id
+        console.log('Client Secret:', result.clientSecret);
+        console.log('Booking ID:', result.booking._id);
         setShowPaymentModal(true);
       } else {
         console.error('Booking error:', result);
@@ -90,7 +95,7 @@ const LuggageStoreDetails = () => {
           });
           const result = await response.json();
           if (response.ok) {
-            setClientId(result.user._id);
+            setClientId(result._id);
             setClientDetails({
               name: result.user.username,
               email: result.user.email,
@@ -156,19 +161,21 @@ const LuggageStoreDetails = () => {
                 setTotalPrice={setTotalPrice}
                 servicePrices={servicePrices}
                 regularprice={regularprice}
+                clientId={clientId}
+                setClientId={setClientId}
                 clientDetails={clientDetails}
                 setClientDetails={setClientDetails}
               />
             </div>
           </div>
         </div>
-        {showPaymentModal && <PaymentFormModal clientSecret={clientSecret} clientDetails={clientDetails} />}
+        {showPaymentModal && <PaymentFormModal clientSecret={clientSecret} clientDetails={clientDetails} bookingId={bookingId} />}
       </div>
     </Elements>
   );
 };
 
-const PaymentFormModal = ({ clientSecret, clientDetails }) => {
+const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState('');
@@ -195,9 +202,28 @@ const PaymentFormModal = ({ clientSecret, clientDetails }) => {
     if (error) {
       setErrorMessage(error.message);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-      navigate('/payment-success', {
-        state: { paymentIntent, clientDetails }
-      });
+      console.log('Payment successful:', paymentIntent);
+    
+      try {
+        const response = await fetch(`${config.API_BASE_URL}/api/v1/bookings/${bookingId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: 'paid' }),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to update booking status');
+        }
+    
+        console.log('Booking status updated successfully');
+        navigate('/payment-success', {
+          state: { paymentIntent, clientDetails },
+        });
+      } catch (error) {
+        console.error('Error updating booking status:', error);
+      }
     }
   };
 
