@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'tailwindcss/tailwind.css';
-import { Elements } from '@stripe/react-stripe-js';
+import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faMapMarkerAlt, faClock, faStar, faWifi, faShieldAlt, faTag } from '@fortawesome/free-solid-svg-icons';
 import { loadStripe } from '@stripe/stripe-js';
@@ -11,6 +11,7 @@ import config from '../../../config';
 import LuggageStoreInfo from './LuggageStoreInfo';
 import BookingForm from './BookingForm';
 import NavbarComp from '../../Home/NavbarComp';
+import { Button, Modal } from 'react-bootstrap';
 
 library.add(faMapMarkerAlt, faClock, faStar, faWifi, faShieldAlt, faTag);
 
@@ -36,6 +37,8 @@ const LuggageStoreDetails = () => {
     specialRequests: '',
     notes: ''
   });
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
   const navigate = useNavigate();
 
   const servicePrices = {
@@ -65,11 +68,8 @@ const LuggageStoreDetails = () => {
       const result = await response.json();
 
       if (result.status === 'success') {
-        const { clientSecret, bookingId } = result;
-
-        navigate('/payment-success', {
-          state: { clientSecret, bookingId, clientDetails }
-        });
+        setClientSecret(result.clientSecret);
+        setShowPaymentModal(true);
       } else {
         console.error('Booking error:', result);
       }
@@ -162,8 +162,62 @@ const LuggageStoreDetails = () => {
             </div>
           </div>
         </div>
+        {showPaymentModal && <PaymentFormModal clientSecret={clientSecret} clientDetails={clientDetails} />}
       </div>
     </Elements>
+  );
+};
+
+const PaymentFormModal = ({ clientSecret, clientDetails }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
+
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    const cardElement = elements.getElement(CardElement);
+    console.log('Card Element:', cardElement); // Log cardElement
+
+    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: {
+          name: clientDetails.name,
+        },
+      },
+    });
+
+    console.log('Payment Intent:', paymentIntent); // Log paymentIntent
+
+    if (error) {
+      setErrorMessage(error.message);
+    } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+      navigate('/payment-success', {
+        state: { paymentIntent, clientDetails }
+      });
+    }
+  };
+
+  return (
+    <Modal show onHide={() => {}} className="modal-dialog-centered">
+      <Modal.Header closeButton className="bg-[#1A73A7] text-white">
+        <Modal.Title>Complete Your Payment</Modal.Title>
+      </Modal.Header>
+      <Modal.Body className="bg-gray-100 p-6 rounded-lg">
+        <form onSubmit={handlePayment} className="space-y-4">
+          <div>
+            <CardElement className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+          </div>
+          {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+          <Button variant="primary" type="submit" className="w-full bg-[#1A73A7] text-white py-3 rounded-lg hover:bg-blue-500 transition duration-300">
+            Pay Now
+          </Button>
+        </form>
+      </Modal.Body>
+    </Modal>
   );
 };
 
