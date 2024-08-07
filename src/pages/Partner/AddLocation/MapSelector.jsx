@@ -4,7 +4,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import debounce from 'lodash/debounce';
-import useGoogleMapsApi from './useGoogleMapsApi'; // Import the custom hook
+import useGoogleMapsApi from './useGoogleMapsApi';
 import config from '../../../config';
 
 const MapSelector = ({ onSelect }) => {
@@ -28,7 +28,6 @@ const MapSelector = ({ onSelect }) => {
                 const addressComponents = response.data.results[0].address_components;
                 const addressDetails = {
                     street: '',
-                    district: '',
                     city: '',
                     state: '',
                     zipCode: '',
@@ -38,8 +37,6 @@ const MapSelector = ({ onSelect }) => {
                 addressComponents.forEach((component) => {
                     if (component.types.includes('route')) {
                         addressDetails.street = component.long_name;
-                    } else if (component.types.includes('sublocality_level_1')) {
-                        addressDetails.district = component.long_name;
                     } else if (component.types.includes('locality')) {
                         addressDetails.city = component.long_name;
                     } else if (component.types.includes('administrative_area_level_1')) {
@@ -109,7 +106,7 @@ const MapSelector = ({ onSelect }) => {
             </Autocomplete>
             <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '400px' }}
-                center={selectedPosition || { lat: -33.856779, lng: 151.215256 }}
+                center={selectedPosition || { lat: -31.950527, lng: 115.860457 }}
                 zoom={15}
                 onClick={handleMapClick}
                 className="rounded-lg overflow-hidden"

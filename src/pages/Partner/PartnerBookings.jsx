@@ -22,7 +22,7 @@ const PartnerBookings = () => {
             setLoading(true);
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`${config.API_BASE_URL}/bookings/fetch/all/booking-info/`, {
+                const response = await axios.get(`${config.API_BASE_URL}/api/v1/bookings/fetch/all/booking-info/`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -57,8 +57,18 @@ const PartnerBookings = () => {
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     const formatDate = (dateString) => {
+        if (!dateString) return '';
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
+    const formatDateTime = (dateString, timeString) => {
+        if (!dateString || !timeString) return '';
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const date = new Date(dateString);
+        const [hours, minutes] = timeString.split(':');
+        date.setHours(hours, minutes);
+        return date.toLocaleString(undefined, options);
     };
 
     return (
@@ -94,10 +104,13 @@ const PartnerBookings = () => {
                                 <table className="min-w-full">
                                     <thead className="bg-[#4A686A] text-white">
                                         <tr>
-                                            <th className="w-1/6 py-3 px-6 text-left">Client ID</th>
                                             <th className="w-1/4 py-3 px-6 text-left">Location</th>
-                                            <th className="w-1/4 py-3 px-6 text-left">Booking Date</th>
-                                            <th className="w-1/6 py-3 px-6 text-left">Status</th>
+                                            <th className="w-1/6 py-3 px-6 text-left">Booking Date</th>
+                                            <th className="w-1/4 py-3 px-6 text-left">Start Date & Time</th>
+                                            <th className="w-1/4 py-3 px-6 text-left">End Date & Time</th>
+                                            <th className="w-1/6 py-3 px-6 text-left">Regular Price</th>
+                                            <th className="w-1/6 py-3 px-6 text-left">Discount (%)</th>
+                                            <th className="w-1/6 py-3 px-6 text-left">Special Request</th>
                                             <th className="w-1/6 py-3 px-6 text-left">Actions</th>
                                         </tr>
                                     </thead>
@@ -105,10 +118,13 @@ const PartnerBookings = () => {
                                     <tbody className="text-gray-800">
                                         {currentBookings.map((booking, index) => (
                                             <tr key={index} className="bg-white hover:bg-gray-200 transition duration-150">
-                                                <td className="w-1/6 py-3 px-6 border">{booking.clientId}</td>
-                                                <td className="w-1/4 py-3 px-6 border">{booking.location}</td>
-                                                <td className="w-1/4 py-3 px-6 border">{formatDate(booking.bookingDate)}</td>
-                                                <td className="w-1/6 py-3 px-6 border">{booking.status}</td>
+                                                <td className="w-1/4 py-3 px-6 border">{booking.location.name || ''}</td>
+                                                <td className="w-1/6 py-3 px-6 border">{formatDate(booking.bookingDate)}</td>
+                                                <td className="w-1/4 py-3 px-6 border">{formatDateTime(booking.startDate, booking.startTime)}</td>
+                                                <td className="w-1/4 py-3 px-6 border">{formatDateTime(booking.endDate, booking.endTime)}</td>
+                                                <td className="w-1/6 py-3 px-6 border">{booking.location.regularPrice || ''}</td>
+                                                <td className="w-1/6 py-3 px-6 border">{booking.location.discountPercentage || ''}</td>
+                                                <td className="w-1/6 py-3 px-6 border">{booking.specialRequests || ''}</td>
                                                 <td className="w-1/6 py-3 px-6 border text-center">
                                                     <button
                                                         onClick={() => {
@@ -140,7 +156,7 @@ const PartnerBookings = () => {
                                     <button
                                         key={number}
                                         onClick={() => paginate(number + 1)}
-                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : ''}`}
+                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-blue' : ''}`}
                                     >
                                         {number + 1}
                                     </button>

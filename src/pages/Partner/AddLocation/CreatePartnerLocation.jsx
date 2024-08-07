@@ -8,44 +8,50 @@ import PartnerNavbarComp from '../PartnerNavbarComp';
 
 const CreatePartnerLocation = () => {
     const [location, setLocation] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState({ text: '', type: '' });
     const navigate = useNavigate(); 
 
     const handleSelect = async ({ position, addressDetails, additionalDetails }) => {
         try {
             const timezoneResponse = await axios.get(`https://maps.googleapis.com/maps/api/timezone/json?location=${position.lat},${position.lng}&timestamp=${Math.floor(Date.now() / 1000)}&key=${config.GOOGLE_API_KEY}`);
-            const timezone = timezoneResponse.data.timeZoneId || "Asia/Dhaka";
+            const timezone = timezoneResponse.data.timeZoneId || "Australia/Perth";
             setLocation({ coordinates: position, addressDetails, additionalDetails, timezone });
         } catch (error) {
             console.error('Error fetching timezone:', error);
-            setLocation({ coordinates: position, addressDetails, additionalDetails, timezone: "Asia/Dhaka" });
+            setLocation({ coordinates: position, addressDetails, additionalDetails, timezone: "Australia/Perth" });
         }
     };
 
     const handleSubmit = async (values) => {
+        setLoading(true);
+        setMessage({ text: '', type: '' });
+
         const formData = new FormData();
         formData.append('name', values.name);
         formData.append('description', values.description);
-        formData.append('street', values.street);
-        formData.append('district', values.district);
-        formData.append('city', values.city);
-        formData.append('state', values.state);
-        formData.append('zipCode', values.zipCode);
-        formData.append('country', values.country);
+        formData.append('address[street]', values.street);
+        formData.append('address[city]', values.city);
+        formData.append('address[state]', values.state);
+        formData.append('address[zipCode]', values.zipCode);
+        formData.append('address[country]', values.country);
         formData.append('capacity', values.capacity);
         formData.append('availableSpace', values.availableSpace);
         formData.append('regularPrice', values.regularPrice);
         formData.append('discountPercentage', values.discountPercentage);
         formData.append('availableFrom', values.availableFrom);
         formData.append('availableTo', values.availableTo);
-        formData.append('amenities', values.amenities);
+        formData.append('amenities', JSON.stringify(values.amenities.split(',')));
         formData.append('notes', values.notes);
         formData.append('openTime', values.openTime);
         formData.append('closeTime', values.closeTime);
+        formData.append('closedDays', values.closedDays);
+        formData.append('specialClosedDays', values.specialClosedDays);
         formData.append('locationType', values.locationType);
         formData.append('timezone', location.timezone);
-        
-        Array.from(values.pictures).forEach((file) => {
-            formData.append('pictures', file);
+
+        Array.from(values.files).forEach((file) => {
+            formData.append('files', file);
         });
 
         formData.append('coordinates', JSON.stringify({
@@ -65,14 +71,23 @@ const CreatePartnerLocation = () => {
             });
 
             if (response.status >= 200 && response.status < 300) {
-                alert('Location created successfully!');
-                navigate('/partner/locations'); 
+                setMessage({ text: 'Location created successfully!', type: 'success' });
+                navigate('/partner/locations');
             } else {
-                alert('Failed to create location.');
+                setMessage({ text: 'Failed to create location.', type: 'error' });
             }
         } catch (error) {
-            console.error('Error creating location:', error);
-            alert('An error occurred. Please try again.');
+            if (error.response) {
+                console.error('Error response data:', error.response.data);
+                console.error('Error response status:', error.response.status);
+                console.error('Error response headers:', error.response.headers);
+                setMessage({ text: error.response.data.message || 'An error occurred. Please try again.', type: 'error' });
+            } else {
+                console.error('Error message:', error.message);
+                setMessage({ text: 'An error occurred. Please try again.', type: 'error' });
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -89,12 +104,17 @@ const CreatePartnerLocation = () => {
                             Back
                         </button>
                     </div>
+                    {message.text && (
+                        <div className={`alert ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} p-4 mb-6 rounded`}>
+                            {message.text}
+                        </div>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="bg-white shadow-lg rounded p-6">
                             <MapSelector onSelect={handleSelect} />
                         </div>
                         <div className="bg-white shadow-lg rounded p-6">
-                            <LocationForm onSubmit={handleSubmit} location={location} />
+                            <LocationForm onSubmit={handleSubmit} location={location} loading={loading} />
                         </div>
                     </div>
                 </div>

@@ -6,7 +6,6 @@ const locationSchema = Yup.object().shape({
     name: Yup.string().required('Required'),
     description: Yup.string().required('Required'),
     street: Yup.string().required('Required'),
-    district: Yup.string().required('Required'),
     city: Yup.string().required('Required'),
     state: Yup.string().required('Required'),
     zipCode: Yup.string().required('Required'),
@@ -19,13 +18,15 @@ const locationSchema = Yup.object().shape({
     availableTo: Yup.date().required('Required'),
     amenities: Yup.string().required('Required'),
     notes: Yup.string().required('Required'),
-    pictures: Yup.mixed().required('Required'),
+    files: Yup.mixed().required('Required'),
     openTime: Yup.string().required('Required'),
     closeTime: Yup.string().required('Required'),
+    closedDays: Yup.string().required('Required'),
+    specialClosedDays: Yup.string().required('Required'),
     locationType: Yup.string().required('Required'),
 });
 
-const LocationForm = ({ onSubmit, location }) => {
+const LocationForm = ({ onSubmit, location, loading }) => {
     const [previewPictures, setPreviewPictures] = useState([]);
 
     return (
@@ -34,7 +35,6 @@ const LocationForm = ({ onSubmit, location }) => {
                 name: location?.additionalDetails?.name || '',
                 description: location?.additionalDetails?.description || '',
                 street: location?.addressDetails?.street || '',
-                district: location?.addressDetails?.district || '',
                 city: location?.addressDetails?.city || '',
                 state: location?.addressDetails?.state || '',
                 zipCode: location?.addressDetails?.zipCode || '',
@@ -47,11 +47,13 @@ const LocationForm = ({ onSubmit, location }) => {
                 availableTo: location?.additionalDetails?.availableTo || '',
                 amenities: location?.additionalDetails?.amenities || '',
                 notes: location?.additionalDetails?.notes || '',
-                pictures: [],
+                files: [],
                 openTime: location?.additionalDetails?.openTime || '',
                 closeTime: location?.additionalDetails?.closeTime || '',
+                closedDays: location?.additionalDetails?.closedDays || '',
+                specialClosedDays: location?.additionalDetails?.specialClosedDays || '',
                 locationType: location?.additionalDetails?.locationType || '',
-                timezone: location?.timezone || '', 
+                timezone: location?.timezone || '',
             }}
             validationSchema={locationSchema}
             onSubmit={onSubmit}
@@ -59,15 +61,14 @@ const LocationForm = ({ onSubmit, location }) => {
         >
             {({ errors, touched, setFieldValue, isValid, isSubmitting }) => {
                 useEffect(() => {
-                    if (location.addressDetails) {
+                    if (location?.addressDetails) {
                         setFieldValue('street', location.addressDetails.street);
-                        setFieldValue('district', location.addressDetails.district);
                         setFieldValue('city', location.addressDetails.city);
                         setFieldValue('state', location.addressDetails.state);
                         setFieldValue('zipCode', location.addressDetails.zipCode);
                         setFieldValue('country', location.addressDetails.country);
                     }
-                    if (location.additionalDetails) {
+                    if (location?.additionalDetails) {
                         setFieldValue('name', location.additionalDetails.name);
                         setFieldValue('description', location.additionalDetails.description);
                         setFieldValue('capacity', location.additionalDetails.capacity);
@@ -80,6 +81,8 @@ const LocationForm = ({ onSubmit, location }) => {
                         setFieldValue('notes', location.additionalDetails.notes);
                         setFieldValue('openTime', location.additionalDetails.openTime);
                         setFieldValue('closeTime', location.additionalDetails.closeTime);
+                        setFieldValue('closedDays', location.additionalDetails.closedDays);
+                        setFieldValue('specialClosedDays', location.additionalDetails.specialClosedDays);
                         setFieldValue('locationType', location.additionalDetails.locationType);
                         setFieldValue('timezone', location.timezone);
                     }
@@ -87,7 +90,7 @@ const LocationForm = ({ onSubmit, location }) => {
 
                 const handleFileChange = (event) => {
                     const files = event.currentTarget.files;
-                    setFieldValue('pictures', files);
+                    setFieldValue('files', files);
 
                     const filePreviews = Array.from(files).map(file => URL.createObjectURL(file));
                     setPreviewPictures(filePreviews);
@@ -101,7 +104,6 @@ const LocationForm = ({ onSubmit, location }) => {
                                 { name: 'name', label: 'Name' },
                                 { name: 'description', label: 'Description' },
                                 { name: 'street', label: 'Street' },
-                                { name: 'district', label: 'District' },
                                 { name: 'city', label: 'City' },
                                 { name: 'state', label: 'State' },
                                 { name: 'zipCode', label: 'Zip Code' },
@@ -116,8 +118,10 @@ const LocationForm = ({ onSubmit, location }) => {
                                 { name: 'notes', label: 'Notes' },
                                 { name: 'openTime', label: 'Open Time', type: 'time' },
                                 { name: 'closeTime', label: 'Close Time', type: 'time' },
+                                { name: 'closedDays', label: 'Closed Days' },
+                                { name: 'specialClosedDays', label: 'Special Closed Days' },
                                 { name: 'locationType', label: 'Location Type' },
-                                { name: 'timezone', label: 'Timezone' }, 
+                                { name: 'timezone', label: 'Timezone' },
                             ].map(({ name, label, type = 'text' }) => (
                                 <div key={name} className="form-group">
                                     <Field
@@ -137,23 +141,23 @@ const LocationForm = ({ onSubmit, location }) => {
                                 </div>
                             ))}
                             <div className="form-group">
-                                <label htmlFor="pictures" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="files" className="block text-sm font-medium text-gray-700">
                                     Pictures
                                 </label>
                                 <input
-                                    id="pictures"
-                                    name="pictures"
+                                    id="files"
+                                    name="files"
                                     type="file"
                                     multiple
                                     className={`form-input mt-1 block w-full rounded-md ${
-                                        errors.pictures && touched.pictures
+                                        errors.files && touched.files
                                             ? 'border-red-500'
                                             : 'border-gray-300'
                                     }`}
                                     onChange={handleFileChange}
                                 />
-                                {errors.pictures && touched.pictures && (
-                                    <div className="text-red-500 text-sm">{errors.pictures}</div>
+                                {errors.files && touched.files && (
+                                    <div className="text-red-500 text-sm">{errors.files}</div>
                                 )}
                                 <div className="mt-2 flex flex-wrap">
                                     {previewPictures.map((src, index) => (
@@ -168,10 +172,22 @@ const LocationForm = ({ onSubmit, location }) => {
                             </div>
                             <button 
                                 type="submit" 
-                                className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${isSubmitting || !isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
+                                    isSubmitting || !isValid ? 'opacity-50 cursor-not-allowed' : ''
+                                }`}
                                 disabled={isSubmitting || !isValid}
                             >
-                                Submit
+                                {loading ? (
+                                    <div className="flex items-center">
+                                        <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                            <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" />
+                                        </svg>
+                                        Loading...
+                                    </div>
+                                ) : (
+                                    'Submit'
+                                )}
                             </button>
                         </div>
                     </Form>

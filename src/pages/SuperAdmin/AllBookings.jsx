@@ -125,6 +125,15 @@ const AllBookings = () => {
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
+    const getPaginationGroup = () => {
+        let start = Math.max(1, currentPage - 2);
+        let end = Math.min(start + 4, Math.ceil(filteredBookings.length / bookingsPerPage));
+        if (end - start < 4) {
+            start = Math.max(1, end - 4);
+        }
+        return [...Array(end - start + 1).keys()].map(num => start + num);
+    };
+
     return (
         <div className="flex h-screen overflow-hidden">
             {/* Sidebar */}
@@ -208,18 +217,30 @@ const AllBookings = () => {
                             )}
                         </div>
                         {/* Pagination */}
-                        <div className="mt-6 flex justify-center">
-                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                                {[...Array(Math.ceil(filteredBookings.length / bookingsPerPage)).keys()].map(number => (
-                                    <button
-                                        key={number}
-                                        onClick={() => paginate(number + 1)}
-                                        className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue text-sm font-medium hover:bg-blue-500 hover:text-black transition duration-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : ''}`}
-                                    >
-                                        {number + 1}
-                                    </button>
-                                ))}
-                            </nav>
+                        <div className="mt-6 flex justify-center items-center space-x-2">
+                            <button
+                                onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+                                className={`px-4 py-2 border rounded-md ${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+                                disabled={currentPage === 1}
+                            >
+                                Previous
+                            </button>
+                            {getPaginationGroup().map(number => (
+                                <button
+                                    key={number}
+                                    onClick={() => paginate(number)}
+                                    className={`px-4 py-2 border rounded-md ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 hover:bg-blue-100'}`}
+                                >
+                                    {number}
+                                </button>
+                            ))}
+                            <button
+                                onClick={() => currentPage < Math.ceil(filteredBookings.length / bookingsPerPage) && paginate(currentPage + 1)}
+                                className={`px-4 py-2 border rounded-md ${currentPage === Math.ceil(filteredBookings.length / bookingsPerPage) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+                                disabled={currentPage === Math.ceil(filteredBookings.length / bookingsPerPage)}
+                            >
+                                Next
+                            </button>
                         </div>
                     </div>
                 </main>

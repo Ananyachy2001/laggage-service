@@ -21,7 +21,7 @@ const PartnerChangePasswordModal = ({ isOpen, onClose }) => {
         }
 
         try {
-            const response = await fetch(`${config.API_BASE_URL}/api/v1/change-password`, {
+            const response = await fetch(`${config.API_BASE_URL}/api/v1/users/change-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
