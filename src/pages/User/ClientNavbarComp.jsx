@@ -83,7 +83,7 @@ const ClientNavbarComp = () => {
                   User Menu <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'userOptions' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
-                  {["Menu", "Reservations", "Profile", "Booking", "RefundForm"].map(userOption => (
+                  {["Menu",  "Profile",  ].map(userOption => (
                     <a href={`/client/${userOption.toLowerCase().replace(/ /g, '-')}`} key={userOption} className="block px-4 py-2 hover:bg-blue-800">{userOption}</a>
                   ))}
                 </div>

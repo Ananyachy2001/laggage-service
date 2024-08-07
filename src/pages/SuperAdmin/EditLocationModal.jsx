@@ -1,4 +1,3 @@
-// EditLocationModal.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../../config';
@@ -50,61 +49,72 @@ const EditLocationModal = ({ location, onClose, onUpdate }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-1/2">
-                <h2 className="text-2xl mb-4">Edit Location</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center animate-fadeIn">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg transform transition-all sm:w-1/2 sm:scale-100 scale-95">
+                <h2 className="text-3xl mb-6 font-bold text-gray-800">Edit Location</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block mb-2">Description</label>
+                    <div className="mb-6">
+                        <label className="block mb-2 text-sm font-medium text-gray-700">Description</label>
                         <textarea
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block mb-2">Available Space</label>
+                    <div className="mb-6">
+                        <label className="block mb-2 text-sm font-medium text-gray-700">Available Space</label>
                         <input
                             type="number"
                             name="availableSpace"
                             value={formData.availableSpace}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block mb-2">Discount Percentage</label>
+                    <div className="mb-6">
+                        <label className="block mb-2 text-sm font-medium text-gray-700">Discount Percentage</label>
                         <input
                             type="number"
                             name="discountPercentage"
                             value={formData.discountPercentage}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block mb-2">Notes</label>
+                    <div className="mb-6">
+                        <label className="block mb-2 text-sm font-medium text-gray-700">Notes</label>
                         <textarea
                             name="notes"
                             value={formData.notes}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block mb-2">Location Type</label>
+                    <div className="mb-6">
+                        <label className="block mb-2 text-sm font-medium text-gray-700">Location Type</label>
                         <input
                             type="text"
                             name="locationType"
                             value={formData.locationType}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                         />
                     </div>
                     <div className="flex justify-end">
-                        <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-500 text-white rounded-lg mr-2">Cancel</button>
-                        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-lg">Update</button>
+                        <button 
+                            type="button" 
+                            onClick={onClose} 
+                            className="px-4 py-2 bg-gray-500 text-white rounded-lg mr-2 transition duration-200 ease-in-out transform hover:bg-gray-600 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            type="submit" 
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg transition duration-200 ease-in-out transform hover:bg-blue-600 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            Update
+                        </button>
                     </div>
                 </form>
             </div>

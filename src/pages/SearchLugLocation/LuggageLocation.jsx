@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { Spinner } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import MapContainer from './MapContainer';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,6 +14,7 @@ const LuggageLocation = () => {
   const [locations, setLocations] = useState([]);
   const [visibleLocations, setVisibleLocations] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(state?.location);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLocations = async (retryCount = 0) => {
@@ -20,12 +22,14 @@ const LuggageLocation = () => {
         const response = await axios.get(`${config.API_BASE_URL}/api/v1/locations/public/all-locations`);
         setLocations(response.data);
         setVisibleLocations(response.data);
+        setLoading(false);
       } catch (error) {
         if (error.response && error.response.status === 429 && retryCount < 5) {
           const retryAfter = (error.response.headers['retry-after'] || 1) * 1000;
           setTimeout(() => fetchLocations(retryCount + 1), retryAfter);
         } else {
           console.error('Error fetching locations:', error);
+          setLoading(false);
         }
       }
     };
@@ -36,6 +40,16 @@ const LuggageLocation = () => {
   const handleLocationSelected = (location) => {
     setCurrentLocation(location);
   };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <Spinner animation="border" role="status" variant="primary" style={{ width: '5rem', height: '5rem' }}>
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

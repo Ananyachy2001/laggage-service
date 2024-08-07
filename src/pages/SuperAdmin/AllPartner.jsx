@@ -17,7 +17,7 @@ const AllPartner = () => {
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [partnersPerPage] = useState(3);
+    const [partnersPerPage] = useState(5);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedPartner, setSelectedPartner] = useState(null);
     const [actionType, setActionType] = useState('');

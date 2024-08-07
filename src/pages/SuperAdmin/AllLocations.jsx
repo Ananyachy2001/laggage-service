@@ -7,6 +7,7 @@ import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import EditLocationModal from './EditLocationModal';
 import AssignPartnerModal from './AssignPartnerModal'; // Assuming you have or will create this component
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const AllLocations = () => {
     const [locations, setLocations] = useState([]);
@@ -20,6 +21,8 @@ const AllLocations = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
     const [isAssigning, setIsAssigning] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [locationToDelete, setLocationToDelete] = useState(null);
 
     const navigate = useNavigate();
 
@@ -92,26 +95,31 @@ const AllLocations = () => {
             }
         }
     };
+
+    const confirmDeleteLocation = (id) => {
+        setLocationToDelete(id);
+        setShowDeleteModal(true);
+    };
     
-    const deleteLocation = async (id) => {
-        if (window.confirm("Are you sure you want to delete this location?")) {
-            const token = getToken();
-            if (!token) return;
+    const deleteLocation = async () => {
+        const token = getToken();
+        if (!token) return;
     
-            try {
-                const response = await axios.delete(`${config.API_BASE_URL}/api/v1/locations/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                if (response.status === 200) {
-                    fetchLocations();
-                } else {
-                    alert('Failed to delete location.');
+        try {
+            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/locations/${locationToDelete}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
-            } catch (error) {
-                alert('An error occurred. Please try again.');
+            });
+            if (response.status === 200) {
+                fetchLocations();
+            } else {
+                alert('Failed to delete location.');
             }
+        } catch (error) {
+            alert('An error occurred. Please try again.');
+        } finally {
+            setShowDeleteModal(false);
         }
     };
     
@@ -166,28 +174,27 @@ const AllLocations = () => {
         <div className="flex h-screen overflow-hidden">
             {/* Sidebar */}
             <SuperAdminSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
+    
             {/* Content area */}
             <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gray-100">
                 {/* Site header */}
                 <SuperAdminHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
+    
                 <main>
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                         {/* Welcome banner */}
                         <WelcomeBanner />
-
+    
                         {/* Buttons */}
                         <div className="mb-4 flex justify-between">
                             <button
                                 onClick={() => navigate('/superadmin/create-location')}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
                             >
                                 Create Location
                             </button>
-
                         </div>
-
+    
                         {/* Search bar */}
                         <div className="mb-4">
                             <input
@@ -198,7 +205,7 @@ const AllLocations = () => {
                                 className="px-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
                             />
                         </div>
-
+    
                         {/* Location List Table */}
                         <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
                             {loading ? (
@@ -224,7 +231,7 @@ const AllLocations = () => {
                                             <th className="w-4/12 py-3 px-6 text-left">Actions</th>
                                         </tr>
                                     </thead>
-
+    
                                     <tbody className="text-gray-800">
                                         {currentLocations.map(location => {
                                             const { username, tradeLicenseNumber } = getPartnerDetails(location.partner);
@@ -265,7 +272,7 @@ const AllLocations = () => {
                                                             Edit
                                                         </button>
                                                         <button
-                                                            onClick={() => deleteLocation(location._id)}
+                                                            onClick={() => confirmDeleteLocation(location._id)}
                                                             className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
                                                         >
                                                             Delete
@@ -278,7 +285,7 @@ const AllLocations = () => {
                                 </table>
                             )}
                         </div>
-
+    
                         {/* Pagination */}
                         <div className="mt-6 flex justify-center">
                             <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -310,9 +317,16 @@ const AllLocations = () => {
                         onAssign={assignPartner}
                     />
                 )}
+                {showDeleteModal && (
+                    <DeleteConfirmationModal
+                        onClose={() => setShowDeleteModal(false)}
+                        onDelete={deleteLocation}
+                    />
+                )}
             </div>
         </div>
     );
+    
 };
 
 export default AllLocations;

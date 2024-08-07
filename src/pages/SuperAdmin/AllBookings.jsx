@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
-import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
-import CreateBooking from './CreateBooking';
 import EditBooking from './EditBooking';
 import config from '../../config';
 
@@ -15,7 +13,7 @@ const AllBookings = () => {
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [bookingsPerPage] = useState(3);
+    const [bookingsPerPage] = useState(5);
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentBooking, setCurrentBooking] = useState(null);
@@ -70,7 +68,7 @@ const AllBookings = () => {
     }, {});
 
     const filteredBookings = bookings.filter(booking =>
-        booking.location.name.toLowerCase().includes(searchQuery.toLowerCase())
+        booking.location && booking.location.name && booking.location.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const indexOfLastBooking = currentPage * bookingsPerPage;
@@ -100,7 +98,6 @@ const AllBookings = () => {
                 <>
                     <div>{clientDetails.username}</div>
                     <div>{clientDetails.email}</div>
-                    
                 </>
             );
         } else if (client && client.guest) {
@@ -108,7 +105,6 @@ const AllBookings = () => {
                 <>
                     <div>{client.guest.name}</div>
                     <div>{client.guest.email}</div>
-                    
                 </>
             );
         } else {
@@ -146,9 +142,6 @@ const AllBookings = () => {
 
                 <main>
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-                        {/* Welcome banner */}
-                        <WelcomeBanner />
-
                         {/* Search bar */}
                         <div className="mb-4">
                             <input
@@ -187,8 +180,8 @@ const AllBookings = () => {
                                                 <td className="w-1/7 py-3 px-6 border">
                                                     {getClientInfo(booking.client, booking.status)}
                                                 </td>
-                                                <td className="w-1/7 py-3 px-6 border">{booking.location.name}</td>
-                                                <td className="w-1/7 py-3 px-6 border">{`${booking.location.priceCurrency} ${booking.location.regularPrice} `}</td>
+                                                <td className="w-1/7 py-3 px-6 border">{booking.location ? booking.location.name : 'N/A'}</td>
+                                                <td className="w-1/7 py-3 px-6 border">{`${booking.location.priceCurrency} ${booking.location.regularPrice}`}</td>
                                                 <td className="w-1/7 py-3 px-6 border">{`${booking.location.discountPercentage}%`}</td>
                                                 <td className="w-1/7 py-3 px-6 border">{formatDate(booking.bookingDate)}</td>
                                                 <td className="w-1/7 py-3 px-6 border">{formatDate(booking.startDate)}</td>
@@ -216,6 +209,7 @@ const AllBookings = () => {
                                 </table>
                             )}
                         </div>
+
                         {/* Pagination */}
                         <div className="mt-6 flex justify-center items-center space-x-2">
                             <button
