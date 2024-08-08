@@ -20,7 +20,7 @@ function HowItWorks() {
           <div className="w-full lg:w-1/2 px-4">
             <div className="bg-white p-8 rounded-lg shadow-lg mb-12 transform transition-transform hover:scale-105">
               <div className="flex items-center mb-6">
-                <img src={book} alt="Book Icon" className="h-16 w-16 mr-6" />
+                <img src={book} alt="Book Icon" className="h-16 w-16 mr-6 object-contain" />
                 <h3 className="text-2xl font-bold text-gray-800">Book</h3>
               </div>
               <p className="text-gray-600">Find your desired location easily using our website and proceed through Easy Booking, Unbeatable Prices with our secure online payments.</p>
@@ -30,7 +30,7 @@ function HowItWorks() {
             </div>
             <div className="bg-white p-8 rounded-lg shadow-lg mb-12 transform transition-transform hover:scale-105">
               <div className="flex items-center mb-6">
-                <img src={lock} alt="Lock Icon" className="h-16 w-16 mr-6" />
+                <img src={lock} alt="Lock Icon" className="h-16 w-16 mr-6 object-contain" />
                 <h3 className="text-2xl font-bold text-gray-800">Lock</h3>
               </div>
               <p className="text-gray-600">Simply show your booking confirmation to a store employee and leave your bags with us!</p>
@@ -40,7 +40,7 @@ function HowItWorks() {
             </div>
             <div className="bg-white p-8 rounded-lg shadow-lg transform transition-transform hover:scale-105">
               <div className="flex items-center mb-6">
-                <img src={enjoy} alt="Enjoy Icon" className="h-16 w-16 mr-6" />
+                <img src={enjoy} alt="Enjoy Icon" className="h-16 w-16 mr-6 object-contain" />
                 <h3 className="text-2xl font-bold text-gray-800">Enjoy</h3>
               </div>
               <p className="text-gray-600">Explore freely, and when you’re ready, show your confirmation to collect your belongings! Your Bag Awaits – No Rush!</p>
@@ -70,7 +70,6 @@ function HowItWorks() {
                 src="https://www.youtube.com/embed/video_id"
                 title="YouTube video"
                 className="absolute top-0 left-0 w-full h-full"
-                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>

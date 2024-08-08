@@ -9,12 +9,11 @@ import Team from './Team';
 import Counter from './Counter';
 import Review from './Review';
 import Footer from './Footer';
-import HowitWorks from './HowitWorks';
 import Choose from './Choose';
 import Blog from './Blog';
 import LuggageStorageLocations from '../SearchLugLocation/LuggageStorageLocations';
 import ScrollToTopButton from './ScrollToTopButton';
-import ChatbotButton from '../Chatbot/ChatbotButton';
+import HowItWorks from './HowitWorks';
 
 
 const Home = () => {
@@ -30,7 +29,7 @@ const Home = () => {
       <LuggageStorageLocations />
 
       {/* How it Works */}
-      <HowitWorks />
+      <HowItWorks />
       {/* Services */}
       {/* <Service /> */}
       
