@@ -78,7 +78,7 @@ function Banner() {
 
   return (
     <div
-      className="banner bg-cover bg-center h-screen flex items-center justify-center relative"
+      className="banner bg-cover bg-center mt-28 h-screen flex items-center justify-center relative"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="absolute inset-0 bg-gray-800 opacity-40 backdrop-blur-md"></div>
@@ -111,7 +111,7 @@ function Banner() {
             className={`find-button bg-green-600 hover:bg-green-800 text-white rounded-md shadow-md transition duration-300 ease-in-out mt-4 px-8 py-3 w-full sm:w-auto ${loadingLocation ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={loadingLocation}
           >
-            Find Closest Locations To Book
+            Find Closest Locations
           </button>
         </form>
       </div>

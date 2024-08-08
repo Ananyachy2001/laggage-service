@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import PartnerNavbarComp from './PartnerNavbarComp';
-
 import config from '../../config';
 
 const PartnerLocations = () => {
@@ -28,7 +27,11 @@ const PartnerLocations = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setLocations(response.data);
+            if (Array.isArray(response.data)) {
+                setLocations(response.data);
+            } else {
+                setLocations([]); // Handle case where response is not an array
+            }
         } catch (error) {
             if (error.response && error.response.status === 401) {
                 localStorage.removeItem('token');
@@ -61,7 +64,9 @@ const PartnerLocations = () => {
         }
     };
 
-    const filteredLocations = locations.filter(location => location.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const filteredLocations = locations.filter(location => 
+        location.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const indexOfLastLocation = currentPage * locationsPerPage;
     const indexOfFirstLocation = indexOfLastLocation - locationsPerPage;
@@ -77,8 +82,6 @@ const PartnerLocations = () => {
             <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gray-100">
                 <main>
                     <div className="px-4 mt-32 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-
-
                         {/* Create Location Button */}
                         <div className="mb-4">
                             <button
@@ -107,7 +110,7 @@ const PartnerLocations = () => {
                         {loading && <div className="mb-4 text-blue-500">Loading...</div>}
 
                         {/* Location List Table */}
-                        {!loading && !error && (
+                        {!loading && !error && locations.length > 0 && (
                             <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
                                 <table className="min-w-full">
                                     <thead className="bg-[#4A686A] text-white">
@@ -143,6 +146,13 @@ const PartnerLocations = () => {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        )}
+
+                        {/* No Locations Message */}
+                        {!loading && !error && locations.length === 0 && (
+                            <div className="text-center text-gray-500">
+                                No locations found.
                             </div>
                         )}
 

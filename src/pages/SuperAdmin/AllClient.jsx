@@ -65,7 +65,8 @@ const AllClient = () => {
     };
 
     const filteredClients = clients.filter(client =>
-        client.username.toLowerCase().includes(searchQuery.toLowerCase())
+        client.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        client.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const indexOfLastClient = currentPage * clientsPerPage;
@@ -73,10 +74,6 @@ const AllClient = () => {
     const currentClients = filteredClients.slice(indexOfFirstClient, indexOfLastClient);
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
-
-    const softDeleteClient = (id) => {
-        setClients(clients.filter(client => client.id !== id));
-    };
 
     if (loading) {
         return (
@@ -117,7 +114,7 @@ const AllClient = () => {
                         <div className="mb-4">
                             <input
                                 type="text"
-                                placeholder="Search by Username"
+                                placeholder="Search by Username or Email"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="px-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
@@ -129,17 +126,16 @@ const AllClient = () => {
                             <table className="min-w-full">
                                 <thead className="bg-[#4A686A] text-white">
                                     <tr>
-                                        <th className="w-1/4 py-3 px-6 text-left">Username</th>
-                                        <th className="w-1/4 py-3 px-6 text-left">Email</th>
-                                        <th className="w-1/4 py-3 px-6 text-left">Status</th>
-                                        <th className="w-1/4 py-3 px-6 text-left">Actions</th>
+                                        <th className="w-1/3 py-3 px-6 text-left">Username</th>
+                                        <th className="w-1/3 py-3 px-6 text-left">Email</th>
+                                        <th className="w-1/3 py-3 px-6 text-left">Status</th>
                                     </tr>
                                 </thead>
 
                                 <tbody className="text-gray-800">
                                     {currentClients.map(client => (
                                         <tr key={client.id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                            <td className="w-1/4 py-3 px-6 border">
+                                            <td className="w-1/3 py-3 px-6 border">
                                                 <button
                                                     onClick={() => navigate(`/superadmin/clients/${client.id}`)}
                                                     className="text-blue-600 hover:text-blue-800"
@@ -147,27 +143,13 @@ const AllClient = () => {
                                                     {client.username}
                                                 </button>
                                             </td>
-                                            <td className="w-1/4 py-3 px-6 border">{client.email}</td>
-                                            <td className="w-1/4 py-3 px-6 border">
+                                            <td className="w-1/3 py-3 px-6 border">{client.email}</td>
+                                            <td className="w-1/3 py-3 px-6 border">
                                                 <button
                                                     onClick={() => toggleStatus(client.id)}
                                                     className={`px-2 py-1 rounded ${client.isActive ? 'bg-green-500 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-700'} text-white`}
                                                 >
                                                     {client.isActive ? 'Active' : 'Inactive'}
-                                                </button>
-                                            </td>
-                                            <td className=" py-3 px-6 border text-center flex justify-center space-x-2">
-                                                <button
-                                                    onClick={() => navigate(`/superadmin/clients/edit/${client.id}`)}
-                                                    className="px-2 py-1 bg-blue-500 hover:bg-blue-700 text-white rounded"
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => softDeleteClient(client.id)}
-                                                    className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded"
-                                                >
-                                                    Delete
                                                 </button>
                                             </td>
                                         </tr>

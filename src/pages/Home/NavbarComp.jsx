@@ -70,7 +70,7 @@ const NavbarComp = () => {
           <div className="md:flex md:flex-row md:space-x-4">
             <a href="/" className="hover:text-[#FDB139]">Home</a>
             <a href="/guideline" className="hover:text-[#FDB139]">Guideline</a>
-            <a href="/service" className="hover:text-[#FDB139]">Service</a>
+            {/* <a href="/service" className="hover:text-[#FDB139]">Service</a> */}
           </div>
           <div className="md:flex md:flex-row md:space-x-4">
             <div 
@@ -82,8 +82,8 @@ const NavbarComp = () => {
                 Luggage Storage <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
               <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'luggagestorage' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
-                {["Drop & Pickup Your Keys", "Furniture Storage"].map(luggagestorage => (
-                  <a href={`${luggagestorage.toLowerCase().replace(/ /g, '-')}.html`} key={luggagestorage} className="block px-4 py-2 hover:bg-blue-800">{luggagestorage}</a>
+                {["Urloker Keys"].map(luggagestorage => (
+                  <a href="/comingsoon" key={luggagestorage} className="block px-4 py-2 hover:bg-blue-800">{luggagestorage}</a>
                 ))}
               </div>
             </div>

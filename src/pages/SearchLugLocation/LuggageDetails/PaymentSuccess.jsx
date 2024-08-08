@@ -14,7 +14,7 @@ const PaymentSuccess = () => {
   return (
     <div>
       {token && <ClientNavbarComp />}  {/* Render ClientNavbarComp if token exists */}
-      <div className="container text-center mt-5">
+      <div className="container text-center mt-12 pt-32" >
         <h1 className="text-success">Payment Successful!</h1>
         <p>Thank you for your payment. Your booking has been confirmed.</p>
         <Button onClick={handleBackToHome} variant="primary" className="mt-3">

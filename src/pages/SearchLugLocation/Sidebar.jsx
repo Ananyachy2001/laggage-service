@@ -1,12 +1,10 @@
-// Sidebar.js
-
 import React, { useState, useEffect } from 'react';
 import StorageSpot from './StorageSpot';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment-timezone';
 
-const Sidebar = ({ storageSpots }) => {
+const Sidebar = ({ storageSpots, visibleLocations }) => {
     const [dropOffTime, setDropOffTime] = useState('');
     const [pickUpTime, setPickUpTime] = useState('');
     const [filteredSpots, setFilteredSpots] = useState([]);
@@ -19,15 +17,15 @@ const Sidebar = ({ storageSpots }) => {
         setDropOffTime(defaultDropOff);
         setPickUpTime(defaultPickUp);
 
-        // Automatically trigger the search with default times
-        handleSearch(defaultDropOff, defaultPickUp);
-    }, []);
+        // Automatically trigger the search with default times and visible locations
+        handleSearch(defaultDropOff, defaultPickUp, visibleLocations);
+    }, [visibleLocations]);
 
-    const handleSearch = (dropOff = dropOffTime, pickUp = pickUpTime) => {
+    const handleSearch = (dropOff = dropOffTime, pickUp = pickUpTime, locations = visibleLocations) => {
         const dropOffMoment = moment.tz(dropOff, "Australia/Sydney");
         const pickUpMoment = moment.tz(pickUp, "Australia/Sydney");
 
-        const filtered = storageSpots.filter(spot => {
+        const filtered = locations.filter(spot => {
             const availableFrom = moment.tz(spot.availableFrom, "Australia/Sydney");
             const availableTo = moment.tz(spot.availableTo, "Australia/Sydney");
             return availableFrom.isSameOrBefore(dropOffMoment) && availableTo.isSameOrAfter(pickUpMoment);

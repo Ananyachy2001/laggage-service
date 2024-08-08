@@ -1,28 +1,28 @@
 import React, { useState } from "react";
-import review1 from '../../img/home-one/review1.jpg';
-import review2 from '../../img/home-one/review2.jpg';
-import review3 from '../../img/home-one/review3.jpg';
+import review1 from '../../img/home-two/team-1.jpg';
+import review2 from '../../img/home-two/team-1.jpg';
+import review3 from '../../img/home-two/team-1.jpg';
 
 const reviews = [
   {
     name: "Jason Doe",
-    position: "CEO",
+    position: "Client",
     image: review1,
-    text: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words.",
+    text: "The luggage service provided by this company is exceptional. Their attention to detail and commitment to quality have greatly enhanced our travel experience. Highly recommended!",
     rating: 5
   },
   {
     name: "Alina Decros",
-    position: "Manager",
+    position: "Client",
     image: review2,
-    text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt quis quaerat eius ducimus officia aut vitae, vel repudiandae, accusantium beatae alias, aliquam consequuntur.",
+    text: "I have been thoroughly impressed with the luggage services. From prompt delivery to the pristine condition of the luggage, everything was perfect. Their professionalism is unmatched.",
     rating: 5
   },
   {
     name: "Jac Jacson",
-    position: "Director",
+    position: "Client",
     image: review3,
-    text: "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested.",
+    text: "Outstanding service! The team goes above and beyond to ensure customer satisfaction. The luggage quality is top-notch and their support is always there when you need it.",
     rating: 5
   }
 ];

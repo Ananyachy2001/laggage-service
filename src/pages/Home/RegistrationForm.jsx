@@ -21,6 +21,8 @@ const RegistrationForm = ({ loginType, onClose }) => {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
+  const [responseMessage, setResponseMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false); // Add state to track success
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -50,12 +52,11 @@ const RegistrationForm = ({ loginType, onClose }) => {
     if (!formData.password) newErrors.password = 'Password is required';
     if (loginType === 'Partner') {
       if (!formData.businessAddress.street) newErrors.street = 'Street is required';
-      if (!formData.businessAddress.district) newErrors.district = 'District is required';
+      if (!formData.businessAddress.district) newErrors.district = 'Suburb is required';
       if (!formData.businessAddress.city) newErrors.city = 'City is required';
       if (!formData.businessAddress.state) newErrors.state = 'State is required';
-      if (!formData.businessAddress.zipCode) newErrors.zipCode = 'Zip Code is required';
-      if (!formData.businessAddress.country) newErrors.country = 'Country is required';
-      if (!formData.tradeLicenseNumber) newErrors.tradeLicenseNumber = 'Trade License Number is required';
+      if (!formData.businessAddress.zipCode) newErrors.zipCode = 'Post Code is required';
+      if (!formData.tradeLicenseNumber) newErrors.tradeLicenseNumber = 'ABN number is required';
     }
 
     setErrors(newErrors);
@@ -72,19 +73,15 @@ const RegistrationForm = ({ loginType, onClose }) => {
       ? `${config.API_BASE_URL}/api/v1/users/register/partner`
       : `${config.API_BASE_URL}/api/v1/users/register/client`;
 
-    const body = loginType === 'Partner'
-      ? {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          businessAddress: formData.businessAddress,
-          tradeLicenseNumber: formData.tradeLicenseNumber,
-        }
-      : {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        };
+    const body = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      ...(loginType === 'Partner' && {
+        businessAddress: formData.businessAddress,
+        tradeLicenseNumber: formData.tradeLicenseNumber,
+      }),
+    };
 
     try {
       const response = await fetch(endpoint, {
@@ -97,15 +94,22 @@ const RegistrationForm = ({ loginType, onClose }) => {
       const result = await response.json();
       if (response.ok) {
         console.log('Success:', result);
-        navigate('/logout'); // Redirect to home page
+        setIsSuccess(true); // Set success state to true
+        setResponseMessage('Registration successful!'); // Set success message
       } else {
         console.error('Error:', result);
-        setErrors(result.errors || { general: 'Registration failed' }); // Set server-side validation errors
+        setErrors({ ...errors, ...result });
+        setResponseMessage(result.error); // Set failure message
       }
     } catch (error) {
       console.error('Error:', error);
       setErrors({ general: 'An unexpected error occurred. Please try again later.' });
+      setResponseMessage('An unexpected error occurred. Please try again later.'); // Set error message
     }
+  };
+
+  const handleOkClick = () => {
+    navigate('/logout'); // Redirect to logout page
   };
 
   if (!loginType) return null;
@@ -122,7 +126,22 @@ const RegistrationForm = ({ loginType, onClose }) => {
         </button>
         <h2 className="text-center mb-6 text-4xl font-semibold text-[#4A686A]">{`Register as ${loginType}`}</h2>
         {errors.general && <p className="text-red-500 text-center mb-4">{errors.general}</p>}
-        {loginType === 'Partner' && (
+        {responseMessage && (
+          <p className={`text-center mb-4 ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
+            {responseMessage}
+          </p>
+        )}
+        {isSuccess && (
+          <div className="text-center mb-4">
+            <button
+              onClick={handleOkClick}
+              className="bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
+            >
+              OK
+            </button>
+          </div>
+        )}
+        {!isSuccess && loginType === 'Partner' && (
           <>
             {currentStep === 1 && (
               <form>
@@ -137,6 +156,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                     onChange={handleChange}
                   />
                   {errors.username && <span className="text-red-500">{errors.username}</span>}
+                  {errors.error && errors.error.includes('Username') && <span className="text-red-500">{errors.error}</span>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-[#4A686A] font-medium" htmlFor="email">Email</label>
@@ -149,6 +169,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                     onChange={handleChange}
                   />
                   {errors.email && <span className="text-red-500">{errors.email}</span>}
+                  {errors.error && errors.error.includes('Email') && <span className="text-red-500">{errors.error}</span>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-[#4A686A] font-medium" htmlFor="password">Password</label>
@@ -162,7 +183,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                   />
                   {errors.password && <span className="text-red-500">{errors.password}</span>}
                 </div>
-                <div className="flex justify-center items-center mb-4">
+                <div className="flex justify-between items-center mb-4">
                   <button
                     className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
                     type="button"
@@ -188,7 +209,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                   {errors.street && <span className="text-red-500">{errors.street}</span>}
                 </div>
                 <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.district">District</label>
+                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.district">Suburb</label>
                   <input
                     type="text"
                     id="businessAddress.district"
@@ -223,9 +244,16 @@ const RegistrationForm = ({ loginType, onClose }) => {
                   />
                   {errors.state && <span className="text-red-500">{errors.state}</span>}
                 </div>
-                <div className="flex justify-center items-center mb-4">
+                <div className="flex justify-between items-center mb-4">
                   <button
-                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
+                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 mx-3 px-4 rounded transition duration-200"
+                    type="button"
+                    onClick={() => setCurrentStep(1)}
+                  >
+                    Back
+                  </button>
+                  <button
+                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 mx-3 px-4 rounded transition duration-200"
                     type="button"
                     onClick={() => setCurrentStep(3)}
                   >
@@ -237,7 +265,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
             {currentStep === 3 && (
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.zipCode">Zip Code</label>
+                  <label className="block text-[#4A686A] font-medium" htmlFor="businessAddress.zipCode">Post Code</label>
                   <input
                     type="text"
                     id="businessAddress.zipCode"
@@ -261,7 +289,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                   {errors.country && <span className="text-red-500">{errors.country}</span>}
                 </div>
                 <div className="mb-4">
-                  <label className="block text-[#4A686A] font-medium" htmlFor="tradeLicenseNumber">Trade License Number</label>
+                  <label className="block text-[#4A686A] font-medium" htmlFor="tradeLicenseNumber">ABN Number</label>
                   <input
                     type="text"
                     id="tradeLicenseNumber"
@@ -272,9 +300,16 @@ const RegistrationForm = ({ loginType, onClose }) => {
                   />
                   {errors.tradeLicenseNumber && <span className="text-red-500">{errors.tradeLicenseNumber}</span>}
                 </div>
-                <div className="flex justify-center items-center mb-4">
+                <div className="flex justify-between items-center mb-4">
                   <button
-                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
+                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 mx-3 px-4 rounded transition duration-200"
+                    type="button"
+                    onClick={() => setCurrentStep(2)}
+                  >
+                    Back
+                  </button>
+                  <button
+                    className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 mx-3 px-4 rounded transition duration-200"
                     type="submit"
                   >
                     Register
@@ -284,7 +319,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
             )}
           </>
         )}
-        {loginType !== 'Partner' && (
+        {!isSuccess && loginType !== 'Partner' && (
           <form onSubmit={handleFormSubmit}>
             <div className="mb-4">
               <label className="block text-[#4A686A] font-medium" htmlFor="username">Username</label>
@@ -297,6 +332,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                 onChange={handleChange}
               />
               {errors.username && <span className="text-red-500">{errors.username}</span>}
+              {errors.error && errors.error.includes('Username') && <span className="text-red-500">{errors.error}</span>}
             </div>
             <div className="mb-4">
               <label className="block text-[#4A686A] font-medium" htmlFor="email">Email address</label>
@@ -309,6 +345,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
                 onChange={handleChange}
               />
               {errors.email && <span className="text-red-500">{errors.email}</span>}
+              {errors.error && errors.error.includes('Email') && <span className="text-red-500">{errors.error}</span>}
             </div>
             <div className="mb-4">
               <label className="block text-[#4A686A] font-medium" htmlFor="password">Password</label>

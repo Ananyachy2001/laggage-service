@@ -300,7 +300,7 @@ const PartnerProfile = () => {
                                                         <p className="mt-1">{profile.street}</p>
                                                     </div>
                                                     <div className="mt-3">
-                                                        <label className="block text-sm font-medium text-gray-700">District</label>
+                                                        <label className="block text-sm font-medium text-gray-700">Suburb</label>
                                                         <p className="mt-1">{profile.district}</p>
                                                     </div>
                                                     <div className="mt-3">

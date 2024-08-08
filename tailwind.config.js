@@ -11,6 +11,7 @@ module.exports = {
       'custom-gray': '#f5f5f5',
       'custom-blue': '#3b82f6',
       'primary-5': 'var(--clr-primary-5)',
+      cream: '#f5f5dc',
     },
     animation: {
       fadeIn: 'fadeIn 0.5s ease-in-out',

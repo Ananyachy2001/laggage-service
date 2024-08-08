@@ -8,10 +8,10 @@ import team5 from '../../img/home-two/team5.jpg'
 function Team() {
   const teamMembers = [
     { name: "Thomas Smith", role: "Manager", imgSrc: team1 },
-    { name: "Jansy Henry", role: "Engineer", imgSrc: team2 },
-    { name: "Diyana Pari", role: "Staff", imgSrc: team3 },
-    { name: "Marc Jacobs", role: "Designer", imgSrc: team4 },
-    { name: "Marc Jacobs", role: "Doctor", imgSrc: team5 },
+    { name: "Jansy Henry", role: "Engineer", imgSrc: team1 },
+    { name: "Diyana Pari", role: "Staff", imgSrc: team1 },
+    { name: "Marc Jacobs", role: "Designer", imgSrc: team1 },
+    { name: "Marc Jacobs", role: "Doctor", imgSrc: team1 },
 
   ];
 

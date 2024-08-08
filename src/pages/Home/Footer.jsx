@@ -10,7 +10,7 @@ function Footer() {
             <a href="index.html" className="flex items-center mb-4">
               <img src={logo} alt="logo2" className="h-28 transform hover:scale-110 transition-transform duration-300" />
             </a>
-            <p className="hover:text-teal-200 transition-colors duration-300">Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has survived not only five centuries, but also the leap into electronic.</p>
+            <p className="hover:text-teal-200 transition-colors duration-300">Urlocker offers secure and convenient luggage storage solutions for your home and office. Whether you need short-term or long-term storage, our services are designed to make your life easier and more organized. Experience hassle-free luggage management with Urlocker.</p>
           </div>
           <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
             <h3 className="text-lg font-bold mb-4 hover:text-teal-200 transition-colors duration-300">Company</h3>

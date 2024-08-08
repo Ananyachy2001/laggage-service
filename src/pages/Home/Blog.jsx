@@ -8,30 +8,30 @@ import hospital from '../../img/home-two/hospital-1.jpg';
 function Blog() {
   const blogPosts = [
     {
-      title: "Know More About Our Clean Furniture And Tools",
+      title: "Top-notch Clean Furniture and Tools for Your Comfort",
       author: "Admin",
       comments: 20,
       views: 11,
       imageUrl: furniture,
-      excerpt: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has survived not only five centuries",
+      excerpt: "Discover how our meticulously clean furniture and tools enhance your travel experience. Learn why we are trusted by travelers worldwide.",
       detailsUrl: "blog-details.html"
     },
     {
-      title: "We Are Doing Hospital Luggage For Social Work",
+      title: "Our Commitment to Hospital Luggage for Social Causes",
       author: "Admin",
       comments: 21,
       views: 15,
       imageUrl: hospital,
-      excerpt: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has survived not only five centuries",
+      excerpt: "Read about our initiatives in providing specialized luggage for hospitals. See how we contribute to social causes through our services.",
       detailsUrl: "blog-details.html"
     },
     {
-      title: "We Work For You To Give Best Services",
+      title: "Excellence in Luggage Services - We Work for You",
       author: "Admin",
       comments: 22,
       views: 20,
       imageUrl: luggage,
-      excerpt: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has survived not only five centuries",
+      excerpt: "Learn more about our dedication to offering the best luggage services. We prioritize your needs to ensure a seamless travel experience.",
       detailsUrl: "blog-details.html"
     }
   ];

@@ -58,7 +58,7 @@ const LuggageLocation = () => {
         <Sidebar
           className="w-full lg:w-1/3 p-4 lg:p-6 h-screen overflow-y-auto"
           storageSpots={visibleLocations}
-          isAvailable={visibleLocations.length > 0}
+          visibleLocations={visibleLocations}
         />
         <div className="w-full lg:w-2/3 h-screen">
           <MapContainer locations={locations} setVisibleLocations={setVisibleLocations} center={currentLocation} />
