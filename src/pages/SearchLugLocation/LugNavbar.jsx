@@ -64,21 +64,7 @@ const LugNavbar = ({ onLocationSelected }) => {
           </div>
         </Autocomplete>
       </div>
-      <div className="flex items-center space-x-6">
-        <a href="/faq" className="text-gray-700 hover:text-blue-600 font-medium">FAQ</a>
-        <div className="relative">
-          <button className="text-gray-700 hover:text-blue-600 font-medium focus:outline-none">
-            <FontAwesomeIcon icon={faBars} />
-          </button>
-          {/* Dropdown menu items */}
-        </div>
-        <div className="relative">
-          <button className="text-gray-700 hover:text-blue-600 font-medium focus:outline-none">
-            <FontAwesomeIcon icon={faGlobe} />
-          </button>
-          {/* Dropdown language options */}
-        </div>
-      </div>
+
     </nav>
   );
 };

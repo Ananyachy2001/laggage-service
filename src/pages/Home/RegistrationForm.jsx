@@ -23,6 +23,7 @@ const RegistrationForm = ({ loginType, onClose }) => {
   const [errors, setErrors] = useState({});
   const [responseMessage, setResponseMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false); // Add state to track success
+  const [loading, setLoading] = useState(false); // Add state to track loading
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -69,6 +70,8 @@ const RegistrationForm = ({ loginType, onClose }) => {
 
     if (!validateForm()) return;
 
+    setLoading(true); // Start loading
+
     const endpoint = loginType === 'Partner'
       ? `${config.API_BASE_URL}/api/v1/users/register/partner`
       : `${config.API_BASE_URL}/api/v1/users/register/client`;
@@ -105,6 +108,8 @@ const RegistrationForm = ({ loginType, onClose }) => {
       console.error('Error:', error);
       setErrors({ general: 'An unexpected error occurred. Please try again later.' });
       setResponseMessage('An unexpected error occurred. Please try again later.'); // Set error message
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -312,7 +317,17 @@ const RegistrationForm = ({ loginType, onClose }) => {
                     className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 mx-3 px-4 rounded transition duration-200"
                     type="submit"
                   >
-                    Register
+                    {loading ? (
+                      <div className="flex justify-center items-center">
+                        <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" />
+                        </svg>
+                        Submitting...
+                      </div>
+                    ) : (
+                      'Register'
+                    )}
                   </button>
                 </div>
               </form>
@@ -364,7 +379,17 @@ const RegistrationForm = ({ loginType, onClose }) => {
                 className="w-full bg-[#4A686A] hover:bg-[#518689] text-white py-2 px-4 rounded transition duration-200"
                 type="submit"
               >
-                Register
+                {loading ? (
+                  <div className="flex justify-center items-center">
+                    <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" />
+                    </svg>
+                    Submitting...
+                  </div>
+                ) : (
+                  'Register'
+                )}
               </button>
             </div>
           </form>

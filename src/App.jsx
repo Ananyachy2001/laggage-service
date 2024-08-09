@@ -61,6 +61,8 @@ import GuidelineCom from './pages/Static/GuidelineCom';
 import ServiceCom from './pages/Static/ServiceCom';
 import CreatePartnerLocation from './pages/Partner/AddLocation/CreatePartnerLocation';
 import CreateAdminLocation from './pages/SuperAdmin/AddLocation/CreateAdminLocation';
+import EditSpecialClosedDays from './pages/Partner/EditSpecialClosedDays';
+import EditPartnerLocation from './pages/Partner/EditLocation/EditPartnerLocation';
 
 function App() {
 
@@ -105,6 +107,7 @@ function App() {
 
         {/* partner  */}
         <Route exact path="/partner/create-location" element={<CreatePartnerLocation/>} />
+        <Route exact path="/partner/edit-location/:locationId" element={<EditPartnerLocation/>} />
         <Route exact path="/partner/profile" element={<PartnerProfile />} />
         <Route exact path="/partner/allcustomers" element={<AllCustomer/>} />
         {/* <Route exact path="/partner/analytics" element={<PartnerAnalytics/>} /> */}
@@ -112,6 +115,8 @@ function App() {
         <Route exact path="/partner_availability_calender" element={<PartnerAvailabilityCalendar />} />
         <Route exact path="/partner/locations" element={<PartnerLocations/>} />
         <Route exact path="/partner/bookings" element={<PartnerBookings/>} />
+        <Route path="/partner/edit-special-closed-days/:locationId" element={<EditSpecialClosedDays />} />
+
 
 
 

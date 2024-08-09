@@ -5,8 +5,6 @@ const BookingForm = ({
   handleSubmit, 
   luggageQuantity, 
   setLuggageQuantity, 
-  serviceOption, 
-  setServiceOption, 
   promoCode, 
   setPromoCode, 
   discount, 
@@ -17,7 +15,6 @@ const BookingForm = ({
   setCheckoutTime, 
   totalPrice, 
   setTotalPrice, 
-  servicePrices, 
   regularprice, 
   locationid, 
   clientId, 
@@ -28,7 +25,7 @@ const BookingForm = ({
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [promoApplied, setPromoApplied] = useState(false);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
 
   const [guestDetails, setGuestDetails] = useState({
     name: '',
@@ -78,12 +75,12 @@ const BookingForm = ({
 
   useEffect(() => {
     if (validateDateTime(checkinTime, checkoutTime) && checkinTime && checkoutTime) {
-      const servicePrice = servicePrices[serviceOption];
+      const servicePrice = 5; // Fixed price for standard service
       const duration = calculateDuration(checkinTime, checkoutTime);
-      const price = ((regularprice + servicePrice) * luggageQuantity * duration) - discount;
+      const price = (regularprice + servicePrice) * duration - discount;
       setTotalPrice(price > 0 ? price : 0);
     }
-  }, [luggageQuantity, serviceOption, discount, checkinTime, checkoutTime, regularprice, servicePrices, setTotalPrice]);
+  }, [discount, checkinTime, checkoutTime, regularprice, setTotalPrice]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -154,7 +151,7 @@ const BookingForm = ({
   };
 
   const openUserDetailsModal = () => {
-    if (validateDateTime(checkinTime, checkoutTime) && luggageQuantity > 0 && serviceOption) {
+    if (validateDateTime(checkinTime, checkoutTime)) {
       setShowModal(true);
     } else {
       setErrorMessage('Please fill out all required fields before proceeding.');
@@ -203,23 +200,7 @@ const BookingForm = ({
           </div>
         </div>
         <div className="mb-4">
-          <label htmlFor="serviceOption" className="block font-bold mb-1">Luggage Service:</label>
-          <div className="flex items-center">
-            <select 
-              className="w-full p-2 border border-gray-300 rounded" 
-              id="serviceOption" 
-              name="serviceOption" 
-              value={serviceOption} 
-              onChange={(e) => setServiceOption(e.target.value)}
-              required
-            >
-              <option value="">Select a service</option>
-              <option value="standard">Standard - $5.00 per/day</option>
-              <option value="home">Home Luggage - $7.00 per/day</option>
-              <option value="window">Window Luggage - $6.50 per/day</option>
-              <option value="office">Office Luggage - $8.00 per/day</option>
-            </select>
-          </div>
+          <label className="font-bold">Luggage Service: Standard - $5.00 per day</label>
         </div>
         <div className="mb-4">
           <label htmlFor="promoCode" className="block font-bold mb-1">Promo Code:</label>
@@ -272,7 +253,7 @@ const BookingForm = ({
           variant="primary" 
           onClick={openUserDetailsModal} 
           className="w-full bg-[#1A73A7] text-white py-2 rounded hover:bg-blue-700 transition duration-300 mb-2"
-          disabled={!checkinTime || !checkoutTime || luggageQuantity <= 0 || !serviceOption}
+          disabled={!checkinTime || !checkoutTime}
         >
           Book Now
         </Button>

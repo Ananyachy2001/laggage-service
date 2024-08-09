@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import DatePicker from 'react-multiple-datepicker';
@@ -19,76 +19,49 @@ const locationSchema = Yup.object().shape({
     availableTo: Yup.date().required('Required'),
     amenities: Yup.string().required('Required'),
     notes: Yup.string().required('Required'),
-    files: Yup.mixed().required('Required'),
+    files: Yup.mixed().nullable(),
     openTime: Yup.string().required('Required'),
     closeTime: Yup.string().required('Required'),
     closedDays: Yup.array().of(Yup.string()).required('Required'),
-    specialClosedDays: Yup.array().of(Yup.date()).required('Required'),
+    // specialClosedDays: Yup.array().of(Yup.date()).required('Required'),
     locationType: Yup.string().default('Other'), // Set default value
 });
 
-const LocationForm = ({ onSubmit, location, loading }) => {
-    const [previewPictures, setPreviewPictures] = useState([]);
-    const [specialClosedDays, setSpecialClosedDays] = useState([]);
+const EditLocationForm = ({ onSubmit, location, loading }) => {
+    const [previewPictures, setPreviewPictures] = useState(location.pictures || []);
+    const [specialClosedDays, setSpecialClosedDays] = useState(location.specialClosedDays || []);
 
     return (
         <Formik
             initialValues={{
-                name: location?.additionalDetails?.name || '',
-                description: location?.additionalDetails?.description || '',
-                street: location?.addressDetails?.street || '',
-                city: location?.addressDetails?.city || '',
-                state: location?.addressDetails?.state || '',
-                zipCode: location?.addressDetails?.zipCode || '',
-                country: location?.addressDetails?.country || '',
-                capacity: location?.additionalDetails?.capacity || '',
-                availableSpace: location?.additionalDetails?.availableSpace || '',
-                regularPrice: location?.additionalDetails?.regularPrice || '',
-                discountPercentage: location?.additionalDetails?.discountPercentage || '',
-                availableFrom: location?.additionalDetails?.availableFrom || '',
-                availableTo: location?.additionalDetails?.availableTo || '',
-                amenities: location?.additionalDetails?.amenities || '',
-                notes: location?.additionalDetails?.notes || '',
-                files: [],
-                openTime: location?.additionalDetails?.openTime || '',
-                closeTime: location?.additionalDetails?.closeTime || '',
-                closedDays: location?.additionalDetails?.closedDays || [],
-                specialClosedDays: location?.additionalDetails?.specialClosedDays || [],
-                locationType: 'Other', // Set default value here
-                timezone: location?.timezone || '',
+                name: location.name || '',
+                description: location.description || '',
+                street: location.address?.street || '',
+                city: location.address?.city || '',
+                state: location.address?.state || '',
+                zipCode: location.address?.zipCode || '',
+                country: location.address?.country || '',
+                capacity: location.capacity || '',
+                availableSpace: location.availableSpace || '',
+                regularPrice: location.regularPrice || '',
+                discountPercentage: location.discountPercentage || '',
+                availableFrom: location.availableFrom || '',
+                availableTo: location.availableTo || '',
+                amenities: location.amenities || '',
+                notes: location.notes || '',
+                files: null,
+                openTime: location.openTime || '',
+                closeTime: location.closeTime || '',
+                closedDays: location.closedDays || [],
+                specialClosedDays: location.specialClosedDays || [],
+                locationType: location.locationType || 'Other',
+                timezone: location.timezone || '',
             }}
             validationSchema={locationSchema}
             onSubmit={onSubmit}
             enableReinitialize
         >
             {({ errors, touched, setFieldValue, isValid, isSubmitting }) => {
-                useEffect(() => {
-                    if (location?.addressDetails) {
-                        setFieldValue('street', location.addressDetails.street);
-                        setFieldValue('city', location.addressDetails.city);
-                        setFieldValue('state', location.addressDetails.state);
-                        setFieldValue('zipCode', location.addressDetails.zipCode);
-                        setFieldValue('country', location.addressDetails.country);
-                    }
-                    if (location?.additionalDetails) {
-                        setFieldValue('name', location.additionalDetails.name);
-                        setFieldValue('description', location.additionalDetails.description);
-                        setFieldValue('capacity', location.additionalDetails.capacity);
-                        setFieldValue('availableSpace', location.additionalDetails.availableSpace);
-                        setFieldValue('regularPrice', location.additionalDetails.regularPrice);
-                        setFieldValue('discountPercentage', location.additionalDetails.discountPercentage);
-                        setFieldValue('availableFrom', location.additionalDetails.availableFrom);
-                        setFieldValue('availableTo', location.additionalDetails.availableTo);
-                        setFieldValue('amenities', location.additionalDetails.amenities);
-                        setFieldValue('notes', location.additionalDetails.notes);
-                        setFieldValue('openTime', location.additionalDetails.openTime);
-                        setFieldValue('closeTime', location.additionalDetails.closeTime);
-                        setFieldValue('closedDays', location.additionalDetails.closedDays);
-                        setFieldValue('specialClosedDays', location.additionalDetails.specialClosedDays);
-                        setFieldValue('timezone', location.timezone);
-                    }
-                }, [location, setFieldValue]);
-
                 const handleFileChange = (event) => {
                     const files = event.currentTarget.files;
                     setFieldValue('files', files);
@@ -105,7 +78,7 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                 return (
                     <Form className="overflow-y-auto p-6 bg-white shadow-xl rounded-lg" style={{ maxHeight: '80vh' }}>
                         <div className="space-y-8">
-                            <h6 className="text-2xl font-bold text-gray-800 mb-4">Location Details</h6>
+                            <h6 className="text-2xl font-bold text-gray-800 mb-4">Edit Location Details</h6>
                             {[
                                 { name: 'name', label: 'Name' },
                                 { name: 'description', label: 'Description' },
@@ -134,7 +107,6 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                                         as="input"
                                         name={name}
                                         type={type}
-                                        
                                         className={`form-input mt-1 block w-full rounded-md border ${
                                             errors[name] && touched[name]
                                                 ? 'border-red-500'
@@ -167,7 +139,6 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                                     Special Closed Days
                                 </label>
                                 <div className="bg-gray-100 p-3 rounded-lg">
-                                    
                                     <DatePicker
                                         onChange={handleSpecialClosedDaysChange}
                                         value={specialClosedDays}
@@ -214,7 +185,7 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                                 className={`bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 ease-in-out ${
                                     isSubmitting || !isValid ? 'opacity-50 cursor-not-allowed' : ''
                                 }`}
-                                disabled={isSubmitting || !isValid}
+                                // disabled={isSubmitting || !isValid}
                             >
                                 {loading ? (
                                     <div className="flex items-center">
@@ -236,4 +207,4 @@ const LocationForm = ({ onSubmit, location, loading }) => {
     );
 };
 
-export default LocationForm;
+export default EditLocationForm;

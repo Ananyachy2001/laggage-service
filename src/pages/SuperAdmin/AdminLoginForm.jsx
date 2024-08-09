@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { Button, Checkbox, Label, TextInput, Spinner } from 'flowbite-react';
 import axios from 'axios';
 import config from '../../config'; 
 
@@ -9,11 +9,13 @@ function AdminLoginForm() {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const response = await axios.post(`${config.API_BASE_URL}/api/v1/users/login/superadmin`, {
@@ -23,11 +25,14 @@ function AdminLoginForm() {
       });
       const token = response.data.token;
       localStorage.setItem('token', token);
+      localStorage.setItem('loginTime', new Date().getTime().toString()); // Store the login time
       console.log('Login successful', response.data);
       navigate('/superadmin/dashboard');
     } catch (error) {
       console.error('Login failed', error);
       setError('Login failed. Please check your credentials and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,9 +80,17 @@ function AdminLoginForm() {
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <Button 
           type="submit"
-          className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105"
+          className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 flex justify-center items-center"
+          disabled={loading}
         >
-          Login
+          {loading ? (
+            <>
+              <Spinner size="sm" className="mr-2" />
+              Logging in...
+            </>
+          ) : (
+            'Login'
+          )}
         </Button>
       </form>
     </div>

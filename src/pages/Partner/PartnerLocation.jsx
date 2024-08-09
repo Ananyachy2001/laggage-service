@@ -11,6 +11,10 @@ const PartnerLocations = () => {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [locationsPerPage] = useState(3);
+    const [qrCode, setQrCode] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [fetchingQRCode, setFetchingQRCode] = useState(false);
+    const [qrCodeError, setQrCodeError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -61,6 +65,20 @@ const PartnerLocations = () => {
             } catch (error) {
                 alert('An error occurred. Please try again.');
             }
+        }
+    };
+
+    const handleURLClick = async (url) => {
+        setFetchingQRCode(true);
+        setQrCodeError(null);
+        try {
+            const response = await axios.get(`${config.API_BASE_URL}/api/v1/qr-code/${url}`);
+            setQrCode(response.data.qrCode);
+            setShowModal(true);
+        } catch (error) {
+            setQrCodeError('Unable to fetch QR code. Please try again later.');
+        } finally {
+            setFetchingQRCode(false);
         }
     };
 
@@ -115,31 +133,53 @@ const PartnerLocations = () => {
                                 <table className="min-w-full">
                                     <thead className="bg-[#4A686A] text-white">
                                         <tr>
-                                            <th className="w-3/12 py-3 px-6 text-left">Name</th>
-                                            <th className="w-4/12 py-3 px-6 text-left">Address</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Name</th>
+                                            <th className="w-3/12 py-3 px-6 text-left">Address</th>
                                             <th className="w-2/12 py-3 px-6 text-left">Price</th>
                                             <th className="w-1/12 py-3 px-6 text-left">Discount</th>
                                             <th className="w-2/12 py-3 px-6 text-left">Available From</th>
                                             <th className="w-2/12 py-3 px-6 text-left">Available To</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">URL</th>
+                                            <th className="w-2/12 py-3 px-6 text-left">Special Closed Days</th>
                                             <th className="w-1/12 py-3 px-6 text-left">Actions</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Edit</th>
                                         </tr>
                                     </thead>
 
                                     <tbody className="text-gray-800">
                                         {currentLocations.map(location => (
                                             <tr key={location._id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                                <td className="w-3/12 py-3 px-6 border">{location.name}</td>
-                                                <td className="w-4/12 py-3 px-6 border">{`${location.address.street}, ${location.address.city}, ${location.address.state}, ${location.address.zipCode}, ${location.address.country}`}</td>
+                                                <td className="w-2/12 py-3 px-6 border">{location.name}</td>
+                                                <td className="w-3/12 py-3 px-6 border">{`${location.address.street}, ${location.address.city}, ${location.address.state}, ${location.address.zipCode}, ${location.address.country}`}</td>
                                                 <td className="w-2/12 py-3 px-6 border">{`${location.priceCurrency} ${location.regularPrice}`}</td>
                                                 <td className="w-1/12 py-3 px-6 border">{location.discountPercentage}%</td>
                                                 <td className="w-2/12 py-3 px-6 border">{new Date(location.availableFrom).toLocaleDateString()}</td>
                                                 <td className="w-2/12 py-3 px-6 border">{new Date(location.availableTo).toLocaleDateString()}</td>
+                                                <td className="w-2/12 py-3 px-6 border text-blue-500 underline cursor-pointer" onClick={() => handleURLClick(location.url)}>
+                                                    {location.url}
+                                                </td>
+                                                <td className="w-1/12 py-3 px-6 border text-center">
+                                                    <button
+                                                        onClick={() => navigate(`/partner/edit-special-closed-days/${location._id}`)}
+                                                        className="ml-2 px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </td>
                                                 <td className="w-1/12 py-3 px-6 border text-center">
                                                     <button
                                                         onClick={() => deleteLocation(location._id)}
                                                         className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
                                                     >
                                                         Delete
+                                                    </button>
+                                                </td>
+                                                <td className="w-1/12 py-3 px-6 border text-center">
+                                                    <button
+                                                        onClick={() => navigate(`/partner/edit-location/${location._id}`, { state: { location } })}
+                                                        className="px-4 py-2 rounded-lg bg-green-500 text-white transition duration-150"
+                                                    >
+                                                        Edit
                                                     </button>
                                                 </td>
                                             </tr>
@@ -173,6 +213,32 @@ const PartnerLocations = () => {
                     </div>
                 </main>
             </div>
+
+            {/* QR Code Modal */}
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
+                    <div className="bg-white rounded-lg p-8 z-10">
+                        {fetchingQRCode ? (
+                            <div className="flex justify-center">
+                                <div className="loader"></div>
+                            </div>
+                        ) : qrCodeError ? (
+                            <div className="text-red-500">{qrCodeError}</div>
+                        ) : (
+                            <div>
+                                <img src={qrCode} alt="QR Code" className="mb-4" />
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                                >
+                                    OK
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

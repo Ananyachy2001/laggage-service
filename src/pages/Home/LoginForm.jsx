@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import config from '../../config';
 import RegistrationForm from './RegistrationForm';
+import { FaSpinner } from 'react-icons/fa';
 
 const schema = yup.object().shape({
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -17,6 +18,7 @@ const LoginForm = ({ loginType, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
   const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -24,6 +26,7 @@ const LoginForm = ({ loginType, onClose }) => {
   });
 
   const handleFormSubmit = async (data) => {
+    setIsLoading(true); // Set loading to true when form is submitted
     const endpoint = loginType === 'Partner'
       ? `${config.API_BASE_URL}/api/v1/users/login/partner`
       : `${config.API_BASE_URL}/api/v1/users/login/client`;
@@ -40,6 +43,7 @@ const LoginForm = ({ loginType, onClose }) => {
       if (response.ok) {
         console.log('Success:', result);
         localStorage.setItem('token', result.token); // Store the token in local storage
+        localStorage.setItem('loginTime', new Date().getTime().toString());
         if (loginType === 'Partner') {
           navigate('/partner/profile'); // Redirect to partner profile
         } else {
@@ -50,10 +54,13 @@ const LoginForm = ({ loginType, onClose }) => {
       }
     } catch (error) {
       setErrorMessage('An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false); // Set loading to false when request is complete
     }
   };
 
   const handleForgotPasswordSubmit = async (data) => {
+    setIsLoading(true); // Set loading to true when form is submitted
     const endpoint = `${config.API_BASE_URL}/api/v1/users/reset-password`;
 
     try {
@@ -73,6 +80,8 @@ const LoginForm = ({ loginType, onClose }) => {
       }
     } catch (error) {
       setErrorMessage('An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false); // Set loading to false when request is complete
     }
   };
 
@@ -115,7 +124,7 @@ const LoginForm = ({ loginType, onClose }) => {
               </div>
               <div className="mb-4">
                 <button className="w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105" type="submit">
-                  Reset Password
+                  {isLoading ? <FaSpinner className="animate-spin" /> : 'Reset Password'}
                 </button>
               </div>
             </form>
@@ -156,7 +165,7 @@ const LoginForm = ({ loginType, onClose }) => {
                 </div>
                 <div className="mb-4">
                   <button className="w-full bg-[#518689] hover:bg-[#4A686A] text-white py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105" type="submit">
-                    Log in
+                    {isLoading ? <FaSpinner className="animate-spin" /> : 'Log in'}
                   </button>
                 </div>
               </form>

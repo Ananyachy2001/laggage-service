@@ -34,13 +34,13 @@ const Home = () => {
       {/* <Service /> */}
       
       {/* Projects */}
-      <Projects />
+      {/* <Projects /> */}
       
       {/* FAQ */}
       <FAQ />
       
       {/* Team */}
-      <Team />
+      {/* <Team /> */}
 
       {/* Counter */}
       <Counter />
@@ -48,7 +48,7 @@ const Home = () => {
       <Choose />
     
       {/* Review */}
-      <Review />
+      {/* <Review /> */}
 
       <Blog/>
 

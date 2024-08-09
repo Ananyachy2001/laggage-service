@@ -97,9 +97,9 @@ const AdminLocationForm = ({ onSubmit, location, loading }) => {
                 };
 
                 return (
-                    <Form className="overflow-y-auto" style={{ maxHeight: '80vh' }}>
-                        <div className="space-y-4">
-                            <h6 className="text-xl font-semibold">Location Details</h6>
+                    <Form className="overflow-y-auto p-6 bg-white shadow-xl rounded-lg" style={{ maxHeight: '80vh' }}>
+                        <div className="space-y-8">
+                            <h6 className="text-2xl font-bold text-gray-800 mb-4">Location Details</h6>
                             {[
                                 { name: 'name', label: 'Name' },
                                 { name: 'description', label: 'Description' },
@@ -118,30 +118,30 @@ const AdminLocationForm = ({ onSubmit, location, loading }) => {
                                 { name: 'notes', label: 'Notes' },
                                 { name: 'openTime', label: 'Open Time', type: 'time' },
                                 { name: 'closeTime', label: 'Close Time', type: 'time' },
-                                { name: 'closedDays', label: 'Closed Days' },
-                                { name: 'specialClosedDays', label: 'Special Closed Days' },
-                                { name: 'locationType', label: 'Location Type' },
                                 { name: 'timezone', label: 'Timezone' },
                             ].map(({ name, label, type = 'text' }) => (
                                 <div key={name} className="form-group">
+                                    <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-2">
+                                        {label}
+                                    </label>
                                     <Field
                                         as="input"
                                         name={name}
                                         type={type}
-                                        placeholder={label}
-                                        className={`form-input mt-1 block w-full rounded-md ${
+                                        
+                                        className={`form-input mt-1 block w-full rounded-md border ${
                                             errors[name] && touched[name]
                                                 ? 'border-red-500'
                                                 : 'border-gray-300'
-                                        }`}
+                                        } focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
                                     />
                                     {errors[name] && touched[name] && (
-                                        <div className="text-red-500 text-sm">{errors[name]}</div>
+                                        <div className="text-red-500 text-sm mt-1">{errors[name]}</div>
                                     )}
                                 </div>
                             ))}
                             <div className="form-group">
-                                <label htmlFor="files" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="files" className="block text-sm font-medium text-gray-700 mb-2">
                                     Pictures
                                 </label>
                                 <input
@@ -149,30 +149,30 @@ const AdminLocationForm = ({ onSubmit, location, loading }) => {
                                     name="files"
                                     type="file"
                                     multiple
-                                    className={`form-input mt-1 block w-full rounded-md ${
+                                    className={`form-input mt-1 block w-full rounded-md border ${
                                         errors.files && touched.files
                                             ? 'border-red-500'
                                             : 'border-gray-300'
-                                    }`}
+                                    } focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
                                     onChange={handleFileChange}
                                 />
                                 {errors.files && touched.files && (
-                                    <div className="text-red-500 text-sm">{errors.files}</div>
+                                    <div className="text-red-500 text-sm mt-1">{errors.files}</div>
                                 )}
-                                <div className="mt-2 flex flex-wrap">
+                                <div className="mt-4 flex flex-wrap gap-4">
                                     {previewPictures.map((src, index) => (
                                         <img
                                             key={index}
                                             src={src}
                                             alt={`Preview ${index}`}
-                                            className="h-20 w-20 object-cover mr-2 mb-2 rounded"
+                                            className="h-20 w-20 object-cover rounded-lg shadow-md"
                                         />
                                     ))}
                                 </div>
                             </div>
                             <button 
                                 type="submit" 
-                                className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
+                                className={`bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 ease-in-out ${
                                     isSubmitting || !isValid ? 'opacity-50 cursor-not-allowed' : ''
                                 }`}
                                 disabled={isSubmitting || !isValid}

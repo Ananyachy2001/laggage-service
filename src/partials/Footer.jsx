@@ -71,11 +71,11 @@ const Footer = () => {
                                 <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
                                 <ul className="text-gray-600">
                                     <li className="mb-2">
-                                        <span>Location: 6th Floor, Barbosa, Sidney</span>
+                                        <span>Our Business Address: 52 MERLIN ST CRAIGIEBURN VIC 3064</span>
                                     </li>
                                     <li className="mb-2">
                                         <span>Email: </span>
-                                        <a href="mailto:info@Urlocker.com" target="_blank" className="hover:underline">info@Urlocker.com</a>
+                                        <a href="mailto:info@Urloker.com" target="_blank" className="hover:underline">admin@Urloker.com</a>
                                     </li>
                                     <li className="mb-2">
                                         <span>Phone: </span>
@@ -112,7 +112,7 @@ const Footer = () => {
                 </div>
                 <div className="border-t border-gray-300 pt-4 mt-8 text-center">
                     <p className="text-gray-600">
-                        Copyright &copy; <script>document.write(new Date().getFullYear())</script> Urlocker. Designed By 
+                        Copyright &copy; <script>document.write(new Date().getFullYear())</script> Urloker. Designed By 
                         <a href="https://hibootstrap.com/" target="_blank" className="hover:underline">HiBootstrap</a>
                     </p>
                 </div>

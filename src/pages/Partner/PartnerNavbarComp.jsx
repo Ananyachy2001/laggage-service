@@ -9,6 +9,12 @@ const PartnerNavbarComp = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('loginTime');
+    navigate('/logout');
+  };
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -23,8 +29,21 @@ const PartnerNavbarComp = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const loginTime = localStorage.getItem('loginTime');
     if (token) {
       setIsAuthenticated(true);
+      const currentTime = new Date().getTime();
+      const timeDiff = currentTime - parseInt(loginTime, 10);
+      const timeLimit = 50 * 60 * 1000; // 50 minutes in milliseconds
+
+      if (timeDiff > timeLimit) {
+        logout();
+      } else {
+        const timer = setTimeout(() => {
+          logout();
+        }, timeLimit - timeDiff);
+        return () => clearTimeout(timer);
+      }
     } else {
       navigate('/');
     }

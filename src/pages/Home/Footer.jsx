@@ -10,7 +10,7 @@ function Footer() {
             <a href="index.html" className="flex items-center mb-4">
               <img src={logo} alt="logo2" className="h-28 transform hover:scale-110 transition-transform duration-300" />
             </a>
-            <p className="hover:text-teal-200 transition-colors duration-300">Urlocker offers secure and convenient luggage storage solutions for your home and office. Whether you need short-term or long-term storage, our services are designed to make your life easier and more organized. Experience hassle-free luggage management with Urlocker.</p>
+            <p className="hover:text-teal-200 transition-colors duration-300">Urloker offers secure and convenient luggage storage solutions for your home and office. Whether you need short-term or long-term storage, our services are designed to make your life easier and more organized. Experience hassle-free luggage management with Urloker.</p>
           </div>
           <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
             <h3 className="text-lg font-bold mb-4 hover:text-teal-200 transition-colors duration-300">Company</h3>
@@ -35,8 +35,8 @@ function Footer() {
           <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
             <h3 className="text-lg font-bold mb-4 hover:text-teal-200 transition-colors duration-300">Contact Info</h3>
             <ul className="space-y-2">
-              <li><span>Location: 6th Floor, Barbosa, Sidney</span></li>
-              <li><span>Email: <a href="mailto:info@Urlocker.com" className="hover:underline hover:text-teal-200 transition-colors duration-300">info@Urlocker.com</a></span></li>
+              <li><span> Address: 52 MERLIN ST CRAIGIEBURN VIC 3064</span></li>
+              <li><span>Email: <a href="mailto:admin@Urloker.com" className="hover:underline hover:text-teal-200 transition-colors duration-300">admin@Urloker.com</a></span></li>
               <li><span>Phone: <a href="tel:+0123456789" className="hover:underline hover:text-teal-200 transition-colors duration-300">+0123 456 789</a></span></li>
             </ul>
             <div className="flex space-x-4 mt-4">
@@ -48,7 +48,7 @@ function Footer() {
           </div>
         </div>
         <div className="text-center mt-8">
-          <p className="hover:text-teal-200 transition-colors duration-300">Copyright &copy; {new Date().getFullYear()} Urlocker. Designed By <a href="#" className="hover:underline hover:text-teal-200 transition-colors duration-300">EasytechInnovation</a></p>
+          <p className="hover:text-teal-200 transition-colors duration-300">Copyright &copy; {new Date().getFullYear()} Urloker. Designed By <a href="#" className="hover:underline hover:text-teal-200 transition-colors duration-300">EasytechInnovation</a></p>
         </div>
       </div>
     </footer>

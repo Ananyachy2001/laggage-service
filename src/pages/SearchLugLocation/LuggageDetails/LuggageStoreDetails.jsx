@@ -50,6 +50,7 @@ const LuggageStoreDetails = () => {
   };
 
   const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
+  const [bookingError, setBookingError] = useState('');
 
   const handleSubmit = async (bookingData) => {
     const token = localStorage.getItem('token');
@@ -68,18 +69,20 @@ const LuggageStoreDetails = () => {
       const response = await fetch(url, fetchOptions);
       const result = await response.json();
       console.log(result);
-
+    
       if (result.status === 'success') {
         setClientSecret(result.clientSecret);
-        setBookingId(result.booking._id);  // Assuming bookingId is available in result.booking._id
+        setBookingId(result.booking._id);
         console.log('Client Secret:', result.clientSecret);
         console.log('Booking ID:', result.booking._id);
         setShowPaymentModal(true);
       } else {
         console.error('Booking error:', result);
+        setBookingError(result.message); // Set the error message here
       }
     } catch (error) {
       console.error('Error:', error);
+      setBookingError('An unexpected error occurred. Please try again later.'); // Fallback error message
     }
   };
 
@@ -121,7 +124,7 @@ const LuggageStoreDetails = () => {
     <Elements stripe={stripePromise}>
       <div>
         {isLoggedIn ? <ClientNavbarComp /> : <NavbarComp />}
-
+  
         <div className="container mx-auto mt-12 pt-32">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-2">
@@ -142,6 +145,7 @@ const LuggageStoreDetails = () => {
               />
             </div>
             <div>
+              {bookingError && <div className="alert alert-danger">{bookingError}</div>}
               <BookingForm 
                 locationid={id}
                 handleSubmit={handleSubmit}
@@ -173,6 +177,8 @@ const LuggageStoreDetails = () => {
       </div>
     </Elements>
   );
+  
+
 };
 
 const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {

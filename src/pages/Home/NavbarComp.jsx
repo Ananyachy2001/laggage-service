@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import LoginForm from './LoginForm'; // Assuming LoginForm is in the same directory
-import './Navbarcomp.css'; 
+import './Navbarcomp.css';
 import logo from '../../img/home-two/logo3.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faKey } from '@fortawesome/free-solid-svg-icons';
 
 const NavbarComp = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,11 +42,18 @@ const NavbarComp = () => {
   };
 
   return (
-    <div className="fixed top-0 w-full bg-white shadow-md z-50 ">
+    <div className="fixed top-0 w-full bg-white shadow-md z-50">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
-        <a href="/" className="flex items-center">
-          <img src={logo} alt="logo1" className="h-16 w-40" />
-        </a>
+        <div className="flex items-center">
+          <a href="/" className="flex items-center">
+            <img src={logo} alt="logo1" className="h-16 w-40" />
+          </a>
+          <div className="md:hidden ml-24">
+            <a href="/comingsoon" className="flex items-center text-[#1a73a7] hover:text-[#2a9b84]">
+              <FontAwesomeIcon icon={faKey} className="mr-2" /> Urloker Keys
+            </a>
+          </div>
+        </div>
         <div className="md:hidden">
           <button
             onClick={toggleMenu}
@@ -68,9 +77,9 @@ const NavbarComp = () => {
         </div>
         <nav className={`flex-col md:flex md:flex-row md:space-x-4 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
           <div className="md:flex md:flex-row md:space-x-4">
-            <a href="/" className="hover:text-[#FDB139]">Home</a>
-            <a href="/guideline" className="hover:text-[#FDB139]">Guideline</a>
-            {/* <a href="/service" className="hover:text-[#FDB139]">Service</a> */}
+            <a href="/" className="hover:text-[#2a9b84]">Home</a>
+            <a href="/guideline" className="hover:text-[#2a9b84]">Guideline</a>
+            <a href="/comingsoon" className="hidden md:block hover:text-[#2a9b84]">Urloker Keys</a>
           </div>
           <div className="md:flex md:flex-row md:space-x-4">
             <div 
@@ -78,21 +87,7 @@ const NavbarComp = () => {
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
             >
-              <button onClick={() => handleDropdownToggle('luggagestorage')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
-                Luggage Storage <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'luggagestorage' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
-                {["Urloker Keys"].map(luggagestorage => (
-                  <a href="/comingsoon" key={luggagestorage} className="block px-4 py-2 hover:bg-blue-800">{luggagestorage}</a>
-                ))}
-              </div>
-            </div>
-            <div 
-              className="relative group"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              <button onClick={() => handleDropdownToggle('login')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
+              <button onClick={() => handleDropdownToggle('login')} className="hover:text-[#2a9b84] flex items-center focus:outline-none">
                 Login <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
               <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'login' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
@@ -123,7 +118,7 @@ const NavbarComp = () => {
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
             >
-              <button onClick={() => handleDropdownToggle('language')} className="hover:text-[#FDB139] flex items-center focus:outline-none">
+              <button onClick={() => handleDropdownToggle('language')} className="hover:text-[#2a9b84] flex items-center focus:outline-none">
                 Language <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
               <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'language' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
