@@ -35,10 +35,10 @@ const Sidebar = ({ storageSpots, visibleLocations }) => {
     };
 
     return (
-        <div className="w-full lg:w-1/3 bg-white p-4 lg:p-6 shadow-lg rounded-lg">
-            <div className="filters mb-6 pt-4">
-                <div className="flex flex-col lg:flex-row justify-between mb-4">
-                    <label className="w-full lg:w-1/2 lg:pr-2 mb-4 lg:mb-0">
+        <div className="w-full lg:w-1/3 bg-white p-8 lg:p-6 shadow-lg rounded">
+            <div className="filters">
+                <div className="flex flex-col lg:flex-row justify-between">
+                    <label className="w-full lg:w-1/2 lg:pr-2 mb-2 lg:mb-0">
                         Drop off:
                         <input
                             type="datetime-local"
@@ -65,35 +65,28 @@ const Sidebar = ({ storageSpots, visibleLocations }) => {
                     Search
                 </button>
             </div>
-            <div className="storage-spots overflow-y-auto h-[32rem] mt-4 lg:mt-16">
+            <div className="storage-spots overflow-y-auto h-[28rem] mt-4 pt-2 lg:mt-16">
                 {filteredSpots.length > 0 ? (
-                    filteredSpots.map((spot, index) => {
-                        const now = moment.tz("Australia/Sydney");
-                        const isOpen = now.isBetween(moment.tz(spot.availableFrom, "Australia/Sydney"), moment.tz(spot.availableTo, "Australia/Sydney")) &&
-                                       (!spot.openTime || now.isBetween(moment.tz(spot.openTime, "HH:mm", "Australia/Sydney"), moment.tz(spot.closeTime, "HH:mm", "Australia/Sydney")));
-
-                        return (
-                            <StorageSpot
-                                key={index}
-                                id={spot._id}
-                                title={spot.name}
-                                details={spot.description}
-                                price={`A$${spot.regularPrice.toFixed(2)} / 24h `}
-                                regularprice={spot.regularPrice}
-                                link={isOpen ? spot.url : null}
-                                lat={spot.coordinates.coordinates[1]}
-                                lng={spot.coordinates.coordinates[0]}
-                                image={spot.pictures[0] || 'https://img.freepik.com/free-vector/cartoon-style-cafe-front-shop-view_134830-697.jpg'}
-                                isOpen={isOpen}
-                                availableFrom={spot.availableFrom}
-                                availableTo={spot.availableTo}
-                                discountPercentage={spot.discountPercentage}
-                                openTime={spot.openTime}
-                                closeTime={spot.closeTime}
-                                notes={spot.notes}
-                            />
-                        );
-                    })
+                    filteredSpots.map((spot, index) => (
+                        <StorageSpot
+                            key={index}
+                            id={spot._id}
+                            title={spot.name}
+                            details={spot.description}
+                            price={`A$${spot.regularPrice.toFixed(2)} / 24h `}
+                            regularprice={spot.regularPrice}
+                            link={spot.url} 
+                            lat={spot.coordinates.coordinates[1]}
+                            lng={spot.coordinates.coordinates[0]}
+                            image={spot.pictures[0] || 'https://img.freepik.com/free-vector/cartoon-style-cafe-front-shop-view_134830-697.jpg'}
+                            availableFrom={spot.availableFrom}
+                            availableTo={spot.availableTo}
+                            discountPercentage={spot.discountPercentage}
+                            openTime={spot.openTime}
+                            closeTime={spot.closeTime}
+                            notes={spot.notes}
+                        />
+                    ))
                 ) : (
                     <div className="text-center">
                         <FontAwesomeIcon icon={faBoxOpen} className="text-gray-400 text-6xl mb-4" />

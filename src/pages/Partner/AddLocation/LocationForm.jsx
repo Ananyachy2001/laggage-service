@@ -12,19 +12,20 @@ const locationSchema = Yup.object().shape({
     zipCode: Yup.string().required('Required'),
     country: Yup.string().required('Required'),
     capacity: Yup.number().required('Required').typeError('Must be a number'),
-    availableSpace: Yup.number().required('Required').typeError('Must be a number'),
-    regularPrice: Yup.number().required('Required').typeError('Must be a number'),
-    discountPercentage: Yup.number().required('Required').typeError('Must be a number'),
+    availableSpace: Yup.number().default(100), // Default value
+    regularPrice: Yup.number().default(50), // Default value
+    discountPercentage: Yup.number().default(10), // Default value
     availableFrom: Yup.date().required('Required'),
     availableTo: Yup.date().required('Required'),
-    amenities: Yup.string().required('Required'),
-    notes: Yup.string().required('Required'),
+    amenities: Yup.string().default('Wi-Fi, Parking'), // Default value
+    notes: Yup.string().default('Default notes'), // Default value
     files: Yup.mixed().required('Required'),
     openTime: Yup.string().required('Required'),
     closeTime: Yup.string().required('Required'),
-    closedDays: Yup.array().of(Yup.string()).required('Required'),
-    specialClosedDays: Yup.array().of(Yup.date()).required('Required'),
+    closedDays: Yup.array().of(Yup.string()), // Optional validation
+    specialClosedDays: Yup.array().of(Yup.date()), // Optional validation
     locationType: Yup.string().default('Other'), // Set default value
+    timezone: Yup.string().default('Australia/Perth'), // Default value
 });
 
 const LocationForm = ({ onSubmit, location, loading }) => {
@@ -42,20 +43,20 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                 zipCode: location?.addressDetails?.zipCode || '',
                 country: location?.addressDetails?.country || '',
                 capacity: location?.additionalDetails?.capacity || '',
-                availableSpace: location?.additionalDetails?.availableSpace || '',
-                regularPrice: location?.additionalDetails?.regularPrice || '',
-                discountPercentage: location?.additionalDetails?.discountPercentage || '',
-                availableFrom: location?.additionalDetails?.availableFrom || '',
-                availableTo: location?.additionalDetails?.availableTo || '',
-                amenities: location?.additionalDetails?.amenities || '',
-                notes: location?.additionalDetails?.notes || '',
+                availableSpace: 100, // Default value
+                regularPrice: 7.90, // Default value
+                discountPercentage: 10, // Default value
+                availableFrom: location?.additionalDetails?.availableFrom || new Date(), // Default to current date
+                availableTo: location?.additionalDetails?.availableTo || new Date(new Date().setFullYear(new Date().getFullYear() + 10)), // Default to 10 years from now
+                amenities: 'Wi-Fi, Parking', // Default value
+                notes: 'Default notes', // Default value
                 files: [],
                 openTime: location?.additionalDetails?.openTime || '',
                 closeTime: location?.additionalDetails?.closeTime || '',
                 closedDays: location?.additionalDetails?.closedDays || [],
                 specialClosedDays: location?.additionalDetails?.specialClosedDays || [],
                 locationType: 'Other', // Set default value here
-                timezone: location?.timezone || '',
+                timezone: location?.timezone || 'Australia/Perth', // Default value
             }}
             validationSchema={locationSchema}
             onSubmit={onSubmit}
@@ -74,17 +75,8 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                         setFieldValue('name', location.additionalDetails.name);
                         setFieldValue('description', location.additionalDetails.description);
                         setFieldValue('capacity', location.additionalDetails.capacity);
-                        setFieldValue('availableSpace', location.additionalDetails.availableSpace);
-                        setFieldValue('regularPrice', location.additionalDetails.regularPrice);
-                        setFieldValue('discountPercentage', location.additionalDetails.discountPercentage);
-                        setFieldValue('availableFrom', location.additionalDetails.availableFrom);
-                        setFieldValue('availableTo', location.additionalDetails.availableTo);
-                        setFieldValue('amenities', location.additionalDetails.amenities);
-                        setFieldValue('notes', location.additionalDetails.notes);
                         setFieldValue('openTime', location.additionalDetails.openTime);
                         setFieldValue('closeTime', location.additionalDetails.closeTime);
-                        setFieldValue('closedDays', location.additionalDetails.closedDays);
-                        setFieldValue('specialClosedDays', location.additionalDetails.specialClosedDays);
                         setFieldValue('timezone', location.timezone);
                     }
                 }, [location, setFieldValue]);
@@ -112,19 +104,11 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                                 { name: 'street', label: 'Street' },
                                 { name: 'city', label: 'City' },
                                 { name: 'state', label: 'State' },
-                                { name: 'zipCode', label: 'Zip Code' },
+                                { name: 'zipCode', label: 'Post Code' },
                                 { name: 'country', label: 'Country' },
                                 { name: 'capacity', label: 'Capacity' },
-                                { name: 'availableSpace', label: 'Available Space' },
-                                { name: 'regularPrice', label: 'Regular Price' },
-                                { name: 'discountPercentage', label: 'Discount Percentage' },
-                                { name: 'availableFrom', label: 'Available From', type: 'date' },
-                                { name: 'availableTo', label: 'Available To', type: 'date' },
-                                { name: 'amenities', label: 'Amenities (comma separated)' },
-                                { name: 'notes', label: 'Notes' },
                                 { name: 'openTime', label: 'Open Time', type: 'time' },
                                 { name: 'closeTime', label: 'Close Time', type: 'time' },
-                                { name: 'timezone', label: 'Timezone' },
                             ].map(({ name, label, type = 'text' }) => (
                                 <div key={name} className="form-group">
                                     <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-2">
@@ -134,7 +118,6 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                                         as="input"
                                         name={name}
                                         type={type}
-                                        
                                         className={`form-input mt-1 block w-full rounded-md border ${
                                             errors[name] && touched[name]
                                                 ? 'border-red-500'
@@ -158,16 +141,12 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                                         </label>
                                     ))}
                                 </div>
-                                {errors.closedDays && touched.closedDays && (
-                                    <div className="text-red-500 text-sm mt-1">{errors.closedDays}</div>
-                                )}
                             </div>
                             <div className="form-group">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Special Closed Days
                                 </label>
                                 <div className="bg-gray-100 p-3 rounded-lg">
-                                    
                                     <DatePicker
                                         onChange={handleSpecialClosedDaysChange}
                                         value={specialClosedDays}
@@ -175,9 +154,6 @@ const LocationForm = ({ onSubmit, location, loading }) => {
                                         className="w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     />
                                 </div>
-                                {errors.specialClosedDays && touched.specialClosedDays && (
-                                    <div className="text-red-500 text-sm mt-1">{errors.specialClosedDays}</div>
-                                )}
                             </div>
                             <div className="form-group">
                                 <label htmlFor="files" className="block text-sm font-medium text-gray-700 mb-2">

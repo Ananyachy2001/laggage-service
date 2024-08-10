@@ -75,12 +75,13 @@ const BookingForm = ({
 
   useEffect(() => {
     if (validateDateTime(checkinTime, checkoutTime) && checkinTime && checkoutTime) {
-      const servicePrice = 5; // Fixed price for standard service
+      const serviceFee = 2.60; // Fixed service fee
+      const luggagePricePerDay = 7.90; // Price per bag per day
       const duration = calculateDuration(checkinTime, checkoutTime);
-      const price = (regularprice + servicePrice) * duration - discount;
+      const price = (luggagePricePerDay * luggageQuantity * duration) + serviceFee - discount;
       setTotalPrice(price > 0 ? price : 0);
     }
-  }, [discount, checkinTime, checkoutTime, regularprice, setTotalPrice]);
+  }, [discount, checkinTime, checkoutTime, luggageQuantity, setTotalPrice]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -200,9 +201,6 @@ const BookingForm = ({
           </div>
         </div>
         <div className="mb-4">
-          <label className="font-bold">Luggage Service: Standard - $5.00 per day</label>
-        </div>
-        <div className="mb-4">
           <label htmlFor="promoCode" className="block font-bold mb-1">Promo Code:</label>
           <div className="flex items-center">
             <input 
@@ -233,6 +231,11 @@ const BookingForm = ({
             )}
           </div>
         </div>
+        <div className="mb-4">
+          <label className="font-bold mt-2">Luggage Service:  $7.90 AUD per day per bag</label>
+          <label className="font-bold pt-2"> Service Fee: $2.60 AUD</label>
+        </div>
+
         {checkinTime && checkoutTime && (
           <div className="mb-4">
             <label className="font-bold">Total Price: $</label>
@@ -245,10 +248,10 @@ const BookingForm = ({
             <span id="clientId">{clientId}</span>
           </div>
         )}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="font-bold">Location ID: </label>
           <span id="locationid">{locationid}</span>
-        </div>
+        </div> */}
         <Button 
           variant="primary" 
           onClick={openUserDetailsModal} 

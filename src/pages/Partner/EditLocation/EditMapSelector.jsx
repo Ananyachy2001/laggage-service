@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,14 +9,13 @@ import config from '../../../config';
 
 const EditMapSelector = ({ onSelect, initialPosition }) => {
     const isLoaded = useGoogleMapsApi(config.GOOGLE_API_KEY);
-    const [selectedPosition, setSelectedPosition] = useState(initialPosition);
+    const [selectedPosition, setSelectedPosition] = useState(null);
     const [autocomplete, setAutocomplete] = useState(null);
     const locationInputRef = useRef(null);
 
     useEffect(() => {
         if (initialPosition) {
             setSelectedPosition(initialPosition);
-            fetchAddressDetails(initialPosition);
         }
     }, [initialPosition]);
 
@@ -113,12 +112,13 @@ const EditMapSelector = ({ onSelect, initialPosition }) => {
             </Autocomplete>
             <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '400px' }}
-                center={selectedPosition || { lat: -31.950527, lng: 115.860457 }} // Default center if no initial position
-                zoom={selectedPosition ? 15 : 10}
+                center={selectedPosition || initialPosition || { lat: -31.950527, lng: 115.860457 }}
+                zoom={15}
                 onClick={handleMapClick}
                 className="rounded-lg overflow-hidden"
             >
-                {selectedPosition && <Marker position={selectedPosition} />}
+                {initialPosition && <Marker position={initialPosition} label="Old Location" />}
+                {selectedPosition && <Marker position={selectedPosition} label="New Location" />}
             </GoogleMap>
         </div>
     );

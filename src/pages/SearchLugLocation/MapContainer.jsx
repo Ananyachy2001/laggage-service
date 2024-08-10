@@ -38,7 +38,7 @@ const MapContainer = ({ locations, setVisibleLocations, center }) => {
     if (!center) {
       map.fitBounds(bounds);
     } else {
-      map.setZoom(13);  // Adjust zoom level as needed
+      map.setZoom(14);  // Adjust zoom level as needed
     }
 
     google.maps.event.addListener(map, 'idle', () => {

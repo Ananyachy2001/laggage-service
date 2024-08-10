@@ -29,6 +29,36 @@ const CreateAdminLocation = () => {
         setLoading(true);
         setMessage({ text: '', type: '' });
 
+        // Validate form inputs
+        const formErrors = {};
+        if (!values.name) formErrors.name = 'Name is required';
+        if (!values.description) formErrors.description = 'Description is required';
+        if (!values.street) formErrors.street = 'Street is required';
+        if (!values.city) formErrors.city = 'City is required';
+        if (!values.state) formErrors.state = 'State is required';
+        if (!values.zipCode) formErrors.zipCode = 'Zip code is required';
+        if (!values.country) formErrors.country = 'Country is required';
+        if (!values.capacity) formErrors.capacity = 'Capacity is required';
+        if (!values.availableSpace) formErrors.availableSpace = 'Available space is required';
+        if (!values.regularPrice) formErrors.regularPrice = 'Regular price is required';
+        if (!values.discountPercentage) formErrors.discountPercentage = 'Discount percentage is required';
+        if (!values.availableFrom) formErrors.availableFrom = 'Available from date is required';
+        if (!values.availableTo) formErrors.availableTo = 'Available to date is required';
+        if (!values.amenities) formErrors.amenities = 'Amenities are required';
+        if (!values.notes) formErrors.notes = 'Notes are required';
+        if (!values.openTime) formErrors.openTime = 'Open time is required';
+        if (!values.closeTime) formErrors.closeTime = 'Close time is required';
+        if (!values.closedDays) formErrors.closedDays = 'Closed days are required';
+        if (!values.specialClosedDays) formErrors.specialClosedDays = 'Special closed days are required';
+        if (!values.locationType) formErrors.locationType = 'Location type is required';
+        if (!location.coordinates) formErrors.location = 'Map location must be selected';
+
+        if (Object.keys(formErrors).length > 0) {
+            setLoading(false);
+            setMessage({ text: 'Please fill in all required fields.', type: 'error' });
+            return;
+        }
+
         const formData = new FormData();
         formData.append('name', values.name);
         formData.append('description', values.description);

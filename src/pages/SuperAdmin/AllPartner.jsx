@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import axios from 'axios'; 
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Modal from 'react-modal';
 
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
-import config from '../../config'; 
+import config from '../../config';
 
 Modal.setAppElement('#root');
 
@@ -21,13 +21,15 @@ const AllPartner = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedPartner, setSelectedPartner] = useState(null);
     const [actionType, setActionType] = useState('');
+    const [errorModalIsOpen, setErrorModalIsOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
-            navigate('/logout'); 
+            navigate('/logout');
             return;
         }
 
@@ -93,8 +95,31 @@ const AllPartner = () => {
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-    const softDeletePartner = (id) => {
-        setPartners(partners.filter(partner => partner.id !== id));
+    const softDeletePartner = async (id) => {
+        const token = localStorage.getItem('token');
+        console.log(`Attempting to delete partner with ID: ${id}`);
+        try {
+            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/partners/${id}/soft`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log('API Response:', response.data);
+            if (response.data.status === 'success') {
+                setPartners(partners.filter(partner => partner.id !== id));
+            } else {
+                setErrorMessage('Failed to delete partner');
+                setErrorModalIsOpen(true);
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            setErrorMessage('Failed to delete partner');
+            setErrorModalIsOpen(true);
+        }
+    };
+
+    const closeErrorModal = () => {
+        setErrorModalIsOpen(false);
     };
 
     if (loading) {
@@ -172,18 +197,12 @@ const AllPartner = () => {
                                                 {partner.businessAddress.street}, {partner.businessAddress.district}, {partner.businessAddress.city}, {partner.businessAddress.state}, {partner.businessAddress.zipCode}, {partner.businessAddress.country}
                                             </td>
                                             <td className="w-1/5 py-3 px-6 border">{partner.tradeLicenseNumber}</td>
-                                            <td className=" py-4 px-8 border text-center flex justify-center space-x-2">
+                                            <td className="py-4 px-8 border text-center flex justify-center space-x-2">
                                                 <button
                                                     onClick={() => handleAction(partner, partner.isLocked ? 'unlock' : 'lock')}
                                                     className={`px-2 py-2 rounded ${partner.isLocked ? 'bg-yellow-500 hover:bg-yellow-700' : 'bg-green-500 hover:bg-green-700'} text-white`}
                                                 >
                                                     {partner.isLocked ? 'Unlock' : 'Lock'}
-                                                </button>
-                                                <button
-                                                    onClick={() => navigate(`/superadmin/partners/edit/${partner.id}`)}
-                                                    className="px-2 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded"
-                                                >
-                                                    Edit
                                                 </button>
                                                 <button
                                                     onClick={() => softDeletePartner(partner.id)}
@@ -238,6 +257,27 @@ const AllPartner = () => {
                             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
                         >
                             Confirm
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Error Modal */}
+            <Modal
+                isOpen={errorModalIsOpen}
+                onRequestClose={closeErrorModal}
+                className="fixed inset-0 flex items-center justify-center"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+            >
+                <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                    <h2 className="text-xl font-semibold mb-4">Error</h2>
+                    <p className="mb-6">{errorMessage}</p>
+                    <div className="flex justify-end">
+                        <button
+                            onClick={closeErrorModal}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
+                        >
+                            OK
                         </button>
                     </div>
                 </div>

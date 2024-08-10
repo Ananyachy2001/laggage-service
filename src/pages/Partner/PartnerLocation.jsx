@@ -141,8 +141,9 @@ const PartnerLocations = () => {
                                             <th className="w-2/12 py-3 px-6 text-left">Available To</th>
                                             <th className="w-2/12 py-3 px-6 text-left">URL</th>
                                             <th className="w-2/12 py-3 px-6 text-left">Special Closed Days</th>
-                                            <th className="w-1/12 py-3 px-6 text-left">Actions</th>
                                             <th className="w-1/12 py-3 px-6 text-left">Edit</th>
+                                            <th className="w-1/12 py-3 px-6 text-left">Action</th>
+                                            
                                         </tr>
                                     </thead>
 
@@ -151,7 +152,7 @@ const PartnerLocations = () => {
                                             <tr key={location._id} className="bg-white hover:bg-gray-200 transition duration-150">
                                                 <td className="w-2/12 py-3 px-6 border">{location.name}</td>
                                                 <td className="w-3/12 py-3 px-6 border">{`${location.address.street}, ${location.address.city}, ${location.address.state}, ${location.address.zipCode}, ${location.address.country}`}</td>
-                                                <td className="w-2/12 py-3 px-6 border">{`${location.priceCurrency} ${location.regularPrice}`}</td>
+                                                <td className="w-2/12 py-3 px-6 border">{` ${location.regularPrice} ${location.priceCurrency}`}</td>
                                                 <td className="w-1/12 py-3 px-6 border">{location.discountPercentage}%</td>
                                                 <td className="w-2/12 py-3 px-6 border">{new Date(location.availableFrom).toLocaleDateString()}</td>
                                                 <td className="w-2/12 py-3 px-6 border">{new Date(location.availableTo).toLocaleDateString()}</td>
@@ -167,6 +168,14 @@ const PartnerLocations = () => {
                                                     </button>
                                                 </td>
                                                 <td className="w-1/12 py-3 px-6 border text-center">
+                                                <button
+                                                    onClick={() => navigate(`/partner/edit-location/${location._id}`, { state: { location } })}
+                                                    className="px-4 py-2 rounded-lg bg-green-500 text-white transition duration-150"
+                                                >
+                                                    Edit
+                                                </button>
+                                            </td>
+                                                <td className="w-1/12 py-3 px-6 border text-center">
                                                     <button
                                                         onClick={() => deleteLocation(location._id)}
                                                         className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
@@ -174,15 +183,8 @@ const PartnerLocations = () => {
                                                         Delete
                                                     </button>
                                                 </td>
-                                                <td className="w-1/12 py-3 px-6 border text-center">
-                                                    <button
-                                                        onClick={() => navigate(`/partner/edit-location/${location._id}`, { state: { location } })}
-                                                        className="px-4 py-2 rounded-lg bg-green-500 text-white transition duration-150"
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                </td>
-                                            </tr>
+
+                                                                                        </tr>
                                         ))}
                                     </tbody>
                                 </table>
@@ -227,6 +229,7 @@ const PartnerLocations = () => {
                             <div className="text-red-500">{qrCodeError}</div>
                         ) : (
                             <div>
+                                <h1 className='text-center font-bold'>URLOCKER</h1>
                                 <img src={qrCode} alt="QR Code" className="mb-4" />
                                 <button
                                     onClick={() => setShowModal(false)}

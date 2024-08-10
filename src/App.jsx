@@ -63,6 +63,9 @@ import CreatePartnerLocation from './pages/Partner/AddLocation/CreatePartnerLoca
 import CreateAdminLocation from './pages/SuperAdmin/AddLocation/CreateAdminLocation';
 import EditSpecialClosedDays from './pages/Partner/EditSpecialClosedDays';
 import EditPartnerLocation from './pages/Partner/EditLocation/EditPartnerLocation';
+import SuperAdminPartnerAnalytics from './pages/SuperAdmin/SuperAdminPartnerAnalytics';
+import PaymentCancelled from './pages/SearchLugLocation/LuggageDetails/PaymentCancelled';
+
 
 function App() {
 
@@ -104,6 +107,7 @@ function App() {
         <Route exact path="/superadmin/create-location" element={<CreateAdminLocation/>} />
         <Route exact path="/superadmin/bookings" element={<AllBookings/>} />
         <Route exact path="/superadmin/analytics" element={<AdminAnalytics/>} />
+        <Route exact path="/superadmin/partner-analytics" element={<SuperAdminPartnerAnalytics/>} />
 
         {/* partner  */}
         <Route exact path="/partner/create-location" element={<CreatePartnerLocation/>} />
@@ -131,14 +135,15 @@ function App() {
         <Route exact path="/client/bookinghistory" element={<ClientBookingHistory />} />
         <Route exact path="/client/wallet" element={<ClientWallet />} />
         <Route path="/payment-success" element={<PaymentSuccess />}  />
-        <Route path="/payment-cancel" element={<PaymentCancel />}  />
+        {/* <Route path="/payment-cancel" element={<PaymentCancel />}  /> */}
+        <Route path="/payment-cancelled" element={<PaymentCancelled />} />
 
 
 
 
         {/* luggage  */}
         <Route exact path="/luggage_locations" element={<LuggageLocation />} />
-        <Route exact path="/luggage_store_details" element={<LuggageStoreDetails />} />
+        <Route exact path="/luggage_store_details/:link" element={<LuggageStoreDetails />} />
         <Route exact path="/userserviceagency" element={<UserServiceAgency />} />
         <Route exact path="/searchluggage" element={<SearchLuggage/>} />
         <Route exact path="/searchnearlocation" element={<SearchNearLocation/>} />

@@ -90,16 +90,9 @@ const PartnerDetails = () => {
                                     </p>
                                     <p className="text-gray-600 flex items-center">
                                         <FontAwesomeIcon icon={faIdBadge} className="mr-2 text-[#1a73a7]" />
-                                        <strong className="font-medium text-gray-700">Trade License Number:</strong> {partner.tradeLicenseNumber}
+                                        <strong className="font-medium text-gray-700">ABN Number:</strong> {partner.tradeLicenseNumber}
                                     </p>
-                                    <p className="text-gray-600 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarAlt} className="mr-2 text-[#1a73a7]" />
-                                        <strong className="font-medium text-gray-700">Account Created At:</strong> {new Date(partner.user.createdAt).toLocaleDateString()}
-                                    </p>
-                                    <p className="text-gray-600 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarAlt} className="mr-2 text-[#1a73a7]" />
-                                        <strong className="font-medium text-gray-700">Account Updated At:</strong> {new Date(partner.user.updatedAt).toLocaleDateString()}
-                                    </p>
+       
                                 </div>
                             </div>
                             <div className="flex justify-center">

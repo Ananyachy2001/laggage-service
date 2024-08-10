@@ -29,7 +29,6 @@ const EditPartnerLocation = () => {
 
         // Perform validation (as you have done previously)
         const formErrors = {};
-        // Add the validation code here similar to your CreatePartnerLocation component
         if (!values.name) formErrors.name = 'Name is required';
         // ... (Other validation code)
         if (!location.coordinates) formErrors.location = 'Map location must be selected';
@@ -40,47 +39,38 @@ const EditPartnerLocation = () => {
             return;
         }
 
-        const formData = new FormData();
-        // Append form fields and files to formData
-        formData.append('name', values.name);
-        formData.append('description', values.description);
-        formData.append('address[street]', values.street);
-        formData.append('address[city]', values.city);
-        formData.append('address[state]', values.state);
-        formData.append('address[zipCode]', values.zipCode);
-        formData.append('address[country]', values.country);
-        formData.append('capacity', values.capacity);
-        formData.append('availableSpace', values.availableSpace);
-        formData.append('regularPrice', values.regularPrice);
-        formData.append('discountPercentage', values.discountPercentage);
-        formData.append('availableFrom', values.availableFrom);
-        formData.append('availableTo', values.availableTo);
-        formData.append('amenities', JSON.stringify(values.amenities.split(',')));
-        formData.append('notes', values.notes);
-        formData.append('openTime', values.openTime);
-        formData.append('closeTime', values.closeTime);
-        formData.append('closedDays', values.closedDays);
-        formData.append('specialClosedDays', values.specialClosedDays);
-        formData.append('locationType', values.locationType);
-        formData.append('timezone', location.timezone);
-
-        Array.from(values.files).forEach((file) => {
-            formData.append('files', file);
-        });
-
-        formData.append('coordinates', JSON.stringify({
-            type: "Point",
-            coordinates: [location.coordinates.lng, location.coordinates.lat]
-        }));
+        // Prepare the JSON object with the data to send to the server
+        const updatedLocation = {
+            name: values.name,
+            description: values.description,
+            address: {
+                street: values.street,
+                city: values.city,
+                state: values.state,
+                zipCode: values.zipCode,
+                country: values.country,
+            },
+            regularPrice: values.regularPrice,
+            discountPercentage: values.discountPercentage,
+            availableFrom: values.availableFrom,
+            availableTo: values.availableTo,
+            openTime: values.openTime,
+            closeTime: values.closeTime,
+            closedDays: values.closedDays,
+            specialClosedDays: values.specialClosedDays,
+            locationType: values.locationType,
+            timezone: location.timezone,
+            notes: values.notes,
+        };
 
         const token = localStorage.getItem('token');
         const url = `${config.API_BASE_URL}/api/v1/locations/${location._id}`;
 
         try {
-            const response = await axios.put(url, formData, {
+            const response = await axios.put(url, updatedLocation, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'application/json'
                 }
             });
 

@@ -1,31 +1,6 @@
 import React, { useState } from 'react';
 import { Formik, Field, Form } from 'formik';
-import * as Yup from 'yup';
 import DatePicker from 'react-multiple-datepicker';
-
-const locationSchema = Yup.object().shape({
-    name: Yup.string().required('Required'),
-    description: Yup.string().required('Required'),
-    street: Yup.string().required('Required'),
-    city: Yup.string().required('Required'),
-    state: Yup.string().required('Required'),
-    zipCode: Yup.string().required('Required'),
-    country: Yup.string().required('Required'),
-    capacity: Yup.number().required('Required').typeError('Must be a number'),
-    availableSpace: Yup.number().required('Required').typeError('Must be a number'),
-    regularPrice: Yup.number().required('Required').typeError('Must be a number'),
-    discountPercentage: Yup.number().required('Required').typeError('Must be a number'),
-    availableFrom: Yup.date().required('Required'),
-    availableTo: Yup.date().required('Required'),
-    amenities: Yup.string().required('Required'),
-    notes: Yup.string().required('Required'),
-    files: Yup.mixed().nullable(),
-    openTime: Yup.string().required('Required'),
-    closeTime: Yup.string().required('Required'),
-    closedDays: Yup.array().of(Yup.string()).required('Required'),
-    // specialClosedDays: Yup.array().of(Yup.date()).required('Required'),
-    locationType: Yup.string().default('Other'), // Set default value
-});
 
 const EditLocationForm = ({ onSubmit, location, loading }) => {
     const [previewPictures, setPreviewPictures] = useState(location.pictures || []);
@@ -42,22 +17,14 @@ const EditLocationForm = ({ onSubmit, location, loading }) => {
                 zipCode: location.address?.zipCode || '',
                 country: location.address?.country || '',
                 capacity: location.capacity || '',
-                availableSpace: location.availableSpace || '',
-                regularPrice: location.regularPrice || '',
-                discountPercentage: location.discountPercentage || '',
-                availableFrom: location.availableFrom || '',
-                availableTo: location.availableTo || '',
-                amenities: location.amenities || '',
-                notes: location.notes || '',
+                availableFrom: location.availableFrom || new Date(), // Default to current date
+                availableTo: location.availableTo || new Date(new Date().setFullYear(new Date().getFullYear() + 10)), // Default to 10 years from now
                 files: null,
                 openTime: location.openTime || '',
                 closeTime: location.closeTime || '',
                 closedDays: location.closedDays || [],
                 specialClosedDays: location.specialClosedDays || [],
-                locationType: location.locationType || 'Other',
-                timezone: location.timezone || '',
             }}
-            validationSchema={locationSchema}
             onSubmit={onSubmit}
             enableReinitialize
         >
@@ -85,19 +52,11 @@ const EditLocationForm = ({ onSubmit, location, loading }) => {
                                 { name: 'street', label: 'Street' },
                                 { name: 'city', label: 'City' },
                                 { name: 'state', label: 'State' },
-                                { name: 'zipCode', label: 'Zip Code' },
+                                { name: 'zipCode', label: 'Post Code' },
                                 { name: 'country', label: 'Country' },
                                 { name: 'capacity', label: 'Capacity' },
-                                { name: 'availableSpace', label: 'Available Space' },
-                                { name: 'regularPrice', label: 'Regular Price' },
-                                { name: 'discountPercentage', label: 'Discount Percentage' },
-                                { name: 'availableFrom', label: 'Available From', type: 'date' },
-                                { name: 'availableTo', label: 'Available To', type: 'date' },
-                                { name: 'amenities', label: 'Amenities (comma separated)' },
-                                { name: 'notes', label: 'Notes' },
                                 { name: 'openTime', label: 'Open Time', type: 'time' },
                                 { name: 'closeTime', label: 'Close Time', type: 'time' },
-                                { name: 'timezone', label: 'Timezone' },
                             ].map(({ name, label, type = 'text' }) => (
                                 <div key={name} className="form-group">
                                     <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-2">
@@ -130,9 +89,6 @@ const EditLocationForm = ({ onSubmit, location, loading }) => {
                                         </label>
                                     ))}
                                 </div>
-                                {errors.closedDays && touched.closedDays && (
-                                    <div className="text-red-500 text-sm mt-1">{errors.closedDays}</div>
-                                )}
                             </div>
                             <div className="form-group">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -146,9 +102,6 @@ const EditLocationForm = ({ onSubmit, location, loading }) => {
                                         className="w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     />
                                 </div>
-                                {errors.specialClosedDays && touched.specialClosedDays && (
-                                    <div className="text-red-500 text-sm mt-1">{errors.specialClosedDays}</div>
-                                )}
                             </div>
                             <div className="form-group">
                                 <label htmlFor="files" className="block text-sm font-medium text-gray-700 mb-2">
@@ -185,7 +138,6 @@ const EditLocationForm = ({ onSubmit, location, loading }) => {
                                 className={`bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 ease-in-out ${
                                     isSubmitting || !isValid ? 'opacity-50 cursor-not-allowed' : ''
                                 }`}
-                                // disabled={isSubmitting || !isValid}
                             >
                                 {loading ? (
                                     <div className="flex items-center">

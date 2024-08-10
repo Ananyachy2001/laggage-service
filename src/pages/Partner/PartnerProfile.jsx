@@ -320,21 +320,15 @@ const PartnerProfile = () => {
                                                         <p className="mt-1">{profile.country}</p>
                                                     </div>
                                                     <div className="mt-3">
-                                                        <label className="block text-sm font-medium text-gray-700">Trade License</label>
+                                                        <label className="block text-sm font-medium text-gray-700">ABN Number</label>
                                                         <p className="mt-1">{profile.tradeLicense}</p>
                                                     </div>
-                                                    <div className="mt-3">
-                                                        <label className="block text-sm font-medium text-gray-700">Earnings</label>
-                                                        <p className="mt-1">{profile.earnings}</p>
-                                                    </div>
-                                                    <div className="mt-3">
-                                                        <label className="block text-sm font-medium text-gray-700">Locations</label>
-                                                        <p className="mt-1">{profile.locations}</p>
-                                                    </div>
+
+
                                                 </div>
-                                                <div className="mt-6 text-center">
+                                                <div className="mt-4 pb-4 mx-24  ">
                                                     <button
-                                                        className="bg-indigo-600 text-white px-4 py-2 rounded-md transition duration-500 ease-in-out transform hover:bg-indigo-700 hover:-translate-y-1 hover:scale-110"
+                                                        className="bg-indigo-600 text-white px-4 py-2  rounded-md transition duration-500 ease-in-out transform hover:bg-indigo-700 hover:-translate-y-1 hover:scale-110"
                                                         onClick={handleOpenModal}
                                                     >
                                                         Change Password

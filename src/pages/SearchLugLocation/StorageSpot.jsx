@@ -8,8 +8,8 @@ const StorageSpot = ({ id, title, details, price, regularprice, link, image, lat
   const navigate = useNavigate();
 
   const handleDetailsClick = () => {
-    navigate('/luggage_store_details', {
-      state: { id, title, details, price, regularprice, image, lat, lng, availableFrom, availableTo, discountPercentage, openTime, closeTime, notes }
+    navigate(`/luggage_store_details/${link}`, {
+      state: { id, title, details,link, price, regularprice, image, lat, lng, availableFrom, availableTo, discountPercentage, openTime, closeTime, notes }
     });
   };
 
@@ -24,6 +24,8 @@ const StorageSpot = ({ id, title, details, price, regularprice, link, image, lat
         </div>
         <div className="spot-price mt-4 flex justify-between items-center">
           <p className="text-lg font-semibold text-green-600">{price}</p>
+          {/* <p>{link}</p> */}
+          {/* {link && <a href={link} className="text-blue-600">More Info</a>} */}
           <button onClick={handleDetailsClick} className="btn btn-primary btn-sm bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Book This Store
           </button>

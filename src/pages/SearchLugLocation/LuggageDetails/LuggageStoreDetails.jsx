@@ -19,7 +19,9 @@ const stripePromise = loadStripe(config.STRIPE_PUBLIC_KEY);
 
 const LuggageStoreDetails = () => {
   const location = useLocation();
-  const { id, title, details, price, image, lat, lng, regularprice, availableFrom, availableTo, discountPercentage, openTime, closeTime, notes } = location.state || {};
+  const navigate = useNavigate();
+  
+  const [storeDetails, setStoreDetails] = useState(null);
   const [luggageQuantity, setLuggageQuantity] = useState(1);
   const [serviceOption, setServiceOption] = useState('standard');
   const [promoCode, setPromoCode] = useState('');
@@ -40,17 +42,55 @@ const LuggageStoreDetails = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
   const [bookingId, setBookingId] = useState('');
-  const navigate = useNavigate();
-
-  const servicePrices = {
-    standard: 5.00,
-    home: 7.00,
-    window: 6.50,
-    office: 8.00,
-  };
+  const [bookingError, setBookingError] = useState('');
 
   const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
-  const [bookingError, setBookingError] = useState('');
+
+  useEffect(() => {
+    const fetchStoreDetails = async () => {
+      if (!location.state || !location.state.link) {
+        const pathName = location.pathname.split('/').pop(); 
+        const url = `${config.API_BASE_URL}/api/v1/locations/url/${pathName}`;
+        console.log(pathName);
+        
+        
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          
+          if (response.ok) {
+            setStoreDetails({
+              id: data._id,
+              title: data.name,
+              details: data.description,
+              price: data.regularPrice,
+              lat: data.coordinates.coordinates[1],
+              lng: data.coordinates.coordinates[0],
+              regularprice: data.regularPrice,
+              availableFrom: data.availableFrom,
+              availableTo: data.availableTo,
+              discountPercentage: data.discountPercentage,
+              openTime: data.openTime,
+              closeTime: data.closeTime,
+              notes: data.notes,
+              link: data.url
+            });
+          } else {
+            console.error('Error fetching store details:', data);
+            navigate('/error'); // Redirect to an error page
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          navigate('/error'); // Redirect to an error page
+        }
+      } else {
+        setStoreDetails(location.state); // Use the data passed via location.state
+      }
+    };
+
+    fetchStoreDetails();
+  }, [location, navigate]);
+  
 
   const handleSubmit = async (bookingData) => {
     const token = localStorage.getItem('token');
@@ -124,30 +164,35 @@ const LuggageStoreDetails = () => {
     <Elements stripe={stripePromise}>
       <div>
         {isLoggedIn ? <ClientNavbarComp /> : <NavbarComp />}
+        
   
         <div className="container mx-auto mt-12 pt-32">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-2">
-              <LuggageStoreInfo 
-                id={id}
-                title={title}
-                details={details}
-                price={price}
-                lat={lat}
-                lng={lng}
-                availableFrom={availableFrom}
-                availableTo={availableTo}
-                discountPercentage={discountPercentage}
-                openTime={openTime}
-                closeTime={closeTime}
-                notes={notes}
-                GOOGLE_MAPS_API_KEY={GOOGLE_MAPS_API_KEY}
-              />
+              {storeDetails ? (
+                <LuggageStoreInfo 
+                  id={storeDetails.id}
+                  title={storeDetails.title}
+                  details={storeDetails.details}
+                  price={storeDetails.price}
+                  lat={storeDetails.lat}
+                  lng={storeDetails.lng}
+                  availableFrom={storeDetails.availableFrom}
+                  availableTo={storeDetails.availableTo}
+                  discountPercentage={storeDetails.discountPercentage}
+                  openTime={storeDetails.openTime}
+                  closeTime={storeDetails.closeTime}
+                  notes={storeDetails.notes}
+                  GOOGLE_MAPS_API_KEY={GOOGLE_MAPS_API_KEY}
+                />
+              ) : (
+                <div>Loading...</div>
+              )}
             </div>
             <div>
               {bookingError && <div className="alert alert-danger">{bookingError}</div>}
               <BookingForm 
-                locationid={id}
+                locationid={storeDetails?.id}
                 handleSubmit={handleSubmit}
                 luggageQuantity={luggageQuantity}
                 setLuggageQuantity={setLuggageQuantity}
@@ -163,8 +208,7 @@ const LuggageStoreDetails = () => {
                 setCheckoutTime={setCheckoutTime}
                 totalPrice={totalPrice}
                 setTotalPrice={setTotalPrice}
-                servicePrices={servicePrices}
-                regularprice={regularprice}
+                regularprice={storeDetails?.regularprice}
                 clientId={clientId}
                 setClientId={setClientId}
                 clientDetails={clientDetails}
@@ -177,8 +221,6 @@ const LuggageStoreDetails = () => {
       </div>
     </Elements>
   );
-  
-
 };
 
 const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
@@ -190,10 +232,10 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
   const handlePayment = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
-
+  
     const cardElement = elements.getElement(CardElement);
     console.log('Card Element:', cardElement); // Log cardElement
-
+  
     const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: cardElement,
@@ -202,14 +244,14 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
         },
       },
     });
-
+  
     console.log('Payment Intent:', paymentIntent); // Log paymentIntent
-
+  
     if (error) {
       setErrorMessage(error.message);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       console.log('Payment successful:', paymentIntent);
-    
+  
       try {
         const response = await fetch(`${config.API_BASE_URL}/api/v1/bookings/${bookingId}`, {
           method: 'PUT',
@@ -218,11 +260,11 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
           },
           body: JSON.stringify({ status: 'paid' }),
         });
-    
+  
         if (!response.ok) {
           throw new Error('Failed to update booking status');
         }
-    
+  
         console.log('Booking status updated successfully');
         navigate('/payment-success', {
           state: { paymentIntent, clientDetails },
@@ -230,6 +272,8 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
       } catch (error) {
         console.error('Error updating booking status:', error);
       }
+    } else {
+      navigate('/payment-cancelled');  // Navigate to the Payment Cancelled page
     }
   };
 

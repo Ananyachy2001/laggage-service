@@ -56,7 +56,7 @@ const LuggageLocation = () => {
       <LugNavbar onLocationSelected={handleLocationSelected} />
       <div className="flex flex-col lg:flex-row flex-grow">
         <Sidebar
-          className="w-full lg:w-1/3 p-4 lg:p-6 h-screen overflow-y-auto"
+          className="w-full lg:w-1/3 p-2 lg:p-6 h-screen overflow-y-auto"
           storageSpots={visibleLocations}
           visibleLocations={visibleLocations}
         />

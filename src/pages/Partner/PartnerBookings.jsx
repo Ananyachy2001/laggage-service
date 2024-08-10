@@ -111,7 +111,7 @@ const PartnerBookings = () => {
                                             <th className="w-1/6 py-3 px-6 text-left">Regular Price</th>
                                             <th className="w-1/6 py-3 px-6 text-left">Discount (%)</th>
                                             <th className="w-1/6 py-3 px-6 text-left">Special Request</th>
-                                            <th className="w-1/6 py-3 px-6 text-left">Actions</th>
+                                            
                                         </tr>
                                     </thead>
 
@@ -125,23 +125,7 @@ const PartnerBookings = () => {
                                                 <td className="w-1/6 py-3 px-6 border">{booking.location.regularPrice || ''}</td>
                                                 <td className="w-1/6 py-3 px-6 border">{booking.location.discountPercentage || ''}</td>
                                                 <td className="w-1/6 py-3 px-6 border">{booking.specialRequests || ''}</td>
-                                                <td className="w-1/6 py-3 px-6 border text-center">
-                                                    <button
-                                                        onClick={() => {
-                                                            setIsEditing(true);
-                                                            setCurrentBooking(booking);
-                                                        }}
-                                                        className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setBookings(bookings.filter(b => b !== booking))}
-                                                        className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </td>
+
                                             </tr>
                                         ))}
                                     </tbody>
@@ -167,7 +151,7 @@ const PartnerBookings = () => {
                 </main>
             </div>
 
-            {isEditing && <EditPartnerBooking currentBooking={currentBooking} setIsEditing={setIsEditing} />}
+
         </div>
     );
 };
