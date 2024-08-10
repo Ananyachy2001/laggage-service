@@ -78,7 +78,8 @@ const BookingForm = ({
       const serviceFee = 2.60; // Fixed service fee
       const luggagePricePerDay = 7.90; // Price per bag per day
       const duration = calculateDuration(checkinTime, checkoutTime);
-      const price = (luggagePricePerDay * luggageQuantity * duration) + serviceFee - discount;
+      let price = ((luggagePricePerDay+ serviceFee) * luggageQuantity * duration)  - discount;
+      price = parseFloat(price.toFixed(2)); // Round to two decimal places
       setTotalPrice(price > 0 ? price : 0);
     }
   }, [discount, checkinTime, checkoutTime, luggageQuantity, setTotalPrice]);
@@ -127,7 +128,7 @@ const BookingForm = ({
       startTime: new Date(checkinTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
       endDate: new Date(checkoutTime).toISOString().split('T')[0],
       endTime: new Date(checkoutTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-      totalPricePaid: totalPrice.toFixed(2),
+      totalPricePaid: parseFloat(totalPrice).toFixed(2),
       specialRequests: clientDetails.specialRequests || 'No requirement',
     };
 
@@ -242,16 +243,6 @@ const BookingForm = ({
             <span id="totalPrice">{totalPrice.toFixed(2)}</span>
           </div>
         )}
-        {clientId && (
-          <div>
-            <label className="font-bold">Client ID: </label>
-            <span id="clientId">{clientId}</span>
-          </div>
-        )}
-        {/* <div className="mb-4">
-          <label className="font-bold">Location ID: </label>
-          <span id="locationid">{locationid}</span>
-        </div> */}
         <Button 
           variant="primary" 
           onClick={openUserDetailsModal} 
@@ -318,19 +309,6 @@ const BookingForm = ({
                 </>
               )}
               <div>
-                <label htmlFor="clientAddress" className="block font-semibold mb-1">Address:</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  id="clientAddress"
-                  name="address"
-                  value={clientDetails.address}
-                  onChange={handleInputChange}
-                  required
-                />
-                {errors.address && <p className="text-red-500">{errors.address}</p>}
-              </div>
-              <div>
                 <label htmlFor="luggagePhotos" className="block font-semibold mb-1">Luggage Photos (optional):</label>
                 <input
                   type="file"
@@ -341,12 +319,6 @@ const BookingForm = ({
                   onChange={handleFileChange}
                 />
               </div>
-              {clientId && (
-                <div>
-                  <label className="font-bold">Client ID: </label>
-                  <span id="clientId">{clientId}</span>
-                </div>
-              )}
               <Button variant="primary" type="submit" className="w-full bg-[#1A73A7] text-white py-3 rounded-lg hover:bg-blue-500 transition duration-300">
                 Submit
               </Button>

@@ -78,7 +78,7 @@ const NavbarComp = () => {
         <nav className={`flex-col md:flex md:flex-row md:space-x-4 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
           <div className="md:flex md:flex-row md:space-x-4">
             <a href="/" className="hover:text-[#2a9b84]">Home</a>
-            <a href="/guideline" className="hover:text-[#2a9b84]">Guideline</a>
+            {/* <a href="/guideline" className="hover:text-[#2a9b84]">Guideline</a> */}
             <a href="/comingsoon" className="hidden md:block hover:text-[#2a9b84]">Urloker Keys</a>
           </div>
           <div className="md:flex md:flex-row md:space-x-4">

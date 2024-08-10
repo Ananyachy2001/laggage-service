@@ -88,8 +88,8 @@ const ClientNavbarComp = () => {
         <nav className={`flex-col md:flex md:flex-row md:space-x-4 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
           <div className="md:flex md:flex-row md:space-x-4">
             <a href="/client/home" className="hover:text-[#FDB139]">Home</a>
-            <a href="/about" className="hover:text-[#FDB139]">About</a>
-            <a href="/contact" className="hover:text-[#FDB139]">Contact</a>
+            {/* <a href="/about" className="hover:text-[#FDB139]">About</a>
+            <a href="/contact" className="hover:text-[#FDB139]">Contact</a> */}
           </div>
           {isAuthenticated && (
             <div className="md:flex md:flex-row md:space-x-4">

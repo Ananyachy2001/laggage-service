@@ -87,8 +87,13 @@ const LuggageStoreInfo = ({
       </h6>
       <div id="map" className="h-80 mb-6 rounded-lg shadow-md"></div>
       <p className="flex items-center mb-4 text-lg">
-        <FontAwesomeIcon icon={faTag} className="text-[#1A73A7] mr-3" />
-        <strong>Price:</strong> <span className="ml-2">{price}</span>
+      <FontAwesomeIcon icon={faTag} className="text-[#1A73A7] mr-3" />
+        <strong>Luggage Price</strong> <span className="ml-2">$7.90 AUD / Per Day</span>
+        
+      </p>
+      <p className="flex items-center mb-4 text-lg">
+      <FontAwesomeIcon icon={faTag} className="text-[#1A73A7] mr-3" />
+      <strong>Service Price:</strong> <span className="ml-2">$2.60 AUD</span>
       </p>
       <p className="flex items-center mb-4 text-lg">
         <FontAwesomeIcon icon={faWifi} className="text-[#1A73A7] mr-3" />
