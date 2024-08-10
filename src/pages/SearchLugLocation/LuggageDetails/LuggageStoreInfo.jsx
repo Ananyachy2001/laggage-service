@@ -92,29 +92,13 @@ const LuggageStoreInfo = ({
       </p>
       <p className="flex items-center mb-4 text-lg">
         <FontAwesomeIcon icon={faWifi} className="text-[#1A73A7] mr-3" />
-        <strong>Services:</strong> <span className="ml-2">Free Wi-Fi, Bar</span>
-      </p>
-      <p className="flex items-center mb-4 text-lg">
-        <FontAwesomeIcon icon={faClock} className="text-[#1A73A7] mr-3" />
-        <strong>Available From:</strong> <span className="ml-2">{formatDate(availableFrom)}</span>
-      </p>
-      <p className="flex items-center mb-4 text-lg">
-        <FontAwesomeIcon icon={faClock} className="text-[#1A73A7] mr-3" />
-        <strong>Available To:</strong> <span className="ml-2">{formatDate(availableTo)}</span>
-      </p>
-      <p className="flex items-center mb-4 text-lg">
-        <FontAwesomeIcon icon={faTag} className="text-[#1A73A7] mr-3" />
-        <strong>Discount:</strong> <span className="ml-2">{discountPercentage}%</span>
+        <strong>Services:</strong> <span className="ml-2">One of the best Luggage Service Provider</span>
       </p>
       <p className="flex items-center mb-4 text-lg">
         <FontAwesomeIcon icon={faClock} className="text-[#1A73A7] mr-3" />
         <strong>Open Time:</strong> <span className="ml-2">{formatTime(openTime)}</span>
         <FontAwesomeIcon icon={faClock} className=" ps-4 text-[#1A73A7] " />
         <strong className='ps-2'>Close Time:</strong> <span className="ml-2">{formatTime(closeTime)}</span>
-      </p>
-      <p className="flex items-center mb-4 text-lg">
-        <FontAwesomeIcon icon={faInfoCircle} className="text-[#1A73A7] mr-3" />
-        <strong>Notes:</strong> <span className="ml-2">{notes}</span>
       </p>
     </div>
   );

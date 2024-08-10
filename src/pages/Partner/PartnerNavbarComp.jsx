@@ -103,6 +103,7 @@ const PartnerNavbarComp = () => {
                 <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'partnerOptions' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
                   <NavLink to="/partner/bookings" className="block px-4 py-2 hover:bg-blue-800">Partner Bookings</NavLink>
                   <NavLink to="/partner/locations" className="block px-4 py-2 hover:bg-blue-800">Partner's Location</NavLink>
+                  <NavLink to="/partner/analytics" className="block px-4 py-2 hover:bg-blue-800">Partner's Analytics</NavLink>
                   {/* <NavLink to="/partner/allcustomers" className="block px-4 py-2 hover:bg-blue-800">All Customers</NavLink> */}
                   <NavLink to="/partner/profile" className="block px-4 py-2 hover:bg-blue-800">Partner Profile</NavLink>
                 </div>

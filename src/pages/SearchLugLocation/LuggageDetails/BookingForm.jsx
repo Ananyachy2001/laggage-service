@@ -127,7 +127,7 @@ const BookingForm = ({
       startTime: new Date(checkinTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
       endDate: new Date(checkoutTime).toISOString().split('T')[0],
       endTime: new Date(checkoutTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-      totalPricePaid: totalPrice,
+      totalPricePaid: totalPrice.toFixed(2),
       specialRequests: clientDetails.specialRequests || 'No requirement',
     };
 

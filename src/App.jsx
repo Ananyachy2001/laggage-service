@@ -114,7 +114,7 @@ function App() {
         <Route exact path="/partner/edit-location/:locationId" element={<EditPartnerLocation/>} />
         <Route exact path="/partner/profile" element={<PartnerProfile />} />
         <Route exact path="/partner/allcustomers" element={<AllCustomer/>} />
-        {/* <Route exact path="/partner/analytics" element={<PartnerAnalytics/>} /> */}
+        <Route exact path="/partner/analytics" element={<PartnerAnalytics/>} />
         <Route exact path="/partner/home" element={<PartnerAnalytics/>} />
         <Route exact path="/partner_availability_calender" element={<PartnerAvailabilityCalendar />} />
         <Route exact path="/partner/locations" element={<PartnerLocations/>} />

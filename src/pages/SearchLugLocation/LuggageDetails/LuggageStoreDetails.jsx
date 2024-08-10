@@ -108,13 +108,17 @@ const LuggageStoreDetails = () => {
     try {
       const response = await fetch(url, fetchOptions);
       const result = await response.json();
-      console.log(result);
+      
+      // Log the result of the instant booking attempt
+      console.log('Instant booking result:', result);
     
       if (result.status === 'success') {
         setClientSecret(result.clientSecret);
         setBookingId(result.booking._id);
-        console.log('Client Secret:', result.clientSecret);
+        
+        // Log the booking ID
         console.log('Booking ID:', result.booking._id);
+        
         setShowPaymentModal(true);
       } else {
         console.error('Booking error:', result);
@@ -217,13 +221,13 @@ const LuggageStoreDetails = () => {
             </div>
           </div>
         </div>
-        {showPaymentModal && <PaymentFormModal clientSecret={clientSecret} clientDetails={clientDetails} bookingId={bookingId} />}
+        {showPaymentModal && <PaymentFormModal clientSecret={clientSecret} clientDetails={clientDetails} bookingId={bookingId} storeDetails={storeDetails} />}
       </div>
     </Elements>
   );
 };
 
-const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
+const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, storeDetails }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState('');
@@ -234,7 +238,6 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
     if (!stripe || !elements) return;
   
     const cardElement = elements.getElement(CardElement);
-    console.log('Card Element:', cardElement); // Log cardElement
   
     const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
@@ -245,13 +248,12 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
       },
     });
   
-    console.log('Payment Intent:', paymentIntent); // Log paymentIntent
+    // Log the payment intent object
+    console.log('PaymentIntent:', paymentIntent);
   
     if (error) {
       setErrorMessage(error.message);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-      console.log('Payment successful:', paymentIntent);
-  
       try {
         const response = await fetch(`${config.API_BASE_URL}/api/v1/bookings/${bookingId}`, {
           method: 'PUT',
@@ -261,14 +263,31 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
           body: JSON.stringify({ status: 'paid' }),
         });
   
+        const responseData = await response.json();
+        console.log('Booking Update Response:', responseData);
+  
         if (!response.ok) {
           throw new Error('Failed to update booking status');
         }
   
-        console.log('Booking status updated successfully');
+        // Navigate to the payment success page with additional data
         navigate('/payment-success', {
-          state: { paymentIntent, clientDetails },
+          state: { 
+            paymentIntent, 
+            clientDetails,
+            bookingDetails: {
+              bookingId: responseData._id,
+              bookingDate: responseData.bookingDate,
+              startDate: responseData.startDate,
+              startTime: responseData.startTime,
+              endTime: responseData.endTime,
+              endDate: responseData.endDate,
+            },
+            storeDetails, 
+          },
         });
+        
+        
       } catch (error) {
         console.error('Error updating booking status:', error);
       }
@@ -296,5 +315,6 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId }) => {
     </Modal>
   );
 };
+
 
 export default LuggageStoreDetails;
