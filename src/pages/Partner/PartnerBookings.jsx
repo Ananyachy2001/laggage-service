@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PartnerNavbarComp from './PartnerNavbarComp';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
-import CreatePartnerBooking from './CreatePartnerBooking';
-import EditPartnerBooking from './EditPartnerBooking';
 import config from '../../config';
 
 const PartnerBookings = () => {
@@ -12,10 +10,7 @@ const PartnerBookings = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [bookingsPerPage] = useState(3);
-    const [isCreating, setIsCreating] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [currentBooking, setCurrentBooking] = useState(null);
+    const [bookingsPerPage] = useState(50);
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -106,12 +101,9 @@ const PartnerBookings = () => {
                                         <tr>
                                             <th className="w-1/4 py-3 px-6 text-left">Location</th>
                                             <th className="w-1/6 py-3 px-6 text-left">Booking Date</th>
-                                            <th className="w-1/4 py-3 px-6 text-left">Start Date & Time</th>
-                                            <th className="w-1/4 py-3 px-6 text-left">End Date & Time</th>
-                                            <th className="w-1/6 py-3 px-6 text-left">Regular Price</th>
-                                            <th className="w-1/6 py-3 px-6 text-left">Discount (%)</th>
-                                            <th className="w-1/6 py-3 px-6 text-left">Special Request</th>
-                                            
+                                            <th className="w-1/4 py-3 px-6 text-left">Drop-off Time</th>
+                                            <th className="w-1/4 py-3 px-6 text-left">Pick-up Time</th>
+                                            <th className="w-1/6 py-3 px-6 text-left">Status</th>
                                         </tr>
                                     </thead>
 
@@ -122,10 +114,7 @@ const PartnerBookings = () => {
                                                 <td className="w-1/6 py-3 px-6 border">{formatDate(booking.bookingDate)}</td>
                                                 <td className="w-1/4 py-3 px-6 border">{formatDateTime(booking.startDate, booking.startTime)}</td>
                                                 <td className="w-1/4 py-3 px-6 border">{formatDateTime(booking.endDate, booking.endTime)}</td>
-                                                <td className="w-1/6 py-3 px-6 border">{booking.location.regularPrice || ''}</td>
-                                                <td className="w-1/6 py-3 px-6 border">{booking.location.discountPercentage || ''}</td>
-                                                <td className="w-1/6 py-3 px-6 border">{booking.specialRequests || ''}</td>
-
+                                                <td className="w-1/6 py-3 px-6 border">{booking.status || ''}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -150,8 +139,6 @@ const PartnerBookings = () => {
                     </div>
                 </main>
             </div>
-
-
         </div>
     );
 };

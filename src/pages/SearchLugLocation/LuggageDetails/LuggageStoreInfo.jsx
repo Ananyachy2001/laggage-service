@@ -11,18 +11,12 @@ import {
 import 'tailwindcss/tailwind.css';
 
 const LuggageStoreInfo = ({
-  id,
   title,
   details,
-  price,
   lat,
   lng,
-  availableFrom,
-  availableTo,
-  discountPercentage,
   openTime,
   closeTime,
-  notes,
   GOOGLE_MAPS_API_KEY
 }) => {
   useEffect(() => {
@@ -93,7 +87,7 @@ const LuggageStoreInfo = ({
       </p>
       <p className="flex items-center mb-4 text-lg">
       <FontAwesomeIcon icon={faTag} className="text-[#1A73A7] mr-3" />
-      <strong>Service Price:</strong> <span className="ml-2">$2.60 AUD</span>
+      <strong>Service Price:</strong> <span className="ml-2">$2.60 AUD / Per Day</span>
       </p>
       <p className="flex items-center mb-4 text-lg">
         <FontAwesomeIcon icon={faWifi} className="text-[#1A73A7] mr-3" />

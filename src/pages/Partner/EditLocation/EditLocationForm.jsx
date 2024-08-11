@@ -2,28 +2,61 @@ import React, { useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import DatePicker from 'react-multiple-datepicker';
 
-const EditLocationForm = ({ onSubmit, location, loading }) => {
+const EditLocationForm = ({ onSubmit, location, loading,errors }) => {
     const [previewPictures, setPreviewPictures] = useState(location.pictures || []);
     const [specialClosedDays, setSpecialClosedDays] = useState(location.specialClosedDays || []);
+    const [formValues, setFormValues] = useState({
+        name: location.name || '',
+        description: location.description || '',
+        street: location.address.street || '',
+        city: location.address.city || '',
+        state: location.address.state || '',
+        zipCode: location.address.zipCode || '',
+        country: location.address.country || '',
+        regularPrice: location.regularPrice || '',
+        discountPercentage: location.discountPercentage || '',
+        availableFrom: location.availableFrom || '',
+        availableTo: location.availableTo || '',
+        openTime: location.openTime || '',
+        closeTime: location.closeTime || '',
+        closedDays: location.closedDays || [],
+        specialClosedDays: location.specialClosedDays || [],
+        locationType: location.locationType || '',
+        notes: location.notes || '',
+        // Add more fields as needed
+    });
 
     return (
         <Formik
             initialValues={{
                 name: location.name || '',
-                description: location.description || '',
+                description: location.description || '', // Include description in initialValues
                 street: location.address?.street || '',
                 city: location.address?.city || '',
                 state: location.address?.state || '',
                 zipCode: location.address?.zipCode || '',
                 country: location.address?.country || '',
                 capacity: location.capacity || '',
-                availableFrom: location.availableFrom || new Date(), // Default to current date
-                availableTo: location.availableTo || new Date(new Date().setFullYear(new Date().getFullYear() + 10)), // Default to 10 years from now
+                availableFrom: location.availableFrom || new Date(),
+                availableTo: location.availableTo || new Date(new Date().setFullYear(new Date().getFullYear() + 10)),
                 files: null,
                 openTime: location.openTime || '',
                 closeTime: location.closeTime || '',
                 closedDays: location.closedDays || [],
                 specialClosedDays: location.specialClosedDays || [],
+            }}
+            validate={(values) => {
+                const errors = {};
+                if (!values.name) errors.name = 'Name is required';
+                if (!values.street) errors.street = 'Street is required';
+                if (!values.city) errors.city = 'City is required';
+                if (!values.state) errors.state = 'State is required';
+                if (!values.zipCode) errors.zipCode = 'Post Code is required';
+                if (!values.country) errors.country = 'Country is required';
+                if (!values.capacity || isNaN(values.capacity)) errors.capacity = 'Capacity must be a valid number';
+                if (!values.openTime) errors.openTime = 'Open time is required';
+                if (!values.closeTime) errors.closeTime = 'Close time is required';
+                return errors;
             }}
             onSubmit={onSubmit}
             enableReinitialize
@@ -48,7 +81,7 @@ const EditLocationForm = ({ onSubmit, location, loading }) => {
                             <h6 className="text-2xl font-bold text-gray-800 mb-4">Edit Location Details</h6>
                             {[
                                 { name: 'name', label: 'Name' },
-                                { name: 'description', label: 'Description' },
+                                { name: 'description', label: 'Description', type: 'textarea' }, // Add description field
                                 { name: 'street', label: 'Street' },
                                 { name: 'city', label: 'City' },
                                 { name: 'state', label: 'State' },
@@ -63,9 +96,9 @@ const EditLocationForm = ({ onSubmit, location, loading }) => {
                                         {label}
                                     </label>
                                     <Field
-                                        as="input"
+                                        as={type === 'textarea' ? 'textarea' : 'input'}
                                         name={name}
-                                        type={type}
+                                        type={type !== 'textarea' ? type : undefined}
                                         className={`form-input mt-1 block w-full rounded-md border ${
                                             errors[name] && touched[name]
                                                 ? 'border-red-500'

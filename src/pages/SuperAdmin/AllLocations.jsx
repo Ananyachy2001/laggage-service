@@ -17,12 +17,16 @@ const AllLocations = () => {
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [locationsPerPage] = useState(3);
+    const [locationsPerPage] = useState(50);
     const [isEditing, setIsEditing] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
     const [isAssigning, setIsAssigning] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [locationToDelete, setLocationToDelete] = useState(null);
+    const [qrCode, setQrCode] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [fetchingQRCode, setFetchingQRCode] = useState(false);
+    const [qrCodeError, setQrCodeError] = useState(null);
 
     const navigate = useNavigate();
 
@@ -78,10 +82,13 @@ const AllLocations = () => {
         try {
             const response = await axios.get(`${config.API_BASE_URL}/api/v1/users/all-partners`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             });
-            if (response.data.status === 'success') {
+
+            if (response.data && Array.isArray(response.data)) {
+                setPartners(response.data);
+            } else if (response.data.status === 'success' && Array.isArray(response.data.data)) {
                 setPartners(response.data.data);
             } else {
                 setError('Failed to fetch partner data');
@@ -168,9 +175,18 @@ const AllLocations = () => {
         }
     };
 
-    const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+    const handleURLClick = async (url) => {
+        setFetchingQRCode(true);
+        setQrCodeError(null);
+        try {
+            const response = await axios.get(`${config.API_BASE_URL}/api/v1/qr-code/${url}`);
+            setQrCode(response.data.qrCode);
+            setShowModal(true);
+        } catch (error) {
+            setQrCodeError('Unable to fetch QR code. Please try again later.');
+        } finally {
+            setFetchingQRCode(false);
+        }
     };
 
     return (
@@ -224,12 +240,9 @@ const AllLocations = () => {
                                     <thead className="bg-[#4A686A] text-white">
                                         <tr>
                                             <th className="py-3 px-6 text-left font-bold">Name</th>
-                                            <th className="py-3 px-6 text-left font-bold">Available From</th>
-                                            <th className="py-3 px-6 text-left font-bold">Available To</th>
+                                            <th className="py-3 px-6 text-left font-bold">Address</th>
                                             <th className="py-3 px-6 text-left font-bold">Open Time</th>
                                             <th className="py-3 px-6 text-left font-bold">Close Time</th>
-                                            <th className="py-3 px-6 text-left font-bold">Price</th>
-                                            <th className="py-3 px-6 text-left font-bold">Discount</th>
                                             <th className="py-3 px-6 text-left font-bold">Partner</th>
                                             <th className="py-3 px-6 text-left font-bold">Actions</th>
                                         </tr>
@@ -241,12 +254,11 @@ const AllLocations = () => {
                                             return (
                                                 <tr key={location._id} className="hover:bg-gray-100 transition duration-150">
                                                     <td className="py-3 px-6 border-b">{location.name}</td>
-                                                    <td className="py-3 px-6 border-b">{formatDate(location.availableFrom)}</td>
-                                                    <td className="py-3 px-6 border-b">{formatDate(location.availableTo)}</td>
+                                                    <td className="py-3 px-6 border-b">
+                                                        {`${location.address.street},  ${location.address.city}, ${location.address.state}, ${location.address.zipCode}, ${location.address.country}`}
+                                                    </td>
                                                     <td className="py-3 px-6 border-b">{location.openTime}</td>
                                                     <td className="py-3 px-6 border-b">{location.closeTime}</td>
-                                                    <td className="py-3 px-6 border-b">{location.priceCurrency} ${location.regularPrice}</td>
-                                                    <td className="py-3 px-6 border-b">{location.discountPercentage}%</td>
                                                     <td className="py-3 px-6 border-b">
                                                         {location.partner ? (
                                                             <>
@@ -325,6 +337,30 @@ const AllLocations = () => {
                         onClose={() => setShowDeleteModal(false)}
                         onDelete={deleteLocation}
                     />
+                )}
+                {showModal && (
+                    <div className="fixed inset-0 flex items-center justify-center z-50">
+                        <div className="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
+                        <div className="bg-white rounded-lg p-8 z-10 shadow-lg w-full max-w-md">
+                            {fetchingQRCode ? (
+                                <div className="flex justify-center">
+                                    <div className="loader"></div>
+                                </div>
+                            ) : qrCodeError ? (
+                                <div className="text-red-500">{qrCodeError}</div>
+                            ) : (
+                                <div className="text-center">
+                                    <img src={qrCode} alt="QR Code" className="mb-4 mx-auto" />
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-150"
+                                    >
+                                        OK
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 )}
             </div>
         </div>

@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import AdminMapSelector from './AdminMapSelector';
 import AdminLocationForm from './AdminLocationForm';
 import config from '../../../config';
-import AdminMapSelector from './AdminMapSelector';
-import SuperAdminSidebar from '../../../partials/SuperAdminSidebar';
-import SuperAdminHeader from '../../../partials/SuperAdminHeader';
 
 const CreateAdminLocation = () => {
     const [location, setLocation] = useState({});
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const navigate = useNavigate();
+    const [errors, setErrors] = useState({});
+    const navigate = useNavigate(); 
 
     const handleSelect = async ({ position, addressDetails, additionalDetails }) => {
         try {
@@ -28,6 +26,7 @@ const CreateAdminLocation = () => {
     const handleSubmit = async (values) => {
         setLoading(true);
         setMessage({ text: '', type: '' });
+        setErrors({});
 
         // Validate form inputs
         const formErrors = {};
@@ -54,8 +53,8 @@ const CreateAdminLocation = () => {
         if (!location.coordinates) formErrors.location = 'Map location must be selected';
 
         if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
             setLoading(false);
-            setMessage({ text: 'Please fill in all required fields.', type: 'error' });
             return;
         }
 
@@ -104,7 +103,7 @@ const CreateAdminLocation = () => {
 
             if (response.status >= 200 && response.status < 300) {
                 setMessage({ text: 'Location created successfully!', type: 'success' });
-                navigate('/superadmin/locations');
+                navigate('/partner/locations');
             } else {
                 setMessage({ text: 'Failed to create location.', type: 'error' });
             }
@@ -124,41 +123,35 @@ const CreateAdminLocation = () => {
     };
 
     return (
-        <div className="flex h-screen overflow-hidden">
-            {/* Sidebar */}
-            <SuperAdminSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-            {/* Content area */}
-            <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-gray-100">
-                {/* Site header */}
-                <SuperAdminHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-                <main>
-                    <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-
-                        <div className="flex justify-between items-center mb-6">
-                            <button 
-                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300" 
-                                onClick={() => navigate(-1)}
-                            >
-                                Back
-                            </button>
+        <div className="flex flex-col h-screen overflow-hidden">
+            
+            <div className="flex-1 overflow-y-auto">
+                <div className="container mx-auto mt-24 px-4 py-8">
+                    <div className="flex justify-between items-center mb-6">
+                        <button 
+                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300" 
+                            onClick={() => navigate(-1)}
+                        >
+                            Back
+                        </button>
+                    </div>
+                    {message.text && (
+                        <div className={`alert ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} p-4 mb-6 rounded`}>
+                            {message.text}
                         </div>
-                        {message.text && (
-                            <div className={`alert ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} p-4 mb-6 rounded`}>
-                                {message.text}
-                            </div>
-                        )}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="bg-white shadow-lg rounded p-6">
-                                <AdminMapSelector onSelect={handleSelect} />
-                            </div>
-                            <div className="bg-white shadow-lg rounded p-6">
-                                <AdminLocationForm onSubmit={handleSubmit} location={location} loading={loading} />
-                            </div>
+                    )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="bg-white shadow-lg rounded p-6">
+                            <AdminMapSelector onSelect={handleSelect} />
+                            {errors.location && (
+                                <div className="text-red-500 text-sm mt-2">{errors.location}</div>
+                            )}
+                        </div>
+                        <div className="bg-white shadow-lg rounded p-6">
+                            <AdminLocationForm onSubmit={handleSubmit} location={location} loading={loading} errors={errors} />
                         </div>
                     </div>
-                </main>
+                </div>
             </div>
         </div>
     );

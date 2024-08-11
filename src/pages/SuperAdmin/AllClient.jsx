@@ -12,11 +12,10 @@ const AllClient = () => {
     const [clients, setClients] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [errorMessage, setErrorMessage] = useState(''); // For modal error message
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [clientsPerPage] = useState(3);
+    const [clientsPerPage] = useState(50);
 
     const navigate = useNavigate();
 
@@ -30,26 +29,28 @@ const AllClient = () => {
         const fetchClients = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${config.API_BASE_URL}/api/v1/users/all-clients`, {
+                const response = await axios.get(`${config.API_BASE_URL}/api/v1/users/all-clients`, { 
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
                 if (response.data.status === 'success') {
-                    const fetchedClients = response.data.data.map(client => ({
-                        id: client._id,
-                        username: client.user.username,
-                        email: client.user.email,
-                    }));
+                    const fetchedClients = response.data.data
+                        .filter(client => !client.user.isDeleted) // Filter out deleted clients
+                        .map(client => ({
+                            id: client._id,
+                            username: client.user.username,
+                            email: client.user.email,
+                        }));
                     setClients(fetchedClients);
                 } else {
-                    setError('Failed to fetch client data');
+                    setErrorMessage('Failed to fetch client data');
                 }
             } catch (err) {
                 if (err.response && err.response.status === 401) {
                     navigate('/logout');
                 } else {
-                    setError('Failed to fetch client data');
+                    setErrorMessage('Failed to fetch client data');
                 }
             } finally {
                 setLoading(false);
@@ -68,9 +69,9 @@ const AllClient = () => {
                 },
             });
             console.log('API Response:', response.data);
-            if (response.data.status === 'success') {
-                setClients(clients.filter(client => client.id !== id));
-                console.log(response.data); // Log the delete response
+            if (response.data.message) {
+                setClients(clients.filter(client => client.id !== id)); // Remove the client from the list
+                setErrorMessage(response.data.message); // Show success message in modal
             } else {
                 setErrorMessage('Failed to delete client'); // Show error in modal
             }

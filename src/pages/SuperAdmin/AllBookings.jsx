@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
-import EditBooking from './EditBooking';
 import config from '../../config';
 
 const AllBookings = () => {
@@ -13,9 +12,7 @@ const AllBookings = () => {
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [bookingsPerPage] = useState(5);
-    const [isCreating, setIsCreating] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const [bookingsPerPage] = useState(50);
     const [currentBooking, setCurrentBooking] = useState(null);
 
     useEffect(() => {
@@ -77,21 +74,11 @@ const AllBookings = () => {
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-    const addBooking = (newBooking) => {
-        setBookings([...bookings, newBooking]);
-        setIsCreating(false);
-    };
 
-    const updateBooking = (updatedBooking) => {
-        setBookings(bookings.map(booking => booking._id === updatedBooking._id ? updatedBooking : booking));
-        setIsEditing(false);
-    };
 
-    const deleteBooking = (id) => {
-        setBookings(bookings.filter(booking => booking._id !== id));
-    };
 
-    const getClientInfo = (client, status) => {
+
+    const getClientInfo = (client) => {
         if (client && client._id && clientMap[client._id]) {
             const clientDetails = clientMap[client._id];
             return (
@@ -116,9 +103,10 @@ const AllBookings = () => {
         }
     };
 
-    const formatDate = (dateString) => {
+    const formatDate = (dateString, timeString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        const date = new Date(dateString).toLocaleDateString(undefined, options);
+        return `${date} ${timeString}`;
     };
 
     const getPaginationGroup = () => {
@@ -163,46 +151,28 @@ const AllBookings = () => {
                                 <table className="min-w-full">
                                     <thead className="bg-[#4A686A] text-white">
                                         <tr>
-                                            <th className="w-1/7 py-3 px-6 text-left">Client Info</th>
-                                            <th className="w-1/7 py-3 px-6 text-left">Location Name</th>
-                                            <th className="w-1/7 py-3 px-6 text-left">Regular Price</th>
-                                            <th className="w-1/7 py-3 px-6 text-left">Discount Percentage</th>
-                                            <th className="w-1/7 py-3 px-6 text-left">Start Date</th>
-                                            <th className="w-1/7 py-3 px-6 text-left">Booking Date</th>
-                                            <th className="w-1/7 py-3 px-6 text-left">Status</th>
-                                            <th className="w-1/7 py-3 px-6 text-left">Actions</th>
+                                            <th className="w-1/5 py-3 px-6 text-left">Client Info</th>
+                                            <th className="w-1/5 py-3 px-6 text-left">Location Name</th>
+                                            <th className="w-1/5 py-3 px-6 text-left">Booking Date</th>
+                                            <th className="w-1/5 py-3 px-6 text-left">Drop-off Time</th>
+                                            <th className="w-1/5 py-3 px-6 text-left">Pick-up Time</th>
+                                            <th className="w-1/5 py-3 px-6 text-left">Status</th>
+                                            
                                         </tr>
                                     </thead>
 
                                     <tbody className="text-gray-800">
                                         {currentBookings.map(booking => (
                                             <tr key={booking._id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                                <td className="w-1/7 py-3 px-6 border">
-                                                    {getClientInfo(booking.client, booking.status)}
+                                                <td className="w-1/5 py-3 px-6 border">
+                                                    {getClientInfo(booking.client)}
                                                 </td>
-                                                <td className="w-1/7 py-3 px-6 border">{booking.location ? booking.location.name : 'N/A'}</td>
-                                                <td className="w-1/7 py-3 px-6 border">{`${booking.location.priceCurrency} ${booking.location.regularPrice}`}</td>
-                                                <td className="w-1/7 py-3 px-6 border">{`${booking.location.discountPercentage}%`}</td>
-                                                <td className="w-1/7 py-3 px-6 border">{formatDate(booking.bookingDate)}</td>
-                                                <td className="w-1/7 py-3 px-6 border">{formatDate(booking.startDate)}</td>
-                                                <td className="w-1/7 py-3 px-6 border">{booking.status}</td>
-                                                <td className="w-1/7 py-3 px-6 border text-center">
-                                                    <button
-                                                        onClick={() => {
-                                                            setIsEditing(true);
-                                                            setCurrentBooking(booking);
-                                                        }}
-                                                        className="px-4 py-2 rounded-lg bg-yellow-500 text-white transition duration-150 mr-2"
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        onClick={() => deleteBooking(booking._id)}
-                                                        className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </td>
+                                                <td className="w-1/5 py-3 px-6 border">{booking.location ? booking.location.name : 'N/A'}</td>
+                                                <td className="w-1/5 py-3 px-6 border">{formatDate(booking.bookingDate, '')}</td>
+                                                <td className="w-1/5 py-3 px-6 border">{formatDate(booking.startDate, booking.startTime)}</td>
+                                                <td className="w-1/5 py-3 px-6 border">{formatDate(booking.endDate, booking.endTime)}</td>
+                                                <td className="w-1/5 py-3 px-6 border">{booking.status}</td>
+
                                             </tr>
                                         ))}
                                     </tbody>
@@ -240,7 +210,7 @@ const AllBookings = () => {
                 </main>
             </div>
 
-            {isEditing && <EditBooking currentBooking={currentBooking} updateBooking={updateBooking} setIsEditing={setIsEditing} />}
+            
         </div>
     );
 };

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from 'react-modal';
-
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import config from '../../config';
+import ErrorModal from '../components/ErrorModal';
 
 Modal.setAppElement('#root');
 
@@ -14,15 +14,13 @@ const AllPartner = () => {
     const [partners, setPartners] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [partnersPerPage] = useState(5);
+    const [partnersPerPage] = useState(50);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedPartner, setSelectedPartner] = useState(null);
     const [actionType, setActionType] = useState('');
-    const [errorModalIsOpen, setErrorModalIsOpen] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
     const navigate = useNavigate();
 
@@ -41,24 +39,25 @@ const AllPartner = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                if (response.data.status === 'success') {
-                    const fetchedPartners = response.data.data.map(partner => ({
-                        id: partner._id,
-                        username: partner.user.username,
-                        email: partner.user.email,
-                        businessAddress: partner.businessAddress,
-                        tradeLicenseNumber: partner.tradeLicenseNumber,
-                        isLocked: partner.user.isLocked,
-                    }));
-                    setPartners(fetchedPartners);
-                } else {
-                    setError('Failed to fetch partner data');
-                }
+
+                console.log('API Response:', response.data);
+
+                const fetchedPartners = response.data.map(partner => ({
+                    id: partner._id,
+                    username: partner.user.username,
+                    email: partner.user.email,
+                    businessAddress: partner.businessAddress,
+                    tradeLicenseNumber: partner.tradeLicenseNumber,
+                    isLocked: partner.user.isLocked,
+                }));
+
+                setPartners(fetchedPartners);
             } catch (err) {
+                console.error('Error fetching partners:', err);
                 if (err.response && err.response.status === 401) {
                     navigate('/logout');
                 } else {
-                    setError('Failed to fetch partner data');
+                    setErrorMessage('Failed to fetch partner data');
                 }
             } finally {
                 setLoading(false);
@@ -85,16 +84,6 @@ const AllPartner = () => {
         setActionType('');
     };
 
-    const filteredPartners = partners.filter(partner =>
-        partner.username.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const indexOfLastPartner = currentPage * partnersPerPage;
-    const indexOfFirstPartner = indexOfLastPartner - partnersPerPage;
-    const currentPartners = filteredPartners.slice(indexOfFirstPartner, indexOfLastPartner);
-
-    const paginate = pageNumber => setCurrentPage(pageNumber);
-
     const softDeletePartner = async (id) => {
         const token = localStorage.getItem('token');
         console.log(`Attempting to delete partner with ID: ${id}`);
@@ -105,21 +94,26 @@ const AllPartner = () => {
                 },
             });
             console.log('API Response:', response.data);
-            if (response.data.status === 'success') {
-                setPartners(partners.filter(partner => partner.id !== id));
-            } else {
-                setErrorMessage('Failed to delete partner');
-                setErrorModalIsOpen(true);
-            }
+            setPartners(partners.filter(partner => partner.id !== id));
+            setErrorMessage('Partner deleted successfully');
         } catch (err) {
             console.error('Error:', err);
             setErrorMessage('Failed to delete partner');
-            setErrorModalIsOpen(true);
         }
     };
 
-    const closeErrorModal = () => {
-        setErrorModalIsOpen(false);
+    const filteredPartners = partners.filter(partner =>
+        partner.username.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const indexOfLastPartner = currentPage * partnersPerPage;
+    const indexOfFirstPartner = indexOfLastPartner - partnersPerPage;
+    const currentPartners = filteredPartners.slice(indexOfFirstPartner, indexOfLastPartner);
+
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    const handleCloseModal = () => {
+        setErrorMessage('');
     };
 
     if (loading) {
@@ -136,10 +130,6 @@ const AllPartner = () => {
                 </div>
             </div>
         );
-    }
-
-    if (error) {
-        return <div>{error}</div>;
     }
 
     return (
@@ -176,7 +166,7 @@ const AllPartner = () => {
                                         <th className="w-1/5 py-3 px-6 text-left">Username</th>
                                         <th className="w-1/5 py-3 px-6 text-left">Email</th>
                                         <th className="w-2/5 py-3 px-6 text-left">Business Address</th>
-                                        <th className="w-1/5 py-3 px-6 text-left">Trade License Number</th>
+                                        <th className="w-1/5 py-3 px-6 text-left">ABN Number</th>
                                         <th className="w-1/5 py-3 px-6 text-left">Actions</th>
                                     </tr>
                                 </thead>
@@ -263,25 +253,7 @@ const AllPartner = () => {
             </Modal>
 
             {/* Error Modal */}
-            <Modal
-                isOpen={errorModalIsOpen}
-                onRequestClose={closeErrorModal}
-                className="fixed inset-0 flex items-center justify-center"
-                overlayClassName="fixed inset-0 bg-black bg-opacity-50"
-            >
-                <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-                    <h2 className="text-xl font-semibold mb-4">Error</h2>
-                    <p className="mb-6">{errorMessage}</p>
-                    <div className="flex justify-end">
-                        <button
-                            onClick={closeErrorModal}
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
-                        >
-                            OK
-                        </button>
-                    </div>
-                </div>
-            </Modal>
+            {errorMessage && <ErrorModal message={errorMessage} onClose={handleCloseModal} />}
         </div>
     );
 };

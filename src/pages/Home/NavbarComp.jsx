@@ -113,7 +113,7 @@ const NavbarComp = () => {
                 </a>
               </div>
             </div>
-            <div 
+            {/* <div 
               className="relative group"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
@@ -126,7 +126,7 @@ const NavbarComp = () => {
                   <a href="#" key={language} className="block px-4 py-2 hover:bg-blue-800">{language}</a>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
         </nav>
       </div>

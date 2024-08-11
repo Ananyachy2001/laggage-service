@@ -143,7 +143,7 @@ function App() {
 
         {/* luggage  */}
         <Route exact path="/luggage_locations" element={<LuggageLocation />} />
-        <Route exact path="/luggage_store_details/:link" element={<LuggageStoreDetails />} />
+        <Route exact path="/:link" element={<LuggageStoreDetails />} />
         <Route exact path="/userserviceagency" element={<UserServiceAgency />} />
         <Route exact path="/searchluggage" element={<SearchLuggage/>} />
         <Route exact path="/searchnearlocation" element={<SearchNearLocation/>} />

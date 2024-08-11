@@ -12,20 +12,19 @@ const locationSchema = Yup.object().shape({
     zipCode: Yup.string().required('Required'),
     country: Yup.string().required('Required'),
     capacity: Yup.number().required('Required').typeError('Must be a number'),
-    availableSpace: Yup.number().default(100), // Default value
-    regularPrice: Yup.number().default(50), // Default value
-    discountPercentage: Yup.number().default(10), // Default value
+    availableSpace: Yup.number().default(100),
+    regularPrice: Yup.number().default(50),
+    discountPercentage: Yup.number().default(10),
     availableFrom: Yup.date().required('Required'),
     availableTo: Yup.date().required('Required'),
-    amenities: Yup.string().default('Wi-Fi, Parking'), // Default value
-    notes: Yup.string().default('Default notes'), // Default value
-    files: Yup.mixed().required('Required'),
+    amenities: Yup.string().default('Wi-Fi, Parking'),
+    notes: Yup.string().default('Default notes'),
     openTime: Yup.string().required('Required'),
     closeTime: Yup.string().required('Required'),
-    closedDays: Yup.array().of(Yup.string()), // Optional validation
-    specialClosedDays: Yup.array().of(Yup.date()), // Optional validation
-    locationType: Yup.string().default('Other'), // Set default value
-    timezone: Yup.string().default('Australia/Perth'), // Default value
+    closedDays: Yup.array().of(Yup.string()),
+    specialClosedDays: Yup.array().of(Yup.date()),
+    locationType: Yup.string().default('Other'),
+    timezone: Yup.string().default('Australia/Perth'),
 });
 
 const AdminLocationForm = ({ onSubmit, location, loading }) => {
@@ -43,23 +42,23 @@ const AdminLocationForm = ({ onSubmit, location, loading }) => {
                 zipCode: location?.addressDetails?.zipCode || '',
                 country: location?.addressDetails?.country || '',
                 capacity: location?.additionalDetails?.capacity || '',
-                availableSpace: 100, // Default value
-                regularPrice: 7.90, // Default value
-                discountPercentage: 10, // Default value
-                availableFrom: location?.additionalDetails?.availableFrom || new Date(), // Default to current date
-                availableTo: location?.additionalDetails?.availableTo || new Date(new Date().setFullYear(new Date().getFullYear() + 10)), // Default to 10 years from now
-                amenities: 'Wi-Fi, Parking', // Default value
-                notes: 'Default notes', // Default value
-                files: [],
+                availableSpace: 100,
+                regularPrice: 7.90,
+                discountPercentage: 10,
+                availableFrom: location?.additionalDetails?.availableFrom || new Date(),
+                availableTo: location?.additionalDetails?.availableTo || new Date(new Date().setFullYear(new Date().getFullYear() + 10)),
+                amenities: 'Wi-Fi, Parking',
+                notes: 'Default notes',
                 openTime: location?.additionalDetails?.openTime || '',
                 closeTime: location?.additionalDetails?.closeTime || '',
                 closedDays: location?.additionalDetails?.closedDays || [],
                 specialClosedDays: location?.additionalDetails?.specialClosedDays || [],
-                locationType: 'Other', // Set default value here
-                timezone: location?.timezone || 'Australia/Perth', // Default value
+                locationType: 'Other',
+                timezone: location?.timezone || 'Australia/Perth',
+                files: [],
             }}
             validationSchema={locationSchema}
-            onSubmit={onSubmit}
+            onSubmit={(values) => onSubmit({ ...values })}
             enableReinitialize
         >
             {({ errors, touched, setFieldValue, isValid, isSubmitting }) => {
@@ -92,11 +91,11 @@ const AdminLocationForm = ({ onSubmit, location, loading }) => {
                 }, [location, setFieldValue]);
 
                 const handleFileChange = (event) => {
-                    const files = event.currentTarget.files;
-                    setFieldValue('files', files);
+                    const selectedFiles = event.currentTarget.files;
+                    setFieldValue('files', selectedFiles);  // Store files in Formik's state
 
-                    const filePreviews = Array.from(files).map(file => URL.createObjectURL(file));
-                    setPreviewPictures(filePreviews);
+                    const filePreviews = Array.from(selectedFiles).map(file => URL.createObjectURL(file));
+                    setPreviewPictures(filePreviews); // Store preview URLs in component state
                 };
 
                 const handleSpecialClosedDaysChange = (dates) => {
@@ -108,6 +107,36 @@ const AdminLocationForm = ({ onSubmit, location, loading }) => {
                     <Form className="overflow-y-auto p-6 bg-white shadow-xl rounded-lg" style={{ maxHeight: '80vh' }}>
                         <div className="space-y-8">
                             <h6 className="text-2xl font-bold text-gray-800 mb-4">Location Details</h6>
+                            <div className="form-group">
+                                <label htmlFor="files" className="block text-sm font-medium text-gray-700  pb-2">
+                                    Store Pictures
+                                </label>
+                                <input
+                                    id="files"
+                                    name="files"
+                                    type="file"
+                                    multiple
+                                    className={`form-input mt-1 block w-full rounded-md border ${
+                                        errors.files && touched.files
+                                            ? 'border-red-500'
+                                            : 'border-gray-300'
+                                    } focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
+                                    onChange={handleFileChange}
+                                />
+                                {errors.files && touched.files && (
+                                    <div className="text-red-500 text-sm mt-1">{errors.files}</div>
+                                )}
+                                <div className="mt-4 flex flex-wrap gap-4">
+                                    {previewPictures.map((src, index) => (
+                                        <img
+                                            key={index}
+                                            src={src}
+                                            alt={`Preview ${index}`}
+                                            className="h-20 w-20 object-cover rounded-lg shadow-md"
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                             {[
                                 { name: 'name', label: 'Name' },
                                 { name: 'description', label: 'Description' },
@@ -165,36 +194,7 @@ const AdminLocationForm = ({ onSubmit, location, loading }) => {
                                     />
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="files" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Pictures
-                                </label>
-                                <input
-                                    id="files"
-                                    name="files"
-                                    type="file"
-                                    multiple
-                                    className={`form-input mt-1 block w-full rounded-md border ${
-                                        errors.files && touched.files
-                                            ? 'border-red-500'
-                                            : 'border-gray-300'
-                                    } focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
-                                    onChange={handleFileChange}
-                                />
-                                {errors.files && touched.files && (
-                                    <div className="text-red-500 text-sm mt-1">{errors.files}</div>
-                                )}
-                                <div className="mt-4 flex flex-wrap gap-4">
-                                    {previewPictures.map((src, index) => (
-                                        <img
-                                            key={index}
-                                            src={src}
-                                            alt={`Preview ${index}`}
-                                            className="h-20 w-20 object-cover rounded-lg shadow-md"
-                                        />
-                                    ))}
-                                </div>
-                            </div>
+
                             <button 
                                 type="submit" 
                                 className={`bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 ease-in-out ${
