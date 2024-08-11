@@ -11,11 +11,17 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, totalPrice }
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Define service fee
+  const serviceFee = 2.60;
+
+//   // Calculate final total price including service fee
+//   const finalTotalPrice = (parseFloat(totalPrice) + serviceFee).toFixed(2);
+
   const handlePayment = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
 
-    setIsLoading(true);
+    setIsLoading(true); // Show loading spinner when payment submission starts
 
     const cardElement = elements.getElement(CardElement);
 
@@ -70,6 +76,7 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, totalPrice }
       }
     } catch (error) {
       console.error('Error updating booking status:', error);
+      setErrorMessage('Payment failed. Please try again.');
       setIsLoading(false);
     }
   };
@@ -85,7 +92,10 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, totalPrice }
             <CardElement className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="text-center text-lg font-semibold my-4">
-            Total Price: ${totalPrice} AUD
+            Service Fee: ${serviceFee.toFixed(2)} AUD
+          </div>
+          <div className="text-center text-lg font-semibold my-4">
+            Total Price (including Service Fee): ${totalPrice} AUD
           </div>
           {errorMessage && <div className="text-red-500">{errorMessage}</div>}
           <div className="flex items-center justify-center">
@@ -99,7 +109,6 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, totalPrice }
               </Button>
             )}
           </div>
-
         </form>
       </Modal.Body>
     </Modal>

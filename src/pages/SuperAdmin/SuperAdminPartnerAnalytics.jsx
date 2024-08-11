@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
@@ -12,48 +12,32 @@ import config from '../../config';
 Chart.register(...registerables);
 
 const SuperAdminPartnerAnalytics = () => {
-  const [partners, setPartners] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [partnersPerPage] = useState(10); // Change the number for items per page
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const [partners, setPartners] = useState([
+    {
+      partnerId: 1,
+      partnerName: ' Partner 1',
+      totalEarnings: 4000,
+      bookingCount: 150,
+      locationCount: 10,
+      averageMonthlyEarnings: 5000,
+      averageMonthlyBookings: 15,
+    },
+    {
+      partnerId: 2,
+      partnerName: ' Partner 2',
+      totalEarnings: 2000,
+      bookingCount: 100,
+      locationCount: 7,
+      averageMonthlyEarnings: 3000,
+      averageMonthlyBookings: 10,
+    },
+    // Add more default partners if needed
+  ]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/logout');
-      return;
-    }
-
-    const fetchPartnersAnalytics = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${config.API_BASE_URL}/api/v1/analytics/partners`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.data) {
-          setPartners(response.data);
-        } else {
-          setError('Failed to fetch partner analytics data');
-        }
-      } catch (err) {
-        if (err.response && err.response.status === 401) {
-          navigate('/logout');
-        } else {
-          setError('Failed to fetch partner analytics data');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPartnersAnalytics();
-  }, [navigate]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [partnersPerPage] = useState(10);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const getChartData = () => {
     return {
@@ -73,24 +57,11 @@ const SuperAdminPartnerAnalytics = () => {
     };
   };
 
-  // Pagination Logic
   const indexOfLastPartner = currentPage * partnersPerPage;
   const indexOfFirstPartner = indexOfLastPartner - partnersPerPage;
   const currentPartners = partners.slice(indexOfFirstPartner, indexOfLastPartner);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
-        <div className="loader ease-linear rounded-full border-8 border-t-8 border-blue-400 h-32 w-32"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   return (
     <div className="flex h-screen overflow-hidden">

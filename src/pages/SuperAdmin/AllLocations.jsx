@@ -110,9 +110,9 @@ const AllLocations = () => {
     const deleteLocation = async () => {
         const token = getToken();
         if (!token) return;
-
+    
         try {
-            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/locations/${locationToDelete}`, {
+            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/locations/${locationToDelete}/hard`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -128,6 +128,7 @@ const AllLocations = () => {
             setShowDeleteModal(false);
         }
     };
+    
 
     const getPartnerDetails = (partnerId) => {
         const partner = partners.find(p => p._id === partnerId || (p.user && p.user._id === partnerId));

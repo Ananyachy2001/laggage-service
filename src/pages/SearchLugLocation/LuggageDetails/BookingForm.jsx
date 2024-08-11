@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Spinner } from 'react-bootstrap';
+import moment from 'moment-timezone';
 
-const BookingForm = ({ 
-  handleSubmit, 
-  luggageQuantity, 
-  setLuggageQuantity, 
-  promoCode, 
-  setPromoCode, 
-  discount, 
-  setDiscount, 
-  checkinTime, 
-  setCheckinTime, 
-  checkoutTime, 
-  setCheckoutTime, 
-  totalPrice, 
-  setTotalPrice, 
-  regularprice, 
-  locationid, 
-  clientId, 
-  clientDetails, 
+const BookingForm = ({
+  handleSubmit,
+  luggageQuantity,
+  setLuggageQuantity,
+  promoCode,
+  setPromoCode,
+  discount,
+  setDiscount,
+  checkinTime,
+  setCheckinTime,
+  checkoutTime,
+  setCheckoutTime,
+  totalPrice,
+  setTotalPrice,
+  locationid,
+  clientId,
+  clientDetails,
   setClientDetails
 }) => {
   const [errorMessage, setErrorMessage] = useState('');
@@ -33,10 +33,20 @@ const BookingForm = ({
     phone: ''
   });
 
+  // Define the Australian time zone
+  const australianTimeZone = 'Australia/Sydney';
+
   useEffect(() => {
-    setTotalPrice(0); 
-    setDiscount(0); 
-  }, [setTotalPrice, setDiscount]);
+    // Set default check-in and check-out times
+    const checkin = moment().tz(australianTimeZone).add(4, 'hours').format('YYYY-MM-DDTHH:mm');
+    const checkout = moment(checkin).tz(australianTimeZone).add(4, 'hours').format('YYYY-MM-DDTHH:mm');
+
+    setCheckinTime(checkin);
+    setCheckoutTime(checkout);
+
+    setTotalPrice(0);
+    setDiscount(0);
+  }, [setTotalPrice, setDiscount, setCheckinTime, setCheckoutTime]);
 
   const handleApplyPromo = () => {
     if (promoCode === 'DISCOUNT10') {
@@ -59,7 +69,7 @@ const BookingForm = ({
     if (!checkin || !checkout) return 1;
     const checkinDate = new Date(checkin);
     const checkoutDate = new Date(checkout);
-    const duration = (checkoutDate - checkinDate) / (1000 * 60 * 60 * 24);
+    const duration = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
     return duration > 0 ? duration : 1;
   };
 
@@ -75,10 +85,9 @@ const BookingForm = ({
 
   useEffect(() => {
     if (validateDateTime(checkinTime, checkoutTime) && checkinTime && checkoutTime) {
-      const serviceFee = 2.60; // Fixed service fee
-      const luggagePricePerDay = 7.90; // Price per bag per day
+      const dailyRate = 10.50; // Combined service fee and luggage price per day
       const duration = calculateDuration(checkinTime, checkoutTime);
-      let price = ((luggagePricePerDay+ serviceFee) * luggageQuantity * duration)  - discount;
+      let price = (dailyRate * duration * luggageQuantity) - discount;
       price = parseFloat(price.toFixed(2)); // Round to two decimal places
       setTotalPrice(price > 0 ? price : 0);
     }
@@ -124,10 +133,10 @@ const BookingForm = ({
 
     const bookingData = {
       location: locationid,
-      startDate: new Date(checkinTime).toISOString().split('T')[0],
-      startTime: new Date(checkinTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-      endDate: new Date(checkoutTime).toISOString().split('T')[0],
-      endTime: new Date(checkoutTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+      startDate: moment(checkinTime).tz(australianTimeZone).format('YYYY-MM-DD'),
+      startTime: moment(checkinTime).tz(australianTimeZone).format('HH:mm'),
+      endDate: moment(checkoutTime).tz(australianTimeZone).format('YYYY-MM-DD'),
+      endTime: moment(checkoutTime).tz(australianTimeZone).format('HH:mm'),
       totalPricePaid: parseFloat(totalPrice).toFixed(2),
       specialRequests: clientDetails.specialRequests || 'No requirement',
     };
@@ -161,12 +170,12 @@ const BookingForm = ({
   };
 
   return (
-    <div className="bg-gray-100 shadow-md rounded-lg p-6">
-      <h5 className="text-xl font-bold mb-4">Your Booking</h5>
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <h5 className="text-2xl font-bold mb-4">Your Booking</h5>
       {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
       <form id="booking-form" onSubmit={handleFormSubmit}>
-        <div className="flex justify-between mb-4">
-          <label className="w-1/2 pr-2">
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <label>
             Drop off:
             <input 
               type="datetime-local" 
@@ -176,7 +185,7 @@ const BookingForm = ({
               required
             />
           </label>
-          <label className="w-1/2 pl-2">
+          <label>
             Pick up:
             <input 
               type="datetime-local" 
@@ -232,17 +241,16 @@ const BookingForm = ({
             )}
           </div>
         </div>
-        <div className="mb-4">
-          <label className="font-bold mt-2">Luggage Service:  $7.90 AUD per day per bag</label>
-          <label className="font-bold pt-2"> Service Fee: $2.60 AUD</label>
+
+        <div className="border-t border-gray-300 pt-4">
+          <h6 className="font-bold mb-2">Price details</h6>
+          <span>{luggageQuantity} Checked bag{luggageQuantity > 1 ? 's' : ''} (A${(10.50).toFixed(2)} per day)</span>
+          <div className="flex justify-between font-bold text-lg mt-4">
+            <span>Total</span>
+            <span>A${totalPrice.toFixed(2)}</span>
+          </div>
         </div>
 
-        {checkinTime && checkoutTime && (
-          <div className="mb-4">
-            <label className="font-bold">Total Price: $</label>
-            <span id="totalPrice">{totalPrice.toFixed(2)}</span>
-          </div>
-        )}
         <Button 
           variant="primary" 
           onClick={openUserDetailsModal} 

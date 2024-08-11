@@ -6,7 +6,7 @@ import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import config from '../../config';
-import ErrorModal from '../components/ErrorModal';
+import ErrorModal from '../components/ErrorModal'; // Ensure this is imported correctly
 
 Modal.setAppElement('#root');
 
@@ -88,7 +88,7 @@ const AllPartner = () => {
         const token = localStorage.getItem('token');
         console.log(`Attempting to delete partner with ID: ${id}`);
         try {
-            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/partners/${id}/soft`, {
+            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/partners/${id}/hard`, { // Update the URL to match your requirements
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -98,7 +98,7 @@ const AllPartner = () => {
             setErrorMessage('Partner deleted successfully');
         } catch (err) {
             console.error('Error:', err);
-            setErrorMessage('Failed to delete partner');
+            setErrorMessage('Failed to delete partner. Please try again.');
         }
     };
 
