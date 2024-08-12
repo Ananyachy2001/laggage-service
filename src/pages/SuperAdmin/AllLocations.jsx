@@ -260,7 +260,10 @@ const AllLocations = () => {
                                             const { username, email } = getPartnerDetails(location.partner);
                                             return (
                                                 <tr key={location._id} className="hover:bg-gray-100 transition duration-150">
-                                                    <td className="py-3 px-6 border-b">{location.name}</td>
+                                                <td className="py-3 px-6 border-b text-blue-500 cursor-pointer"
+                                                    onClick={() => navigate(`/superadmin/reviews/${location._id}`)}>
+                                                    {location.name}
+                                                </td>
                                                     <td className="py-3 px-6 border-b">
                                                         {`${location.address.street},  ${location.address.city}, ${location.address.state}, ${location.address.zipCode}, ${location.address.country}`}
                                                     </td>

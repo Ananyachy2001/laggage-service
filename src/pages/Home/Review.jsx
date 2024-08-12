@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
+import Slider from "react-slick";
 import review1 from '../../img/home-two/team-1.jpg';
 import review2 from '../../img/home-two/team-1.jpg';
 import review3 from '../../img/home-two/team-1.jpg';
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+import './Review.css'; // Custom CSS for additional styling
 
 const reviews = [
   {
@@ -24,66 +28,68 @@ const reviews = [
     image: review3,
     text: "Outstanding service! The team goes above and beyond to ensure customer satisfaction. The luggage quality is top-notch and their support is always there when you need it.",
     rating: 5
-  }
+  },
+  {
+    name: "Jackson",
+    position: "Client",
+    image: review3,
+    text: "Outstanding service! The team goes above and beyond to ensure customer satisfaction. The luggage quality is top-notch and their support is always there when you need it.",
+    rating: 5
+  },
+  {
+    name: "Robert",
+    position: "Client",
+    image: review3,
+    text: "Excellent service! The team goes above and beyond to ensure customer satisfaction. The luggage quality is top-notch and their support is always there when you need it.",
+    rating: 5
+  },
+  // Additional reviews...
 ];
 
+const CustomPrevArrow = (props) => {
+  const { className, onClick } = props;
+  return <div className={`${className} custom-arrow custom-prev-arrow`} onClick={onClick} />;
+};
+
+const CustomNextArrow = (props) => {
+  const { className, onClick } = props;
+  return <div className={`${className} custom-arrow custom-next-arrow`} onClick={onClick} />;
+};
+
 const Review = () => {
-  const [index, setIndex] = useState(0);
-  const { name, position, image, text, rating } = reviews[index];
-
-  const checkIndex = (number) => {
-    if (number > reviews.length - 1) {
-      return 0;
-    }
-    if (number < 0) {
-      return reviews.length - 1;
-    }
-    return number;
-  };
-
-  const nextReview = () => {
-    setIndex((currentIndex) => checkIndex(currentIndex + 1));
-  };
-
-  const prevReview = () => {
-    setIndex((currentIndex) => checkIndex(currentIndex - 1));
-  };
-
-  const randomReview = () => {
-    let randomNumber;
-    do {
-      randomNumber = Math.floor(Math.random() * reviews.length);
-    } while (randomNumber === index);
-    setIndex(randomNumber);
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    prevArrow: <CustomPrevArrow />,
+    nextArrow: <CustomNextArrow />,
   };
 
   return (
-    <section className="bg-gray-200 py-12">
+    <section className="py-12 bg-gray-200">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">What Our Clients Say About Us</h2>
-        <div className="max-w-xl mx-auto overflow-hidden bg-white rounded-lg shadow-lg hover:shadow-2xl transition ease-in-out duration-500 transform hover:scale-105">
-          <img src={image} alt={name} className="w-32 h-32 rounded-full mx-auto mt-4 border-4 border-primary-500 transition ease-in-out duration-500 hover:shadow-lg" />
-          <div className="text-center px-6 py-4">
-            <h3 className="text-xl font-bold text-primary-700">{name}</h3>
-            <p className="text-gray-700">{position}</p>
-            <div className="flex justify-center mt-4">
-              {[...Array(rating)].map((_, i) => (
-                <i key={i} className='bx bxs-star text-yellow-500'></i>
-              ))}
-            </div>
-            <p className="mt-4 text-gray-900 overflow-hidden" style={{ maxHeight: "6em", textOverflow: "ellipsis" }}>{text}</p>
-          </div>
-          <div className="flex justify-around items-center p-4">
-            <button onClick={prevReview} className="text-gray-900 hover:text-primary-300 transform hover:scale-125 transition-transform duration-300">
-              <i className='bx bx-chevron-left text-2xl'></i>
-            </button>
-            <button onClick={randomReview} className="px-4 py-2 text-l text-gray-900 hover:text-primary-300 transform hover:scale-125 transition-transform duration-300 bg-indigo-400 rounded-full shadow">
-              Random
-            </button>
-            <button onClick={nextReview} className="text-gray-900 hover:text-primary-300 transform hover:scale-125 transition-transform duration-300">
-              <i className='bx bx-chevron-right text-2xl'></i>
-            </button>
-          </div>
+        <h2 className="text-4xl font-bold text-center mb-6 text-[#4A686A]">Our customers say it best</h2>
+        <div className="relative">
+          <Slider {...settings}>
+            {reviews.map((review, index) => (
+              <div key={index} className="flex justify-center">
+                <div className="bg-white shadow-md rounded-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 max-w-md mx-auto p-6 text-center">
+                  <img src={review.image} alt={review.name} className="w-20 h-20 rounded-full mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800">{review.name}</h3>
+                  <p className="text-sm text-gray-500 mb-4">{review.position}</p>
+                  <div className="flex justify-center mb-4">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <i key={i} className='bx bxs-star text-yellow-500'></i>
+                    ))}
+                  </div>
+                  <p className="text-gray-700">{review.text}</p>
+                </div>
+              </div>
+            ))}
+          </Slider>
         </div>
       </div>
     </section>

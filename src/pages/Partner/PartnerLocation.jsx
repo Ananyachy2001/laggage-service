@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import PartnerNavbarComp from './PartnerNavbarComp';
 import config from '../../config';
 import logo from '../../img/home-two/logo3.svg'; // Import the logo
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import './PartnerLocation.css';
 
 const PartnerLocations = () => {
     const [locations, setLocations] = useState([]);
@@ -82,6 +85,35 @@ const PartnerLocations = () => {
             setFetchingQRCode(false);
         }
     };
+
+    const handleDownloadPDF = () => {
+        const input = document.getElementById('qrCodeModal');
+        const originalClass = input.className;
+        
+        // Hide buttons before generating PDF
+        input.className = `${originalClass} hide-buttons`;
+    
+        // Increase the scale to improve quality
+        const scale = 3; // Increase this value to improve resolution
+        html2canvas(input, { scale }).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png'); // Use PNG for better quality
+            const pdf = new jsPDF();
+    
+            // Calculate X and Y positions to center the content
+            const imgWidth = 190; // PDF width in mm
+            const pageHeight = pdf.internal.pageSize.height;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Keep aspect ratio
+            const yPosition = (pageHeight - imgHeight) / 2; // Center vertically
+    
+            pdf.addImage(imgData, 'PNG', 10, yPosition, imgWidth, imgHeight); // Use 'PNG' format
+            pdf.save('QRCode.pdf');
+            
+            // Restore original class
+            input.className = originalClass;
+        });
+    };
+    
+    
 
     const filteredLocations = locations.filter(location => 
         location.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -205,29 +237,42 @@ const PartnerLocations = () => {
             {/* QR Code Modal */}
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
-    <div className="fixed inset-0 bg-gray-300 bg-opacity-75"></div> {/* Updated background color */}
-    <div className="bg-cyan-900  rounded-lg p-8 z-10 shadow-lg w-full max-w-md">
-        {fetchingQRCode ? (
-            <div className="flex justify-center">
-                <div className="loader"></div>
-            </div>
-        ) : qrCodeError ? (
-            <div className="text-red-500">{qrCodeError}</div>
-        ) : (
-            <div className="text-center ">
-                <img src={logo} alt="Logo" className="mb-4 w-48 mx-auto" /> {/* Larger logo */}
-                <img src={qrCode} alt="QR Code" className="mb-8 w-48 mx-auto" /> {/* Smaller QR Code */}
-                <button
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 transition duration-150"
-                >
-                    OK
-                </button>
-            </div>
-        )}
-    </div>
-</div>
-
+                    <div className="fixed inset-0 bg-gray-300 bg-opacity-75"></div> {/* Updated background color */}
+                    <div id="qrCodeModal" className="bg-cyan-900 rounded-lg p-8 z-10 shadow-lg w-full max-w-md">
+                        {fetchingQRCode ? (
+                            <div className="flex justify-center">
+                                <div className="loader"></div>
+                            </div>
+                        ) : qrCodeError ? (
+                            <div className="text-red-500">{qrCodeError}</div>
+                        ) : (
+                            <div className="text-center">
+                                <img src={logo} alt="Logo" className="mb-4 w-48 mx-auto" /> {/* Larger logo */}
+                                <img src={qrCode} alt="QR Code" className="mb-4 w-48 mx-auto" /> {/* Smaller QR Code */}
+                                <p
+                                   
+                                    className="px-2 mx-32  text-xl  text-white rounded-lg mt-4  transition duration-150"
+                                >
+                                    Book Now
+                                </p>
+                                <div className="buttons mt-4"> {/* Group buttons in a div */}
+                                    <button
+                                        onClick={handleDownloadPDF}
+                                        className="px-4 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 transition duration-150"
+                                    >
+                                        Download as PDF
+                                    </button>
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-4 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 transition duration-150 ml-2"
+                                    >
+                                        OK
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     );

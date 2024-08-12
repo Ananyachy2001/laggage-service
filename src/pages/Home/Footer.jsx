@@ -12,7 +12,7 @@ function Footer() {
             <a href="index.html" className="flex items-center mb-4">
               <img src={logo} alt="logo2" className="h-28 transform hover:scale-110 transition-transform duration-300" />
             </a>
-            <p className="hover:text-teal-200 transition-colors duration-300">Urloker offers secure and convenient luggage storage solutions for your home and office. Whether you need short-term or long-term storage, our services are designed to make your life easier and more organized. Experience hassle-free luggage management with Urloker.</p>
+            <p className="hover:text-teal-200 transition-colors duration-300">Urloker offers secure and convenient luggage storage solutions for your home and office. </p>
           </div>
           <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
             <h3 className="text-lg font-bold mb-4 hover:text-teal-200 transition-colors duration-300">Company</h3>
@@ -44,16 +44,16 @@ function Footer() {
             <div className="mt-8">
               <h4 className="text-lg font-bold mb-4 hover:text-teal-200 transition-colors duration-300">Follow Us</h4>
               <div className="flex space-x-4">
-                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300">
+                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300 text-3xl p-2">
                   <FontAwesomeIcon icon={faFacebookF} />
                 </a>
-                <a href="#" className="text-white hover:text-pink-600 transition-colors duration-300">
+                <a href="#" className="text-white hover:text-pink-600 transition-colors duration-300 text-3xl p-2">
                   <FontAwesomeIcon icon={faInstagram} />
                 </a>
-                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300">
+                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300 text-3xl p-2">
                   <FontAwesomeIcon icon={faTwitter} />
                 </a>
-                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300">
+                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300 text-3xl  p-2">
                   <FontAwesomeIcon icon={faLinkedinIn} />
                 </a>
               </div>

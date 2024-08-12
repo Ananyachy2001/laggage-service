@@ -65,6 +65,16 @@ const BookingForm = ({
     setPromoApplied(false);
   };
 
+  const handleCheckoutTimeChange = (e) => {
+    const newCheckoutTime = e.target.value;
+    if (new Date(newCheckoutTime) < new Date(checkinTime)) {
+      setErrorMessage('Pickup date can\'t be before the drop-off date.');
+    } else {
+      setErrorMessage('');
+      setCheckoutTime(newCheckoutTime);
+    }
+  };
+  
   const calculateDuration = (checkin, checkout) => {
     if (!checkin || !checkout) return 1;
     const checkinDate = new Date(checkin);
@@ -75,14 +85,17 @@ const BookingForm = ({
 
   const validateDateTime = (checkin, checkout) => {
     const now = new Date();
-    if (new Date(checkin) < now || new Date(checkout) < now) {
-      setErrorMessage('Check-in and check-out times must be in the future.');
+    if (new Date(checkin) < now) {
+      setErrorMessage('Check-in time must be in the future.');
+      return false;
+    } else if (new Date(checkout) < new Date(checkin)) {
+      setErrorMessage('Pickup date can\'t be before the drop-off date.');
       return false;
     }
     setErrorMessage('');
     return true;
   };
-
+  
   useEffect(() => {
     if (validateDateTime(checkinTime, checkoutTime) && checkinTime && checkoutTime) {
       const dailyRate = 10.50; // Combined service fee and luggage price per day
@@ -129,6 +142,10 @@ const BookingForm = ({
       return;
     }
 
+    if (!validateDateTime(checkinTime, checkoutTime)) {
+      return;
+    }
+    
     setLoading(true); // Set loading to true
 
     const bookingData = {
@@ -152,14 +169,15 @@ const BookingForm = ({
     }
 
     try {
-      await handleSubmit(bookingData);
+      await handleSubmit(bookingData, guestDetails);
       setShowModal(false); // Close modal on successful submission
     } catch (error) {
       setErrorMessage('Submission failed. Please try again.');
     } finally {
       setLoading(false); // Set loading to false
     }
-  };
+};
+  
 
   const openUserDetailsModal = () => {
     if (validateDateTime(checkinTime, checkoutTime)) {
@@ -191,10 +209,11 @@ const BookingForm = ({
               type="datetime-local" 
               className="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
               value={checkoutTime}
-              onChange={(e) => setCheckoutTime(e.target.value)}
+              onChange={handleCheckoutTimeChange}
               required
             />
           </label>
+
         </div>
         <div className="mb-4">
           <label htmlFor="luggageQuantity" className="block font-bold mb-1">Number of Bags:</label>
