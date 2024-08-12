@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Modal from 'react-modal'; // Import the Modal component
 
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
 import WelcomeBanner from '../../partials/dashboard/WelcomeBanner';
 import config from '../../config';
-import ErrorModal from '../components/ErrorModal'; // Import the modal component
+import ErrorModal from '../components/ErrorModal'; // Import the ErrorModal component
+
+Modal.setAppElement('#root'); // Ensure the app element is set for accessibility
 
 const AllClient = () => {
     const [clients, setClients] = useState([]);
@@ -16,6 +19,9 @@ const AllClient = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [clientsPerPage] = useState(50);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [selectedClient, setSelectedClient] = useState(null);
+    const [actionType, setActionType] = useState('');
 
     const navigate = useNavigate();
 
@@ -35,13 +41,12 @@ const AllClient = () => {
                     },
                 });
                 if (response.data.status === 'success') {
-                    const fetchedClients = response.data.data
-                        .filter(client => !client.user.isDeleted) // Filter out deleted clients
-                        .map(client => ({
-                            id: client._id,
-                            username: client.user.username,
-                            email: client.user.email,
-                        }));
+                    const fetchedClients = response.data.data.map(client => ({
+                        id: client._id,
+                        username: client.user.username,
+                        email: client.user.email,
+                        isDeleted: client.user.isDeleted,
+                    }));
                     setClients(fetchedClients);
                 } else {
                     setErrorMessage('Failed to fetch client data');
@@ -60,23 +65,48 @@ const AllClient = () => {
         fetchClients();
     }, [navigate]);
 
-    const softDeleteClient = async (id) => {
+    const handleAction = (client, type) => {
+        setSelectedClient(client);
+        setActionType(type);
+        setModalIsOpen(true);
+    };
+
+    const confirmAction = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/clients/${id}/soft`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            console.log('API Response:', response.data);
-            if (response.data.message) {
-                setClients(clients.filter(client => client.id !== id)); // Remove the client from the list
-                setErrorMessage(response.data.message); // Show success message in modal
-            } else {
-                setErrorMessage('Failed to delete client'); // Show error in modal
+            if (actionType === 'softDelete') {
+                const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/clients/${selectedClient.id}/soft`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.data.message) {
+                    setClients(clients.map(client =>
+                        client.id === selectedClient.id ? { ...client, isDeleted: true } : client
+                    ));
+                    setErrorMessage('Client soft deleted successfully');
+                } else {
+                    setErrorMessage('Failed to soft delete client');
+                }
+            } else if (actionType === 'hardDelete') {
+                const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/clients/${selectedClient.id}/hard`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.data.message) {
+                    setClients(clients.filter(client => client.id !== selectedClient.id));
+                    setErrorMessage('Client deleted successfully');
+                } else {
+                    setErrorMessage('Failed to delete client');
+                }
             }
         } catch (err) {
-            setErrorMessage('Failed to delete client'); // Show error in modal
+            setErrorMessage('Failed to perform action. Please try again.');
+        } finally {
+            setModalIsOpen(false);
+            setSelectedClient(null);
+            setActionType('');
         }
     };
 
@@ -142,16 +172,17 @@ const AllClient = () => {
                             <table className="min-w-full">
                                 <thead className="bg-[#4A686A] text-white">
                                     <tr>
-                                        <th className="w-1/3 py-3 px-6 text-left">Username</th>
-                                        <th className="w-1/3 py-3 px-6 text-left">Email</th>
-                                        <th className="w-1/3 py-3 px-6 text-left">Actions</th>
+                                        <th className="w-1/4 py-3 px-6 text-left">Username</th>
+                                        <th className="w-1/4 py-3 px-6 text-left">Email</th>
+                                        <th className="w-1/4 py-3 px-6 text-left">Actions</th>
+                                        <th className="w-1/4 py-3 px-6 text-left">Trash</th>
                                     </tr>
                                 </thead>
 
                                 <tbody className="text-gray-800">
                                     {currentClients.map(client => (
                                         <tr key={client.id} className="bg-white hover:bg-gray-200 transition duration-150">
-                                            <td className="w-1/3 py-3 px-6 border">
+                                            <td className="w-1/4 py-3 px-6 border">
                                                 <button
                                                     onClick={() => navigate(`/superadmin/clients/${client.id}`)}
                                                     className="text-blue-600 hover:text-blue-800"
@@ -159,14 +190,26 @@ const AllClient = () => {
                                                     {client.username}
                                                 </button>
                                             </td>
-                                            <td className="w-1/3 py-3 px-6 border">{client.email}</td>
-                                            <td className="w-1/3 py-3 px-6 border text-center">
+                                            <td className="w-1/4 py-3 px-6 border">{client.email}</td>
+                                            <td className="w-1/4 py-3 px-6 border text-center">
                                                 <button
-                                                    onClick={() => softDeleteClient(client.id)}
+                                                    onClick={() => handleAction(client, 'hardDelete')}
                                                     className="px-2 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
                                                 >
                                                     Delete
                                                 </button>
+                                            </td>
+                                            <td className="w-1/4 py-3 px-6 border text-center">
+                                                {client.isDeleted ? (
+                                                    <span className="text-gray-500">Soft Deleted</span>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleAction(client, 'softDelete')}
+                                                        className="px-2 py-2 bg-orange-500 hover:bg-orange-700 text-white rounded"
+                                                    >
+                                                        Trash
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
@@ -191,6 +234,39 @@ const AllClient = () => {
                     </div>
                 </main>
             </div>
+
+            {/* Confirmation Modal */}
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+                className="fixed inset-0 flex items-center justify-center"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+            >
+                <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                    <h2 className="text-xl font-semibold mb-4">
+                        Confirm {actionType === 'softDelete' ? 'Soft Delete' : 'Hard Delete'} Action
+                    </h2>
+                    <p className="mb-6">
+                        {actionType === 'hardDelete'
+                            ? 'Are you sure you want to permanently delete this client? This action cannot be undone.'
+                            : 'Are you sure you want to soft delete this client? You can restore it later if needed.'}
+                    </p>
+                    <div className="flex justify-end space-x-4">
+                        <button
+                            onClick={() => setModalIsOpen(false)}
+                            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700 transition duration-300"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={confirmAction}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
+                        >
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </Modal>
 
             {/* Error Modal */}
             {errorMessage && <ErrorModal message={errorMessage} onClose={handleCloseModal} />}

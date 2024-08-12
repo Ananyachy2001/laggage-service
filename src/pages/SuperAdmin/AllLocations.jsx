@@ -27,6 +27,7 @@ const AllLocations = () => {
     const [showModal, setShowModal] = useState(false);
     const [fetchingQRCode, setFetchingQRCode] = useState(false);
     const [qrCodeError, setQrCodeError] = useState(null);
+    const [deleteType, setDeleteType] = useState(''); // To differentiate between soft and hard delete
 
     const navigate = useNavigate();
 
@@ -60,7 +61,7 @@ const AllLocations = () => {
                 }
             });
             if (Array.isArray(response.data)) {
-                setLocations(response.data.filter(location => !location.isDeleted));
+                setLocations(response.data);
             } else {
                 setLocations([]);
             }
@@ -102,8 +103,9 @@ const AllLocations = () => {
         }
     };
 
-    const confirmDeleteLocation = (id) => {
+    const confirmDeleteLocation = (id, type) => {
         setLocationToDelete(id);
+        setDeleteType(type);
         setShowDeleteModal(true);
     };
     
@@ -112,7 +114,11 @@ const AllLocations = () => {
         if (!token) return;
     
         try {
-            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/locations/${locationToDelete}/hard`, {
+            const url = deleteType === 'soft' 
+                ? `${config.API_BASE_URL}/api/v1/locations/soft-delete/${locationToDelete}`
+                : `${config.API_BASE_URL}/api/v1/locations/${locationToDelete}/hard`;
+
+            const response = await axios.delete(url, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -128,7 +134,6 @@ const AllLocations = () => {
             setShowDeleteModal(false);
         }
     };
-    
 
     const getPartnerDetails = (partnerId) => {
         const partner = partners.find(p => p._id === partnerId || (p.user && p.user._id === partnerId));
@@ -246,6 +251,7 @@ const AllLocations = () => {
                                             <th className="py-3 px-6 text-left font-bold">Close Time</th>
                                             <th className="py-3 px-6 text-left font-bold">Partner</th>
                                             <th className="py-3 px-6 text-left font-bold">Actions</th>
+                                            <th className="py-3 px-6 text-left font-bold">Trash</th>
                                         </tr>
                                     </thead>
 
@@ -288,11 +294,23 @@ const AllLocations = () => {
                                                             Edit
                                                         </button>
                                                         <button
-                                                            onClick={() => confirmDeleteLocation(location._id)}
+                                                            onClick={() => confirmDeleteLocation(location._id, 'hard')}
                                                             className="px-4 py-2 rounded-lg bg-red-500 text-white transition duration-150"
                                                         >
                                                             Delete
                                                         </button>
+                                                    </td>
+                                                    <td className="py-3 px-6 border-b text-center">
+                                                        {location.isDeleted ? (
+                                                            <span className="text-gray-500">Soft Deleted</span>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => confirmDeleteLocation(location._id, 'soft')}
+                                                                className="px-4 py-2 rounded-lg bg-orange-500 text-white transition duration-150"
+                                                            >
+                                                                Trash
+                                                            </button>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             );

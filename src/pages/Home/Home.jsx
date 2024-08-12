@@ -43,12 +43,13 @@ const Home = () => {
       {/* <Team /> */}
 
       {/* Counter */}
-      <Counter />
+      {/* <Counter /> */}
+      <Review />
 
       <Choose />
     
       {/* Review */}
-      {/* <Review /> */}
+      
 
       <Blog/>
 

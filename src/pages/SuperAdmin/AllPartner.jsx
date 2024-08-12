@@ -40,8 +40,6 @@ const AllPartner = () => {
                     },
                 });
 
-                console.log('API Response:', response.data);
-
                 const fetchedPartners = response.data.map(partner => ({
                     id: partner._id,
                     username: partner.user.username,
@@ -49,6 +47,7 @@ const AllPartner = () => {
                     businessAddress: partner.businessAddress,
                     tradeLicenseNumber: partner.tradeLicenseNumber,
                     isLocked: partner.user.isLocked,
+                    isDeleted: partner.user.isDeleted,
                 }));
 
                 setPartners(fetchedPartners);
@@ -73,32 +72,43 @@ const AllPartner = () => {
         setModalIsOpen(true);
     };
 
-    const confirmAction = () => {
-        if (actionType === 'lock' || actionType === 'unlock') {
-            setPartners(partners.map(partner =>
-                partner.id === selectedPartner.id ? { ...partner, isLocked: actionType === 'lock' } : partner
-            ));
-        }
-        setModalIsOpen(false);
-        setSelectedPartner(null);
-        setActionType('');
-    };
-
-    const softDeletePartner = async (id) => {
+    const confirmAction = async () => {
         const token = localStorage.getItem('token');
-        console.log(`Attempting to delete partner with ID: ${id}`);
         try {
-            const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/partners/${id}/hard`, { // Update the URL to match your requirements
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            console.log('API Response:', response.data);
-            setPartners(partners.filter(partner => partner.id !== id));
-            setErrorMessage('Partner deleted successfully');
+            if (actionType === 'lock' || actionType === 'unlock') {
+                setPartners(partners.map(partner =>
+                    partner.id === selectedPartner.id ? { ...partner, isLocked: actionType === 'lock' } : partner
+                ));
+                // Implement lock/unlock API call here
+            } else if (actionType === 'softDelete') {
+                const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/partners/${selectedPartner.id}/soft`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                console.log('Soft Delete Response:', response.data);
+                setPartners(partners.map(partner =>
+                    partner.id === selectedPartner.id ? { ...partner, isDeleted: true } : partner
+                ));
+                setErrorMessage('Partner soft deleted successfully');
+            } else if (actionType === 'hardDelete') {
+                // Add logic for hard delete warning
+                const response = await axios.delete(`${config.API_BASE_URL}/api/v1/users/partners/${selectedPartner.id}/hard`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                console.log('Hard Delete Response:', response.data);
+                setPartners(partners.filter(partner => partner.id !== selectedPartner.id));
+                setErrorMessage('Partner deleted successfully');
+            }
         } catch (err) {
             console.error('Error:', err);
-            setErrorMessage('Failed to delete partner. Please try again.');
+            setErrorMessage('Failed to perform action. Please try again.');
+        } finally {
+            setModalIsOpen(false);
+            setSelectedPartner(null);
+            setActionType('');
         }
     };
 
@@ -168,6 +178,7 @@ const AllPartner = () => {
                                         <th className="w-2/5 py-3 px-6 text-left">Business Address</th>
                                         <th className="w-1/5 py-3 px-6 text-left">ABN Number</th>
                                         <th className="w-1/5 py-3 px-6 text-left">Actions</th>
+                                        <th className="w-1/5 py-3 px-6 text-left">Trash</th>
                                     </tr>
                                 </thead>
 
@@ -195,11 +206,23 @@ const AllPartner = () => {
                                                     {partner.isLocked ? 'Unlock' : 'Lock'}
                                                 </button>
                                                 <button
-                                                    onClick={() => softDeletePartner(partner.id)}
+                                                    onClick={() => handleAction(partner, 'hardDelete')}
                                                     className="px-2 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
                                                 >
                                                     Delete
                                                 </button>
+                                            </td>
+                                            <td className="py-4 px-8 border text-center">
+                                                {partner.isDeleted ? (
+                                                    <span className="text-gray-500">Soft Deleted</span>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleAction(partner, 'softDelete')}
+                                                        className="px-2 py-2 bg-orange-500 hover:bg-orange-700 text-white rounded"
+                                                    >
+                                                        Trash
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
@@ -233,8 +256,10 @@ const AllPartner = () => {
                 overlayClassName="fixed inset-0 bg-black bg-opacity-50"
             >
                 <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-                    <h2 className="text-xl font-semibold mb-4">Confirm {actionType === 'lock' ? 'Lock' : 'Unlock'} Action</h2>
-                    <p className="mb-6">Are you sure you want to {actionType} this partner?</p>
+                    <h2 className="text-xl font-semibold mb-4">Confirm {actionType === 'lock' ? 'Lock' : actionType === 'unlock' ? 'Unlock' : actionType === 'softDelete' ? 'Soft Delete' : 'Hard Delete'} Action</h2>
+                    <p className="mb-6">
+                        Are you sure you want to {actionType === 'hardDelete' ? 'permanently delete this partner? This action will unassign all the bookings done by customers.' : actionType === 'softDelete' ? 'soft delete this partner? You can restore it later if needed.' : `${actionType} this partner?`}
+                    </p>
                     <div className="flex justify-end space-x-4">
                         <button
                             onClick={() => setModalIsOpen(false)}

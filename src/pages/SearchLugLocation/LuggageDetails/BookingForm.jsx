@@ -39,7 +39,7 @@ const BookingForm = ({
   useEffect(() => {
     // Set default check-in and check-out times
     const checkin = moment().tz(australianTimeZone).add(4, 'hours').format('YYYY-MM-DDTHH:mm');
-    const checkout = moment(checkin).tz(australianTimeZone).add(4, 'hours').format('YYYY-MM-DDTHH:mm');
+    const checkout = moment(checkin).tz(australianTimeZone).add(1, 'days').format('YYYY-MM-DDTHH:mm');
 
     setCheckinTime(checkin);
     setCheckoutTime(checkout);
@@ -243,13 +243,23 @@ const BookingForm = ({
         </div>
 
         <div className="border-t border-gray-300 pt-4">
-          <h6 className="font-bold mb-2">Price details</h6>
-          <span>{luggageQuantity} Checked bag{luggageQuantity > 1 ? 's' : ''} (A${(10.50).toFixed(2)} per day)</span>
-          <div className="flex justify-between font-bold text-lg mt-4">
-            <span>Total</span>
-            <span>A${totalPrice.toFixed(2)}</span>
-          </div>
-        </div>
+  <h6 className="font-bold mb-2">Price details</h6>
+
+  <div className="flex justify-between">
+    <span>
+      {luggageQuantity} Checked bag{luggageQuantity > 1 ? 's' : ''} (A${(9.00).toFixed(2)}) x{' '}
+      {calculateDuration(checkinTime, checkoutTime)} day{calculateDuration(checkinTime, checkoutTime) > 1 ? 's' : ''}
+    </span>
+    {/* <span>A${totalPrice.toFixed(2)}</span> */}
+    
+  </div>
+  <span>Service Charge included</span>
+  <div className="flex justify-between font-bold text-lg mt-4">
+    <span>Total</span>
+    <span>A${totalPrice.toFixed(2)}</span>
+  </div>
+</div>
+
 
         <Button 
           variant="primary" 

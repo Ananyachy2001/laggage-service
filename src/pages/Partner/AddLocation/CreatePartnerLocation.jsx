@@ -36,7 +36,7 @@ const CreatePartnerLocation = () => {
         formData.append('address[zipCode]', values.zipCode);
         formData.append('address[country]', values.country);
         formData.append('capacity', values.capacity);
-        formData.append('availableSpace', 100);  // Default value
+        formData.append('availableSpace', 10000);  // Default value
         formData.append('regularPrice', 1000);   // Default value
         formData.append('discountPercentage', 10); // Default value
         formData.append('availableFrom', new Date().toISOString().split('T')[0]);  // Today's date

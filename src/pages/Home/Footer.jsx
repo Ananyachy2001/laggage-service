@@ -1,5 +1,7 @@
 import React from 'react';
 import logo from '../../img/home-two/logo3.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebookF, faInstagram, faTwitter, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
 
 function Footer() {
   return (
@@ -35,15 +37,26 @@ function Footer() {
           <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
             <h3 className="text-lg font-bold mb-4 hover:text-teal-200 transition-colors duration-300">Contact Info</h3>
             <ul className="space-y-2">
-              <li><span> Address: 52 MERLIN ST CRAIGIEBURN VIC 3064</span></li>
+              <li><span>Address: 52 MERLIN ST CRAIGIEBURN VIC 3064</span></li>
               <li><span>Email: <a href="mailto:admin@Urloker.com" className="hover:underline hover:text-teal-200 transition-colors duration-300">admin@Urloker.com</a></span></li>
               <li><span>Phone: <a href="tel:+0123456789" className="hover:underline hover:text-teal-200 transition-colors duration-300">+0123 456 789</a></span></li>
             </ul>
-            <div className="flex space-x-4 mt-4">
-              <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300"><i className='bx bxl-facebook'></i></a>
-              <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300"><i className='bx bxl-twitter'></i></a>
-              <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300"><i className='bx bxl-linkedin'></i></a>
-              <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300"><i className='bx bxl-instagram'></i></a>
+            <div className="mt-8">
+              <h4 className="text-lg font-bold mb-4 hover:text-teal-200 transition-colors duration-300">Follow Us</h4>
+              <div className="flex space-x-4">
+                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300">
+                  <FontAwesomeIcon icon={faFacebookF} />
+                </a>
+                <a href="#" className="text-white hover:text-pink-600 transition-colors duration-300">
+                  <FontAwesomeIcon icon={faInstagram} />
+                </a>
+                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300">
+                  <FontAwesomeIcon icon={faTwitter} />
+                </a>
+                <a href="#" className="text-white hover:text-blue-600 transition-colors duration-300">
+                  <FontAwesomeIcon icon={faLinkedinIn} />
+                </a>
+              </div>
             </div>
           </div>
         </div>

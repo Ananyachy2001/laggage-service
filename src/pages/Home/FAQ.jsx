@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle, faComments, faPlusCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faPlusCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 
 function FAQ() {
   // Create a state to handle the toggle of each FAQ item
@@ -30,7 +30,6 @@ function FAQ() {
       question: "Is hourly luggage storage available at Urloker?",
       answer: " We offer a flat 24-hour rate, ensuring you get the same great price whether you store your items for just a few hours or the entire day."
     },
-
     {
       question: "Looking for luggage lockers nearby?",
       answer: " We partner with trusted businesses that provide secure storage areas for your belongings, offering the same safety and convenience as traditional lockers—without the hassle of availability or size constraints."
@@ -52,7 +51,7 @@ function FAQ() {
           Have Any Questions? We Are Here To Answer You <FontAwesomeIcon icon={faQuestionCircle} />
         </h2>
         <div className="flex flex-wrap -mx-4">
-          <div className="w-full lg:w-1/2 px-4 mb-8">
+          <div className="w-full lg:w-3/4 px-4 mx-auto">
             <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105">
               {faqs.map((faq, index) => (
                 <div key={index} className="mb-4">
@@ -67,20 +66,6 @@ function FAQ() {
                   )}
                 </div>
               ))}
-            </div>
-          </div>
-          <div className="w-full lg:w-1/2 px-4">
-            <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105">
-              <h5 className="text-2xl font-bold text-center text-gray-800 mb-6 transition duration-500 ease-in-out hover:text-blue-500">
-                Chat with Us <FontAwesomeIcon icon={faComments} />
-              </h5>
-              <div className="bg-gray-100 p-4 rounded-lg shadow-inner mb-4" style={{ height: '200px', overflowY: 'auto' }} id="chat-messages">
-                {/* Chat messages will be displayed here */}
-              </div>
-              <div className="flex">
-                <input type="text" id="chat-input" className="flex-grow p-2 rounded-l border border-gray-300" placeholder="Type your message..." />
-                <button className="bg-blue-600 text-white p-2 rounded-r hover:bg-blue-700 transition duration-300" onClick={() => alert('Send message functionality is not implemented.')}>Send</button>
-              </div>
             </div>
           </div>
         </div>

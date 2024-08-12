@@ -5,21 +5,21 @@ import review3 from '../../img/home-two/team-1.jpg';
 
 const reviews = [
   {
-    name: "Jason Doe",
+    name: "Mason Doe",
     position: "Client",
     image: review1,
     text: "The luggage service provided by this company is exceptional. Their attention to detail and commitment to quality have greatly enhanced our travel experience. Highly recommended!",
     rating: 5
   },
   {
-    name: "Alina Decros",
+    name: "Alisa Decros",
     position: "Client",
     image: review2,
     text: "I have been thoroughly impressed with the luggage services. From prompt delivery to the pristine condition of the luggage, everything was perfect. Their professionalism is unmatched.",
     rating: 5
   },
   {
-    name: "Jac Jacson",
+    name: "Jac Lorry",
     position: "Client",
     image: review3,
     text: "Outstanding service! The team goes above and beyond to ensure customer satisfaction. The luggage quality is top-notch and their support is always there when you need it.",
@@ -60,7 +60,7 @@ const Review = () => {
   return (
     <section className="bg-gray-200 py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">What Clients Say About Us</h2>
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">What Our Clients Say About Us</h2>
         <div className="max-w-xl mx-auto overflow-hidden bg-white rounded-lg shadow-lg hover:shadow-2xl transition ease-in-out duration-500 transform hover:scale-105">
           <img src={image} alt={name} className="w-32 h-32 rounded-full mx-auto mt-4 border-4 border-primary-500 transition ease-in-out duration-500 hover:shadow-lg" />
           <div className="text-center px-6 py-4">

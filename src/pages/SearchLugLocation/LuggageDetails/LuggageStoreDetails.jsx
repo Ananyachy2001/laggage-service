@@ -43,6 +43,7 @@ const LuggageStoreDetails = () => {
   const [clientSecret, setClientSecret] = useState('');
   const [bookingId, setBookingId] = useState('');
   const [bookingError, setBookingError] = useState('');
+  const [showBookingErrorModal, setShowBookingErrorModal] = useState(false);
 
   const GOOGLE_MAPS_API_KEY = config.GOOGLE_API_KEY;
 
@@ -109,24 +110,23 @@ const LuggageStoreDetails = () => {
       const response = await fetch(url, fetchOptions);
       const result = await response.json();
       
-      // Log the result of the instant booking attempt
       console.log('Instant booking result:', result);
     
       if (result.status === 'success') {
         setClientSecret(result.clientSecret);
         setBookingId(result.booking._id);
-        
-        // Log the booking ID
         console.log('Booking ID:', result.booking._id);
-        
         setShowPaymentModal(true);
       } else {
         console.error('Booking error:', result);
-        setBookingError(result.message); // Set the error message here
+
+        if (result.message.includes('Location is not available')) {
+          setShowBookingErrorModal(true); 
+        }
       }
     } catch (error) {
       console.error('Error:', error);
-      setBookingError('An unexpected error occurred. Please try again later.'); // Fallback error message
+      setBookingError('An unexpected error occurred. Please try again later.');
     }
   };
 
@@ -163,6 +163,11 @@ const LuggageStoreDetails = () => {
 
     fetchProfileData();
   }, []);
+
+  const handleBookingErrorModalClose = () => {
+    setShowBookingErrorModal(false);
+    window.location.reload(); // Refresh the page when OK is clicked
+  };
 
   return (
     <Elements stripe={stripePromise}>
@@ -221,13 +226,34 @@ const LuggageStoreDetails = () => {
             </div>
           </div>
         </div>
-        {showPaymentModal && <PaymentFormModal clientSecret={clientSecret} clientDetails={clientDetails} bookingId={bookingId} storeDetails={storeDetails} />}
+        {showPaymentModal && (
+          <PaymentFormModal 
+            clientSecret={clientSecret} 
+            clientDetails={clientDetails} 
+            bookingId={bookingId} 
+            storeDetails={storeDetails} 
+            totalPrice={totalPrice} // Pass the total price here
+          />
+        )}
+        {/* Booking Error Modal */}
+        <Modal show={showBookingErrorModal} onHide={handleBookingErrorModalClose} className="modal-dialog-centered">
+          <Modal.Header closeButton>
+            <Modal.Title className='bg-gray-200 text-red-500'>Booking Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Location is not available for the selected dates and times. Your booking has already been processed.</p>
+            <Button variant="primary" onClick={handleBookingErrorModalClose}>
+              OK
+            </Button>
+          </Modal.Body>
+        </Modal>
       </div>
     </Elements>
   );
 };
 
-const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, storeDetails }) => {
+
+const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, storeDetails, totalPrice }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState('');
@@ -248,9 +274,6 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, storeDetails
       },
     });
   
-    // Log the payment intent object
-    console.log('PaymentIntent:', paymentIntent);
-  
     if (error) {
       setErrorMessage(error.message);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
@@ -264,13 +287,11 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, storeDetails
         });
   
         const responseData = await response.json();
-        console.log('Booking Update Response:', responseData);
   
         if (!response.ok) {
           throw new Error('Failed to update booking status');
         }
   
-        // Navigate to the payment success page with additional data
         navigate('/payment-success', {
           state: { 
             paymentIntent, 
@@ -287,34 +308,79 @@ const PaymentFormModal = ({ clientSecret, clientDetails, bookingId, storeDetails
           },
         });
         
-        
       } catch (error) {
         console.error('Error updating booking status:', error);
       }
     } else {
-      navigate('/payment-cancelled');  // Navigate to the Payment Cancelled page
+      navigate('/payment-cancelled');
     }
   };
 
   return (
-    <Modal show onHide={() => {}} className="modal-dialog-centered">
-      <Modal.Header closeButton className="bg-[#1A73A7] text-white">
-        <Modal.Title>Complete Your Payment</Modal.Title>
-      </Modal.Header>
-      <Modal.Body className="bg-gray-100 p-6 rounded-lg">
-        <form onSubmit={handlePayment} className="space-y-4">
-          <div>
-            <CardElement className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
-          </div>
-          {errorMessage && <div className="text-red-500">{errorMessage}</div>}
-          <Button variant="primary" type="submit" className="w-full bg-[#1A73A7] text-white py-3 rounded-lg hover:bg-blue-500 transition duration-300">
-            Pay Now
-          </Button>
-        </form>
-      </Modal.Body>
-    </Modal>
+<Modal show onHide={() => {}} className="modal-dialog-centered">
+  <Modal.Header closeButton className="bg-[#1A73A7] text-white">
+    <Modal.Title className="text-lg font-semibold">Complete Your Payment</Modal.Title>
+  </Modal.Header>
+  <Modal.Body className="bg-gray-100 p-6 rounded-lg">
+    <form onSubmit={handlePayment} className="space-y-6">
+      
+      {/* Payment Information */}
+      <div className="p-4 bg-white shadow-md rounded-lg">
+        <h6 className="text-gray-800 font-medium mb-3">Enter Your Payment Details</h6>
+        <CardElement 
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
+          options={{
+            style: {
+              base: {
+                fontSize: '16px',
+                color: '#32325d',
+                '::placeholder': {
+                  color: '#a0aec0',
+                },
+              },
+              invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a',
+              },
+            },
+          }} 
+        />
+        <div className="bg-white p-4  ">
+        
+        <div className="flex justify-between items-center py-2">
+          <span className="text-gray-600">Service Charge:</span>
+          <span className="text-gray-800 font-semibold">A$2.60 per day</span>
+        </div>
+        <div className="flex justify-between items-center py-2 border-t border-gray-200">
+          <span className="text-gray-600">Total Price:</span>
+          <span className="text-gray-800 font-semibold">A${totalPrice.toFixed(2)}</span>
+        </div>
+      </div>
+
+
+      </div>
+
+      {/* Price Details */}
+      
+
+      {/* Error Message */}
+      {errorMessage && <div className="text-red-500 text-center">{errorMessage}</div>}
+
+      {/* Submit Button */}
+      <Button 
+        variant="primary" 
+        type="submit" 
+        className="w-full bg-[#1A73A7] text-white py-3 rounded-lg hover:bg-blue-600 transition duration-300 font-semibold"
+      >
+        Pay Now
+      </Button>
+    </form>
+  </Modal.Body>
+</Modal>
+
   );
 };
+
 
 
 export default LuggageStoreDetails;

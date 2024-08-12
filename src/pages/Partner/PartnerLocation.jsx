@@ -205,29 +205,29 @@ const PartnerLocations = () => {
             {/* QR Code Modal */}
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
-                    <div className="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
-                    <div className="bg-white rounded-lg p-8 z-10 shadow-lg w-full max-w-md">
-                        {fetchingQRCode ? (
-                            <div className="flex justify-center">
-                                <div className="loader"></div>
-                            </div>
-                        ) : qrCodeError ? (
-                            <div className="text-red-500">{qrCodeError}</div>
-                        ) : (
-                            <div className="text-center">
-                                <img src={logo} alt="Logo" className="mb-4 w-32 mx-auto" />
-                                
-                                <img src={qrCode} alt="QR Code" className="mb-4 mx-auto" />
-                                <button
-                                    onClick={() => setShowModal(false)}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-150"
-                                >
-                                    OK
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
+    <div className="fixed inset-0 bg-gray-300 bg-opacity-75"></div> {/* Updated background color */}
+    <div className="bg-cyan-900  rounded-lg p-8 z-10 shadow-lg w-full max-w-md">
+        {fetchingQRCode ? (
+            <div className="flex justify-center">
+                <div className="loader"></div>
+            </div>
+        ) : qrCodeError ? (
+            <div className="text-red-500">{qrCodeError}</div>
+        ) : (
+            <div className="text-center ">
+                <img src={logo} alt="Logo" className="mb-4 w-48 mx-auto" /> {/* Larger logo */}
+                <img src={qrCode} alt="QR Code" className="mb-8 w-48 mx-auto" /> {/* Smaller QR Code */}
+                <button
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 transition duration-150"
+                >
+                    OK
+                </button>
+            </div>
+        )}
+    </div>
+</div>
+
             )}
         </div>
     );
