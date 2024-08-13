@@ -47,7 +47,7 @@ const NavbarComp = ({ currentLanguage = 'en', setLanguage }) => {
 
   return (
     <div className="fixed top-0 w-full bg-white shadow-md z-50">
-      <div className="container mx-auto flex justify-between items-center py-4 px-6">
+      <div className="container mx-auto flex justify-between items-center py-4 px-24">
         <div className="flex items-center">
           <a href="/" className="flex items-center">
             <img src={logo} alt="logo1" className="h-16 w-40" />
@@ -118,7 +118,7 @@ const NavbarComp = ({ currentLanguage = 'en', setLanguage }) => {
             </div>
             {setLanguage && (
               <div 
-                className="relative group"
+                className="relative group ps-12"
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
               >

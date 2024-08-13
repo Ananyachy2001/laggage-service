@@ -265,19 +265,31 @@ const BookingForm = ({
   <h6 className="font-bold mb-2">Price details</h6>
 
   <div className="flex justify-between">
-    <span>
-      {luggageQuantity} Checked bag{luggageQuantity > 1 ? 's' : ''} (A${(7.90).toFixed(2)}) x{' '}
-      {calculateDuration(checkinTime, checkoutTime)} day{calculateDuration(checkinTime, checkoutTime) > 1 ? 's' : ''}
-    </span>
-    {/* <span>A${totalPrice.toFixed(2)}</span> */}
-    
-  </div>
-  <span>Service Charge included</span>
-  <div className="flex justify-between font-bold text-lg mt-4">
-    <span>Total</span>
-    <span>A${totalPrice.toFixed(2)}</span>
-  </div>
+  <span>
+    {luggageQuantity} Checked bag{luggageQuantity > 1 ? 's' : ''} (A${(7.90).toFixed(2)}) x{' '}
+    {calculateDuration(checkinTime, checkoutTime)} day{calculateDuration(checkinTime, checkoutTime) > 1 ? 's' : ''}
+  </span>
+  <span>
+    A${(luggageQuantity * 7.90 * calculateDuration(checkinTime, checkoutTime)).toFixed(2)}
+  </span>
 </div>
+
+{/* <div className="flex justify-between">
+  <span>Service Charge per day</span>
+  <span>A${(2.60).toFixed(2)}</span>
+</div> */}
+
+<div className="flex justify-between pt-2">
+  <span>Total Service Charge per day (A$2.60 x {calculateDuration(checkinTime, checkoutTime)} day{calculateDuration(checkinTime, checkoutTime) > 1 ? 's' : ''})</span>
+  <span>A${(2.60 * calculateDuration(checkinTime, checkoutTime)).toFixed(2)}</span>
+</div>
+
+
+    <div className="flex justify-between font-bold text-xl mt-4">
+      <span>Total</span>
+      <span>A${totalPrice.toFixed(2)}</span>
+    </div>
+  </div>
 
 
         <Button 
