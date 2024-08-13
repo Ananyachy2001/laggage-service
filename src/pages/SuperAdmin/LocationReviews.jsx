@@ -4,7 +4,7 @@ import axios from 'axios';
 import config from '../../config';
 import SuperAdminSidebar from '../../partials/SuperAdminSidebar';
 import SuperAdminHeader from '../../partials/SuperAdminHeader';
-import { FaStar, FaEdit } from 'react-icons/fa';
+import { FaStar, FaEdit, FaPlus } from 'react-icons/fa';
 
 const LocationReviews = () => {
     const { locationId } = useParams();
@@ -14,12 +14,19 @@ const LocationReviews = () => {
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // Modal and rating state
+    // Modal and rating state for editing reviews
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentRating, setCurrentRating] = useState(0);
     const [currentReviewId, setCurrentReviewId] = useState(null);
     const [modalError, setModalError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+
+    // Modal state for adding reviews
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [newRating, setNewRating] = useState(0);
+    const [newComment, setNewComment] = useState('');
+    const [addModalError, setAddModalError] = useState(null);
+    const [addSuccessMessage, setAddSuccessMessage] = useState(null);
 
     useEffect(() => {
         fetchReviews();
@@ -107,6 +114,45 @@ const LocationReviews = () => {
         }
     };
 
+    const handleAddReview = () => {
+        setIsAddModalOpen(true);
+        setNewRating(0);
+        setNewComment('');
+        setAddModalError(null);
+        setAddSuccessMessage(null);
+    };
+
+    const handleSubmitNewReview = async () => {
+        const token = getToken();
+        if (!token) return;
+
+        try {
+            const response = await axios.post(
+                `${config.API_BASE_URL}/api/v1/reviews`,
+                {
+                    locationId,
+                    rating: newRating,
+                    comment: newComment,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.data.status === 'success') {
+                setAddSuccessMessage('Review added successfully');
+                setIsAddModalOpen(false);
+                fetchReviews();
+            } else {
+                setAddModalError('Failed to add review');
+            }
+        } catch (error) {
+            setAddModalError('Failed to add review');
+        }
+    };
+
     return (
         <div className="flex h-screen overflow-hidden">
             <SuperAdminSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -121,6 +167,13 @@ const LocationReviews = () => {
                             className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
                         >
                             Back
+                        </button>
+                        <button
+                            onClick={handleAddReview}
+                            className="mb-4 ml-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300"
+                        >
+                            <FaPlus className="inline mr-2" />
+                            Add Review
                         </button>
 
                         {loading ? (
@@ -197,6 +250,40 @@ const LocationReviews = () => {
                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
                             >
                                 Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal for Adding Review */}
+            {isAddModalOpen && (
+                <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 className="text-xl font-bold mb-4">Add Review</h2>
+                        <div className="flex justify-center mb-4">
+                            {renderStars(newRating, setNewRating)}
+                        </div>
+                        <textarea
+                            className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
+                            placeholder="Enter your comment..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                        />
+                        {addModalError && <div className="text-red-500 mb-4">{addModalError}</div>}
+                        {addSuccessMessage && <div className="text-green-500 mb-4">{addSuccessMessage}</div>}
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => setIsAddModalOpen(false)}
+                                className="px-4 py-2 mr-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-300"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmitNewReview}
+                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300"
+                            >
+                                Submit
                             </button>
                         </div>
                     </div>

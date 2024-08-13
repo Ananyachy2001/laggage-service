@@ -145,7 +145,7 @@ const BookingForm = ({
     if (!validateDateTime(checkinTime, checkoutTime)) {
       return;
     }
-    
+
     setLoading(true); // Set loading to true
 
     const bookingData = {
@@ -266,7 +266,7 @@ const BookingForm = ({
 
   <div className="flex justify-between">
     <span>
-      {luggageQuantity} Checked bag{luggageQuantity > 1 ? 's' : ''} (A${(9.00).toFixed(2)}) x{' '}
+      {luggageQuantity} Checked bag{luggageQuantity > 1 ? 's' : ''} (A${(7.90).toFixed(2)}) x{' '}
       {calculateDuration(checkinTime, checkoutTime)} day{calculateDuration(checkinTime, checkoutTime) > 1 ? 's' : ''}
     </span>
     {/* <span>A${totalPrice.toFixed(2)}</span> */}

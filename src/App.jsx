@@ -66,6 +66,7 @@ import EditPartnerLocation from './pages/Partner/EditLocation/EditPartnerLocatio
 import SuperAdminPartnerAnalytics from './pages/SuperAdmin/SuperAdminPartnerAnalytics';
 import PaymentCancelled from './pages/SearchLugLocation/LuggageDetails/PaymentCancelled';
 import LocationReviews from './pages/SuperAdmin/LocationReviews';
+import AllPartnerPayment from './pages/SuperAdmin/AllPartnerPayment';
 
 
 function App() {
@@ -102,6 +103,7 @@ function App() {
         <Route exact path="/superadmin/clients" element={<AllClient />} />
         <Route exact path="/superadmin/user" element={<AllUser/>} />
         <Route exact path="/superadmin/partners" element={<AllPartner/>} />
+        <Route exact path="/superadmin/partners-payment" element={<AllPartnerPayment/>} />
         <Route exact path="/superadmin/partners/:id" element={<PartnerDetails />} />
         <Route exact path="/superadmin/clients/:id" element={<ClientDetails />} />
         <Route exact path="/superadmin/locations" element={<AllLocations/>} />

@@ -242,6 +242,7 @@ const LuggageStoreDetails = () => {
             bookingId={bookingId} 
             storeDetails={storeDetails} 
             totalPrice={totalPrice} // Pass the total price here
+            luggageQuantity={luggageQuantity}
           />
         )}
         {/* Booking Error Modal */}
@@ -250,7 +251,7 @@ const LuggageStoreDetails = () => {
             <Modal.Title className='bg-gray-200 text-red-500'>Booking Error</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>Location is not available for the selected dates and times. Your booking has already been processed.</p>
+            <p>Location is not available for the selected dates and times.</p>
             <Button variant="primary" onClick={handleBookingErrorModalClose}>
               OK
             </Button>
@@ -262,7 +263,7 @@ const LuggageStoreDetails = () => {
 };
 
 
-const PaymentFormModal = ({ clientSecret, clientDetails, guestDetails, bookingId, storeDetails, totalPrice }) => {
+const PaymentFormModal = ({ clientSecret, clientDetails, guestDetails, bookingId, storeDetails, totalPrice, luggageQuantity }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState('');
@@ -315,7 +316,9 @@ const PaymentFormModal = ({ clientSecret, clientDetails, guestDetails, bookingId
               endDate: responseData.endDate,
               locationid: storeDetails.id,
             },
-            storeDetails, 
+            storeDetails,
+            totalPrice,  // Pass the total price here
+            luggageQuantity // Pass the luggage quantity here
           },
         });
         
@@ -378,6 +381,7 @@ const PaymentFormModal = ({ clientSecret, clientDetails, guestDetails, bookingId
     </Modal>
   );
 };
+
 
 
 

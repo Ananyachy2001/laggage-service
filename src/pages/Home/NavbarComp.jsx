@@ -48,7 +48,7 @@ const NavbarComp = () => {
           <a href="/" className="flex items-center">
             <img src={logo} alt="logo1" className="h-16 w-40" />
           </a>
-          <div className="md:hidden ml-24">
+          <div className="md:hidden ml-4">
             <a href="/comingsoon" className="flex items-center text-[#1a73a7] hover:text-[#2a9b84]">
               <FontAwesomeIcon icon={faKey} className="mr-2" /> Urloker Keys
             </a>
@@ -75,11 +75,11 @@ const NavbarComp = () => {
             </svg>
           </button>
         </div>
-        <nav className={`flex-col md:flex md:flex-row md:space-x-4 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
-          <div className="md:flex md:flex-row md:space-x-4">
-            <a href="/" className="hover:text-[#2a9b84]">Home</a>
+        <nav className={`flex-col md:flex md:flex-row md:space-x-16 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
+          <div className="md:flex md:flex-row md:space-x-16">
+            <a href="/" className="hover:text-[#2a9b84] ">Home</a>
             {/* <a href="/guideline" className="hover:text-[#2a9b84]">Guideline</a> */}
-            <a href="/comingsoon" className="hidden md:block hover:text-[#2a9b84]">Urloker Keys</a>
+            <a href="/comingsoon" className="hidden md:block  hover:text-[#2a9b84] ">Urloker Keys</a>
           </div>
           <div className="md:flex md:flex-row md:space-x-4">
             <div 

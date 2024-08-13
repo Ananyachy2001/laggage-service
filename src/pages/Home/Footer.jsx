@@ -14,7 +14,7 @@ function Footer() {
             </a>
             <p className="hover:text-teal-200 transition-colors duration-300">Urloker offers secure and convenient luggage storage solutions for your home and office. </p>
           </div>
-          <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
+          <div className="w-full md:w-1/2 lg:w-1/5 px-6 mb-8">
             <h3 className="text-lg font-bold mb-4 hover:text-teal-200 transition-colors duration-300">Company</h3>
             <ul className="space-y-2">
               <li><a href="about.html" className="hover:underline hover:text-teal-200 transition-colors duration-300">About</a></li>
