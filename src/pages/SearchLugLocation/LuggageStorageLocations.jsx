@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import translations from '../Home/translations'; // Import translations
 
 // Import images
 import avalonAirport from '../../img/location_common/Avalon Airport.jpg';
@@ -56,7 +57,7 @@ const locations = [
   { name: 'Chadstone', image: chadstone },
 ];
 
-const LuggageStorageLocations = () => {
+const LuggageStorageLocations = ({ currentLanguage }) => {
   const carouselRef = useRef(null);
   const navigate = useNavigate();
 
@@ -89,10 +90,13 @@ const LuggageStorageLocations = () => {
     });
   };
 
+  // Get translations for the current language
+  const t = translations[currentLanguage].luggageStorageLocations;
+
   return (
     <div className="bg-gradient-to-b from-gray-200 via-white to-gray-300 py-24">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-extrabold text-center mb-12 text-[#4A686A]">Our Top Luggage Storage Locations</h2>
+        <h2 className="text-4xl font-extrabold text-center mb-12 text-[#4A686A]">{t.title}</h2>
         <div className="relative">
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
             <button
@@ -119,7 +123,7 @@ const LuggageStorageLocations = () => {
                     onClick={() => handleSearchLocation(location.name)}
                     className="bg-[#4A686A] text-white px-4 py-2 rounded-full hover:bg-[#2e4647] transition-colors duration-300"
                   >
-                    Search Location
+                    {t.searchButton}
                   </button>
                 </div>
               </div>

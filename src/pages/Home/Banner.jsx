@@ -4,10 +4,11 @@ import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 import backgroundImage from '../../img/home-two/luggage-1.jpg';
 import './Banner.css';
 import config from '../../config';
+import translations from './translations'; // Import your translations
 
 const libraries = ['places'];
 
-function Banner() {
+function Banner({ currentLanguage }) {
   const navigate = useNavigate();
   const [autocomplete, setAutocomplete] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -76,6 +77,9 @@ function Banner() {
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps</div>;
 
+  // Fetch translations for the current language
+  const { title, subtitle, searchPlaceholder, searchButton, findLocationsButton } = translations[currentLanguage].heroSection;
+
   return (
     <div
       className="banner bg-cover bg-center mt-28 h-screen flex items-center justify-center relative"
@@ -84,9 +88,9 @@ function Banner() {
       <div className="absolute inset-0 bg-gray-800 opacity-40 backdrop-blur-md"></div>
       <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold drop-shadow-lg">
-          <span className='slogan-color'>Freedom</span> in Every <span className='slogan-color'>Journey</span>
+          <span className='slogan-color'>{title.split(' ')[0]}</span> {title.split(' ')[1]} <span className='slogan-color'>{title.split(' ')[2]}</span>
         </h1>
-        <p className="mt-4 text-base sm:text-lg lg:text-xl drop-shadow-md">Looking For Luggage Services! We Are Here...</p>
+        <p className="mt-4 text-base sm:text-lg lg:text-xl drop-shadow-md">{subtitle}</p>
         <form id="locationForm" className="mt-4" onSubmit={handleSubmit} aria-label="Location search form">
           <div className="flex flex-col sm:flex-row justify-center items-center relative">
             <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
@@ -94,7 +98,7 @@ function Banner() {
                 type="text"
                 id="location"
                 className="form-input p-3 rounded-none sm:rounded-l-md shadow-md focus:outline-none focus:ring-1 focus:ring-blue-100 w-full sm:w-96 lg:w-[500px] mb-4 sm:mb-0 relative"
-                placeholder="Enter your location"
+                placeholder={searchPlaceholder}
                 ref={locationInputRef}
               />
             </Autocomplete>
@@ -102,7 +106,7 @@ function Banner() {
               type="submit"
               className="search-button bg-green-600 hover:bg-green-800 text-white rounded-none sm:rounded-r-md shadow-md transition duration-300 ease-in-out p-3 sm:px-6 w-full sm:w-auto"
             >
-              Search
+              {searchButton}
             </button>
           </div>
           <button
@@ -111,7 +115,7 @@ function Banner() {
             className={`find-button bg-green-600 hover:bg-green-800 text-white rounded-md shadow-md transition duration-300 ease-in-out mt-4 px-8 py-3 w-full sm:w-auto ${loadingLocation ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={loadingLocation}
           >
-            Find Closest Locations
+            {findLocationsButton}
           </button>
         </form>
       </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'tailwindcss/tailwind.css';
 import NavbarComp from './NavbarComp'; 
 import Banner from './Banner';
@@ -14,55 +14,27 @@ import Blog from './Blog';
 import LuggageStorageLocations from '../SearchLugLocation/LuggageStorageLocations';
 import ScrollToTopButton from './ScrollToTopButton';
 import HowItWorks from './HowitWorks';
-
+import translations from './translations';
 
 const Home = () => {
-    
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
   return (
-    
     <div>
-      <NavbarComp />
-      
-      <Banner />
-
-
-      <LuggageStorageLocations />
-
-      {/* How it Works */}
-      <HowItWorks />
-      {/* Services */}
-      {/* <Service /> */}
-      
-      {/* Projects */}
-      {/* <Projects /> */}
-      
-      {/* FAQ */}
-      <FAQ />
-      
-      {/* Team */}
-      {/* <Team /> */}
-
-      {/* Counter */}
-      {/* <Counter /> */}
-      <Review />
-
-      <Choose />
-    
-      {/* Review */}
-      
-
-      <Blog/>
-
-      {/* Footer */}
-      <Footer />
-
+      <NavbarComp 
+        currentLanguage={currentLanguage} 
+        setLanguage={setCurrentLanguage} 
+      />
+      <Banner currentLanguage={currentLanguage} />
+      <LuggageStorageLocations currentLanguage={currentLanguage} />
+      <HowItWorks currentLanguage={currentLanguage} />
+      <FAQ currentLanguage={currentLanguage} />
+      <Review currentLanguage={currentLanguage} />
+      <Choose currentLanguage={currentLanguage} />
+      <Blog currentLanguage={currentLanguage} />
+      <Footer currentLanguage={currentLanguage} />
       <ScrollToTopButton />
-      {/* <ChatbotButton /> */}
-      
-    
-
     </div>
-    
   );
 };
 

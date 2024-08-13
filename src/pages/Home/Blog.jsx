@@ -4,50 +4,29 @@ import { faComments, faEye, faArrowRight } from '@fortawesome/free-solid-svg-ico
 import furniture from '../../img/home-two/furniture-1.jpg';
 import luggage from '../../img/home-two/luggage-1.jpg';
 import hospital from '../../img/home-two/hospital-1.jpg';
+import translations from './translations'; // Import translations
 
-function Blog() {
-  const blogPosts = [
-    {
-      title: "Top-notch Clean Furniture and Tools for Your Comfort",
-      author: "Admin",
-      comments: 20,
-      views: 11,
-      imageUrl: furniture,
-      excerpt: "Discover how our meticulously clean furniture and tools enhance your travel experience. Learn why we are trusted by travelers worldwide.",
-      detailsUrl: "blog-details.html"
-    },
-    {
-      title: "Our Commitment to Hospital Luggage for Social Causes",
-      author: "Admin",
-      comments: 21,
-      views: 15,
-      imageUrl: hospital,
-      excerpt: "Read about our initiatives in providing specialized luggage for hospitals. See how we contribute to social causes through our services.",
-      detailsUrl: "blog-details.html"
-    },
-    {
-      title: "Excellence in Luggage Services - We Work for You",
-      author: "Admin",
-      comments: 22,
-      views: 20,
-      imageUrl: luggage,
-      excerpt: "Learn more about our dedication to offering the best luggage services. We prioritize your needs to ensure a seamless travel experience.",
-      detailsUrl: "blog-details.html"
-    }
-  ];
+function Blog({ currentLanguage = 'en' }) {
+  const t = translations[currentLanguage].blogSection; // Accessing blog section based on the current language
+
+  const imageMap = {
+    furniture,
+    luggage,
+    hospital,
+  };
 
   return (
     <section className="pt-20 pb-14 bg-gradient-to-b from-gray-100 to-gray-200">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-gray-800 mb-4">Tourist Spots</h2>
-          <p className="text-xl text-gray-600">Explore Our Destinations</p>
+          <h2 className="text-4xl font-extrabold text-gray-800 mb-4">{t.title}</h2>
+          <p className="text-xl text-gray-600">{t.subtitle}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.map((post, index) => (
+          {t.posts.map((post, index) => (
             <div key={index} className="bg-white transition duration-500 transform hover:-translate-y-2 hover:shadow-2xl rounded-lg overflow-hidden">
               <a href={post.detailsUrl} className="block">
-                <img src={post.imageUrl} alt="Blog" className="w-full h-64 object-cover transition duration-500 transform hover:scale-110" />
+                <img src={imageMap[post.imageUrl]} alt="Blog" className="w-full h-64 object-cover transition duration-500 transform hover:scale-110" />
               </a>
               <div className="p-6">
                 <h3 className="font-semibold text-xl leading-tight truncate mb-2">

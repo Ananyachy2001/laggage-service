@@ -4,8 +4,9 @@ import './Navbarcomp.css';
 import logo from '../../img/home-two/logo3.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey } from '@fortawesome/free-solid-svg-icons';
+import translations from './translations'; // Import your translations
 
-const NavbarComp = () => {
+const NavbarComp = ({ currentLanguage = 'en', setLanguage }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isHovering, setIsHovering] = useState(false);
@@ -41,6 +42,9 @@ const NavbarComp = () => {
     setLoginFormType(null);
   };
 
+  // Safeguard against invalid language keys
+  const currentTranslations = translations[currentLanguage] || translations['en'];
+
   return (
     <div className="fixed top-0 w-full bg-white shadow-md z-50">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
@@ -50,7 +54,7 @@ const NavbarComp = () => {
           </a>
           <div className="md:hidden ml-4">
             <a href="/comingsoon" className="flex items-center text-[#1a73a7] hover:text-[#2a9b84]">
-              <FontAwesomeIcon icon={faKey} className="mr-2" /> Urloker Keys
+              <FontAwesomeIcon icon={faKey} className="mr-2" /> {currentTranslations.header.urlokerKeys}
             </a>
           </div>
         </div>
@@ -77,9 +81,8 @@ const NavbarComp = () => {
         </div>
         <nav className={`flex-col md:flex md:flex-row md:space-x-16 text-[#1a73a7] ${isMenuOpen ? 'flex' : 'hidden'}`}>
           <div className="md:flex md:flex-row md:space-x-16">
-            <a href="/" className="hover:text-[#2a9b84] ">Home</a>
-            {/* <a href="/guideline" className="hover:text-[#2a9b84]">Guideline</a> */}
-            <a href="/comingsoon" className="hidden md:block  hover:text-[#2a9b84] ">Urloker Keys</a>
+            <a href="/" className="hover:text-[#2a9b84] ">{currentTranslations.header.home}</a>
+            <a href="/comingsoon" className="hidden md:block  hover:text-[#2a9b84] ">{currentTranslations.header.urlokerKeys}</a>
           </div>
           <div className="md:flex md:flex-row md:space-x-4">
             <div 
@@ -88,7 +91,7 @@ const NavbarComp = () => {
               onMouseLeave={() => setIsHovering(false)}
             >
               <button onClick={() => handleDropdownToggle('login')} className="hover:text-[#2a9b84] flex items-center focus:outline-none">
-                Login <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                {currentTranslations.header.login} <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
               <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'login' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
                 <a
@@ -113,20 +116,32 @@ const NavbarComp = () => {
                 </a>
               </div>
             </div>
-            {/* <div 
-              className="relative group"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              <button onClick={() => handleDropdownToggle('language')} className="hover:text-[#2a9b84] flex items-center focus:outline-none">
-                Language <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'language' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
-                {["English", "Spanish", "Chinese", "Arabic"].map(language => (
-                  <a href="#" key={language} className="block px-4 py-2 hover:bg-blue-800">{language}</a>
-                ))}
+            {setLanguage && (
+              <div 
+                className="relative group"
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+              >
+                <button onClick={() => handleDropdownToggle('language')} className="hover:text-[#2a9b84] flex items-center focus:outline-none">
+                  {currentTranslations.header.language} <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div className={`absolute bg-blue-900 text-white shadow-lg mt-1 rounded-md overflow-hidden ${activeDropdown === 'language' ? 'block' : 'hidden'} md:group-hover:block w-48`}>
+                  {["en", "es", "zh"].map(language => (
+                    <a 
+                      href="#" 
+                      key={language} 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setLanguage(language);
+                      }}
+                      className="block px-4 py-2 hover:bg-blue-800"
+                    >
+                      {translations[language].header.language}
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div> */}
+            )}
           </div>
         </nav>
       </div>
