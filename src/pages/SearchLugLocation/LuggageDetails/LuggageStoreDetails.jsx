@@ -12,6 +12,7 @@ import LuggageStoreInfo from './LuggageStoreInfo';
 import BookingForm from './BookingForm';
 import NavbarComp from '../../Home/NavbarComp';
 import { Button, Modal } from 'react-bootstrap';
+import { FiAlertCircle } from 'react-icons/fi';
 
 library.add(faMapMarkerAlt, faClock, faStar, faWifi, faShieldAlt, faTag);
 
@@ -126,13 +127,22 @@ const LuggageStoreDetails = () => {
       } else {
         console.error('Booking error:', result);
   
+        // Check for specific error messages and set them in the state
         if (result.message.includes('Location is not available')) {
-          setShowBookingErrorModal(true); 
+          setBookingError('Location is not available for the selected dates and times.');
+          setShowBookingErrorModal(true);
+        } else if (result.message.includes('Booking dates cannot be in the past')) {
+          setBookingError('Booking dates cannot be in the past.');
+          setShowBookingErrorModal(true);
+        } else {
+          setBookingError('An unexpected error occurred. Please try again later.');
+          setShowBookingErrorModal(true);
         }
       }
     } catch (error) {
       console.error('Error:', error);
       setBookingError('An unexpected error occurred. Please try again later.');
+      setShowBookingErrorModal(true);
     }
   };
   
@@ -251,7 +261,7 @@ const LuggageStoreDetails = () => {
             <Modal.Title className='bg-gray-200 text-red-500'>Booking Error</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>Location is not available for the selected dates and times.</p>
+            <p>{bookingError}</p> {/* Display the dynamic booking error message here */}
             <Button variant="primary" onClick={handleBookingErrorModalClose}>
               OK
             </Button>
@@ -302,7 +312,6 @@ const PaymentFormModal = ({ clientSecret, clientDetails, guestDetails, bookingId
           throw new Error('Failed to update booking status');
         }
 
-        // Navigate to the payment success page with all necessary details
         navigate('/payment-success', {
           state: { 
             paymentIntent, 
@@ -330,8 +339,12 @@ const PaymentFormModal = ({ clientSecret, clientDetails, guestDetails, bookingId
     }
   };
 
+  const handleClose = () => {
+    window.location.reload(); // Reload the page when the modal is closed
+  };
+
   return (
-    <Modal show onHide={() => {}} className="modal-dialog-centered">
+    <Modal show onHide={handleClose} className="modal-dialog-centered">
       <Modal.Header closeButton className="bg-[#1A73A7] text-white">
         <Modal.Title className="text-lg font-semibold">Complete Your Payment</Modal.Title>
       </Modal.Header>
@@ -358,17 +371,24 @@ const PaymentFormModal = ({ clientSecret, clientDetails, guestDetails, bookingId
               }} 
             />
             <div className="bg-white p-4  ">
-              <div className="flex justify-between items-center py-2">
-                <span className="text-gray-600">Service Charge:</span>
+              <div className="flex  items-center py-2">
+                <FiAlertCircle className="text-gray-700  " />
+                <span className="text-gray-600 mx-2">Service Charge:</span>
                 <span className="text-gray-800 font-semibold">A$2.60 per day</span>
               </div>
-              <div className="flex justify-between items-center py-2 border-t border-gray-200">
-                <span className="text-gray-600">Total Price:</span>
+              <div className="flex  items-center py-2 my-2 border-t border-gray-200">
+                <FiAlertCircle className="text-gray-700  " />
+                <span className="text-gray-600 mx-2">Total Price:</span>
                 <span className="text-gray-800 font-semibold">A${totalPrice.toFixed(2)}</span>
               </div>
             </div>
           </div>
-          {errorMessage && <div className="text-red-500 text-center">{errorMessage}</div>}
+          {errorMessage && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative flex items-center space-x-3" role="alert">
+              <FiAlertCircle className="text-red-700 w-5 h-5" />
+              <span className="block sm:inline">{errorMessage}</span>
+            </div>
+          )}
           <Button 
             variant="primary" 
             type="submit" 

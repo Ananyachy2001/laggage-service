@@ -4,6 +4,17 @@ import { faMapMarkerAlt, faClock, faTag, faWifi, faStar } from '@fortawesome/fre
 import 'tailwindcss/tailwind.css';
 import config from '../../../config';
 
+// Function to generate random customer names
+const generateRandomName = () => {
+  const firstNames = ['John', 'Jane', 'Alex', 'Chris', 'Taylor', 'Morgan', 'Jordan', 'Casey', 'Sydney', 'Pat'];
+  const lastNames = ['Doe', 'Smith', 'Johnson', 'Brown', 'Lee', 'Walker', 'Davis', 'Martinez', 'Garcia', 'Lewis'];
+  
+  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+  
+  return `${firstName} ${lastName}`;
+};
+
 const LuggageStoreInfo = ({
   id,
   title,
@@ -136,36 +147,35 @@ const LuggageStoreInfo = ({
         <h4 className="text-2xl font-semibold mb-4">Customer Reviews</h4>
 
         <ul className="space-y-6">
-  {reviews.map((review, index) => (
-    <li key={review._id} className="p-5 bg-gray-100 rounded-lg shadow-md">
-      <div className="flex items-center mb-3">
-        <p className="font-semibold text-lg mr-4">
-          Anonymous {index + 1}:
-        </p>
-        {[...Array(review.rating)].map((_, i) => (
-          <FontAwesomeIcon
-            key={i}
-            icon={faStar}
-            className="text-yellow-500 mr-1"
-          />
-        ))}
+          {reviews.map((review) => (
+            <li key={review._id} className="p-5 bg-gray-100 rounded-lg shadow-md">
+              <div className="flex items-center mb-3">
+                <p className="font-semibold text-lg mr-4">
+                  {generateRandomName()}:
+                </p>
+                {[...Array(review.rating)].map((_, i) => (
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    className="text-yellow-500 mr-1"
+                  />
+                ))}
 
-        {[...Array(5 - review.rating)].map((_, i) => (
-          <FontAwesomeIcon
-            key={i}
-            icon={faStar}
-            className="text-gray-300 mr-1"
-          />
-        ))}
-      </div>
+                {[...Array(5 - review.rating)].map((_, i) => (
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    className="text-gray-300 mr-1"
+                  />
+                ))}
+              </div>
 
-      <p className="text-gray-700 text-base mt-2">
-        <b className="ms-8">Comment:</b> {review.comment}
-      </p>
-    </li>
-  ))}
-</ul>
-
+              <p className="text-gray-700 text-base mt-2">
+                <b className="ms-8">Comment:</b> {review.comment}
+              </p>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Customer's Anonymous Ratings Section */}

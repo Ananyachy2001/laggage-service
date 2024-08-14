@@ -38,8 +38,8 @@ const BookingForm = ({
 
   useEffect(() => {
     // Set default check-in and check-out times
-    const checkin = moment().tz(australianTimeZone).add(4, 'hours').format('YYYY-MM-DDTHH:mm');
-    const checkout = moment(checkin).tz(australianTimeZone).add(1, 'days').format('YYYY-MM-DDTHH:mm');
+    const checkin = moment().tz(australianTimeZone).add(6, 'hours').format('YYYY-MM-DDTHH:mm');
+    const checkout = moment(checkin).tz(australianTimeZone).add(20, 'hours').format('YYYY-MM-DDTHH:mm');
 
     setCheckinTime(checkin);
     setCheckoutTime(checkout);
